@@ -4,7 +4,6 @@ package cn.edu.xmu.g12.g12ooadgoods.util;
  * created by snow 2020/12/13 18:50
  */
 public enum CommentStatus {
-
     UN_CONFIRMED(0, "未审核"),
     SUCCESS(1, "评论成功"),
     FAILED(2, "未通过");

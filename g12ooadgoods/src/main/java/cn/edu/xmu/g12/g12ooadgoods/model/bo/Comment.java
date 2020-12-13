@@ -12,7 +12,6 @@ public class Comment {
     private String content;
     private Byte state;
 
-
     public Long getId() {
         return id;
     }
