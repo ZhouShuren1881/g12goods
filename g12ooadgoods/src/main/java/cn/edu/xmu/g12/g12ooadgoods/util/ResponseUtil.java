@@ -40,7 +40,7 @@ public class ResponseUtil {
     public static Object ok() {
         Map<String, Object> obj = new HashMap<String, Object>();
         obj.put("errno", cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.OK.getCode());
-        obj.put("errmsg", cn.edu.xmu.g12.g12ooadgoods.ResponseCode.OK.getMessage());
+        obj.put("errmsg", cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.OK.getMessage());
         return obj;
     }
 
