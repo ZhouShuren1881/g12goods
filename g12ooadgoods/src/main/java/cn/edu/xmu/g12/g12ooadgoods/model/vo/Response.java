@@ -5,25 +5,12 @@ package cn.edu.xmu.g12.g12ooadgoods.model.vo;
 //  "errmsg": "成功"
 //}
 
+import lombok.Data;
+
+@Data
 public class Response {
     private Integer errno;
     private String errmsg;
-
-    public Integer getErrno() {
-        return errno;
-    }
-
-    public void setErrno(Integer errno) {
-        this.errno = errno;
-    }
-
-    public String getErrmsg() {
-        return errmsg;
-    }
-
-    public void setErrmsg(String errmsg) {
-        this.errmsg = errmsg;
-    }
 
     public Response() { }
 
