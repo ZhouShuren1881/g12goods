@@ -1,6 +1,7 @@
 package cn.edu.xmu.g12demomybatis.controller;
 
 import cn.edu.xmu.g12demomybatis.model.Customer;
+import cn.edu.xmu.g12demomybatis.model.SuperJoin;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.*;
+import java.util.List;
 
 @Controller
 public class Demo {
@@ -22,7 +24,7 @@ public class Demo {
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
 
         SqlSession session = sqlSessionFactory.openSession();
-        Customer c = (Customer) session.selectOne("g12.namspaceY.selectIdX", 2);
+        List<SuperJoin> c = session.selectList("g12.namspaceY.SSSID");
 
         System.out.println(c);
         session.close();

@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.edu.xmu</groupId>
     <artifactId>g12-demo-mybatis</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <name>g12-demo-mybatis</name>
     <description>Demo project for Spring Boot</description>
 
