@@ -52,7 +52,7 @@ public class ShopState {
         return ss;
     }
 
-    public List<ShopState> getAllStates() {
+    public static List<ShopState> getAllStates() {
         var s = new ArrayList<ShopState>();
         for (int i = 0; i <= 4; i++)
             s.add(ShopState.newState(i));
