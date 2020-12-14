@@ -1,3 +1,3 @@
-drop database if exists g12demo;
-create database g12demo;
-use g12demo;
+drop database if exists oomall;
+create database oomall;
+use oomall;
