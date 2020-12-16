@@ -2,6 +2,8 @@ package cn.edu.xmu.g12.g12ooadgoods.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -12,6 +14,9 @@ import java.io.InputStream;
 
 @Configuration
 public class SQLFactoryConfiguration {
+
+    @Autowired
+    PropertyPlaceholderConfigurer ppc;
 
     @Bean
     public SqlSessionFactory BuildSQLFactory() throws IOException {

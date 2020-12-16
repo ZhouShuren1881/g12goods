@@ -17,8 +17,8 @@
             </dataSource>
         </environment>
     </environments>
-    <mappers>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/CommentPoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/ShopPoMapper.xml"/>
-    </mappers>
+<!--    <mappers>-->
+<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/CommentPoMapper.xml"/>-->
+<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/ShopPoMapper.xml"/>-->
+<!--    </mappers>-->
 </configuration>
