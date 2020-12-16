@@ -15,9 +15,6 @@ import java.io.InputStream;
 @Configuration
 public class SQLFactoryConfiguration {
 
-    @Autowired
-    PropertyPlaceholderConfigurer ppc;
-
     @Bean
     public SqlSessionFactory BuildSQLFactory() throws IOException {
         Resource resource = new ClassPathResource("mybatis-config.xml");
