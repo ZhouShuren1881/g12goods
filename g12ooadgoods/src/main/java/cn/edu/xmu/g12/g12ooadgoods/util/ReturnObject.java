@@ -5,6 +5,7 @@ import lombok.Getter;
 /**
  * 返回对象
  * @author Ming Qiu
+ * @modified Lu Xun
  **/
 @Getter
 public class ReturnObject<T> {
@@ -69,4 +70,15 @@ public class ReturnObject<T> {
         }
     }
 
+    public void setCode(ResponseCode code) {
+        this.code = code;
+    }
+
+    public void setErrmsg(String errmsg) {
+        this.errmsg = errmsg;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
 }

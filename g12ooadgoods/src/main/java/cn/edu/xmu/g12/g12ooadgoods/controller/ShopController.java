@@ -41,7 +41,7 @@ public class ShopController {
     public Object createShop(@Validated @RequestBody ShopNameVo vo, BindingResult bindingResult,
                              HttpServletRequest request, HttpServletResponse response ) {
 
-        logger.debug("createShop name = "+vo.getName());
+        logger.debug("createShop conroller name = "+vo.getName());
         /* 处理参数校验错误 */
         Object o = Common.processFieldErrors(bindingResult, response);
         if(o != null){
@@ -51,7 +51,7 @@ public class ShopController {
         var useranddepart = jwt.verifyTokenAndGetClaims(request.getHeader("authorization"));
         if (useranddepart == null) return ResponseUtil.fail(ResponseCode.AUTH_JWT_EXPIRED);
 
-        ReturnObject<VoObject> returnObject = shop.createShop(useranddepart.getUserId(), vo.getName());
+        ReturnObject<VoObject> returnObject = shop.createShop(useranddepart.getUserId(), useranddepart.getDepartId(), vo.getName());
 
         if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getRetObject(returnObject);

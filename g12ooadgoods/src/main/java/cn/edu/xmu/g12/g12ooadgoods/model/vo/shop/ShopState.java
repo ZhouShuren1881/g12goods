@@ -25,37 +25,36 @@ public class ShopState {
     private String name;
 
     public ShopState() {}
-    public static ShopState newState(int state) {
-        var ss = new ShopState();
+    ShopState(int state) {
+        this();
         switch (state) {
             case 0:
-                ss.code = 0;
-                ss.name = "未审核";
+                code = 0;
+                name = "未审核";
                 break;
             case 1:
-                ss.code = 1;
-                ss.name = "未上线";
+                code = 1;
+                name = "未上线";
                 break;
             case 2:
-                ss.code = 2;
-                ss.name = "上线";
+                code = 2;
+                name = "上线";
                 break;
             case 3:
-                ss.code = 3;
-                ss.name = "关闭";
+                code = 3;
+                name = "关闭";
                 break;
             default:
-                ss.code = 4;
-                ss.name = "审核未通过";
+                code = 4;
+                name = "审核未通过";
                 break;
         }
-        return ss;
     }
 
     public static List<ShopState> getAllStates() {
         var s = new ArrayList<ShopState>();
         for (int i = 0; i <= 4; i++)
-            s.add(ShopState.newState(i));
+            s.add(new ShopState(i));
         return s;
     }
 }
