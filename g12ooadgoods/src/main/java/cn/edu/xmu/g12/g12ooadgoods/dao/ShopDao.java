@@ -1,6 +1,7 @@
 package cn.edu.xmu.g12.g12ooadgoods.dao;
 
 import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
+import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.*;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
@@ -15,21 +16,21 @@ public class ShopDao {
     @Autowired
     SqlSessionFactory sqlSessionFactory;
 
-    class HasShopException extends Exception {
+    static class HasShopException extends Exception {
         HasShopException() {
             super("Customer Has a Shop!");
         }
     }
 
-    class SameNameShopException extends Exception {
-        SameNameShopException() {
-            super("已经有一个同名店铺!");
+    static class InsertFailException extends Exception {
+        InsertFailException() {
+            super("插入失败!");
         }
     }
 
-    class InsertFailException extends Exception {
-        InsertFailException() {
-            super("插入失败!");
+    static class UpdateFailException extends Exception {
+        UpdateFailException() {
+            super("更新失败!");
         }
     }
 
@@ -41,11 +42,6 @@ public class ShopDao {
             if (user.getDepartId() != 0) throw new HasShopException();
 
             var shopMapper = session.getMapper(ShopPoMapper.class);
-            var shopReq = new ShopPoExample();
-            shopReq.createCriteria().andNameEqualTo(name);
-            var sameNameShop = shopMapper.selectByExample(shopReq);
-            if (sameNameShop != null && sameNameShop.size() != 0) throw new SameNameShopException();
-
             var shop = new ShopPo();
             shop.setName(name);
             shop.setState((byte)0);
@@ -59,9 +55,6 @@ public class ShopDao {
         } catch (HasShopException e) {
             session.rollback();
             return new ReturnObject<>(ResponseCode.USER_HASSHOP);
-        } catch (SameNameShopException e) {
-            session.rollback();
-            return new ReturnObject<>(ResponseCode.SAME_NAME_SHOP);
         } catch (InsertFailException e) {
             session.rollback();
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
@@ -69,4 +62,53 @@ public class ShopDao {
             session.close();
         }
     }
+
+    public ResponseCode modifyShop(Long shopId, String name) {
+        var session = sqlSessionFactory.openSession();
+        try {
+            var shopMapper = session.getMapper(ShopPoMapper.class);
+            var shopGet = shopMapper.selectByPrimaryKey(shopId);
+            if (shopGet == null || shopGet.getId() == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+
+            var shopSet = new ShopPo();
+            shopSet.setId(shopId);
+            shopSet.setName(name);
+            shopSet.setGmtModified(LocalDateTime.now());
+            var rows = shopMapper.updateByPrimaryKey(shopSet);
+
+            if (rows == 0) throw new UpdateFailException();
+            session.commit();
+            return ResponseCode.OK;
+        } catch (UpdateFailException e) {
+            session.rollback();
+            return ResponseCode.INTERNAL_SERVER_ERR;
+        } finally {
+            session.close();
+        }
+    }
+
+    public ResponseCode changeShopState(Long shopId, Byte state) {
+        var session = sqlSessionFactory.openSession();
+        try {
+            var shopMapper = session.getMapper(ShopPoMapper.class);
+            var shopGet = shopMapper.selectByPrimaryKey(shopId);
+            if (shopGet == null || shopGet.getId() == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+
+            var shopSet = new ShopPo();
+            shopSet.setId(shopId);
+            shopSet.setState(state);
+            shopSet.setGmtModified(LocalDateTime.now());
+            var rows = shopMapper.updateByPrimaryKey(shopSet);
+
+            if (rows == 0) throw new UpdateFailException();
+            session.commit();
+            return ResponseCode.OK;
+        } catch (UpdateFailException e) {
+            session.rollback();
+            return ResponseCode.INTERNAL_SERVER_ERR;
+        } finally {
+            session.close();
+        }
+    }
+
 }

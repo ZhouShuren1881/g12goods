@@ -2,7 +2,9 @@ package exam.g12test;
 
 import exam.g12test.util.JwtHelper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest()
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ShopTest {
     private static final Logger logger = LoggerFactory.getLogger(ShopTest.class);
 
@@ -37,6 +40,12 @@ public class ShopTest {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
                 .build();
 
+        if (true) {
+            logger.warn("189535L: "+getJWT(189535L, 0L));
+            logger.warn("189536L: "+getJWT(189536L, 1578998L));
+            System.exit(0);
+        }
+
     }
 
     private String getJWT(Long userId, Long departId) {
@@ -44,7 +53,7 @@ public class ShopTest {
     }
 
     @Test
-    public void ShopCreateTest() throws Exception {
+    public void shopsStates() throws Exception {
 
         byte[] ret = mallClient.get().uri("/shops/states")
                 .exchange()
@@ -60,4 +69,13 @@ public class ShopTest {
                 "{\"name\":\"关闭\",\"code\":3},{\"name\":\"审核未通过\",\"code\":4}],\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
+
+//    /**
+//     * 无店铺用户新建
+//     */
+//    @Test
+//    public void shopsCreate() {
+//        String auth = getJWT(189535L, 0L);
+//        logger.warn();
+//    }
 }

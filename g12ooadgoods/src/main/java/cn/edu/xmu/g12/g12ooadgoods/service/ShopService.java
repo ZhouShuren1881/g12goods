@@ -2,16 +2,12 @@ package cn.edu.xmu.g12.g12ooadgoods.service;
 
 import cn.edu.xmu.g12.g12ooadgoods.dao.ShopDao;
 import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
-import cn.edu.xmu.g12.g12ooadgoods.model.vo.shop.ShopInfoVo;
-import cn.edu.xmu.g12.g12ooadgoods.model.vo.shop.ShopState;
+import cn.edu.xmu.g12.g12ooadgoods.model.vo.shop.*;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseUtil;
 import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 @Service
 public class ShopService {
@@ -38,5 +34,30 @@ public class ShopService {
         } else {
             return new ReturnObject<>(returnShopPo.getCode());
         }
+    }
+
+    public ReturnObject<VoObject> modifyShop(Long departId, String name) {
+        var responceCode = shopDao.modifyShop(departId, name);
+        return new ReturnObject<>(responceCode);
+    }
+
+    public ReturnObject<VoObject> deleteShop(Long shopId) {
+        var responceCode = shopDao.changeShopState(shopId, (byte)3);
+        return new ReturnObject<>(responceCode);
+    }
+
+    public ReturnObject<VoObject> auditShop(Long shopId, Boolean audit) {
+        var responceCode = shopDao.changeShopState(shopId, (audit?(byte)1:(byte)4));
+        return new ReturnObject<>(responceCode);
+    }
+
+    public ReturnObject<VoObject> shopOnshelves(Long shopId) {
+        var responceCode = shopDao.changeShopState(shopId, (byte)2);
+        return new ReturnObject<>(responceCode);
+    }
+
+    public ReturnObject<VoObject> shopOffshelves(Long shopId) {
+        var responceCode = shopDao.changeShopState(shopId, (byte)1);
+        return new ReturnObject<>(responceCode);
     }
 }

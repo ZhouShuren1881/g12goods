@@ -10,15 +10,26 @@
         <environment id="development">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
-                <property name="driver" value="${sql.driverClass}"/>
-                <property name="url" value="${sql.connectionURL}"/>
-                <property name="username" value="${sql.userId}"/>
-                <property name="password" value="${sql.password}"/>
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://192.168.40.153:3306/oomall?serverTimezone=GMT%2B8"/>
+                <property name="username" value="s"/>
+                <property name="password" value="123"/>
             </dataSource>
         </environment>
     </environments>
-<!--    <mappers>-->
-<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/CommentPoMapper.xml"/>-->
-<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/ShopPoMapper.xml"/>-->
-<!--    </mappers>-->
+    <mappers>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/CommentPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/ShopPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/AuthUserPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/GoodsSkuPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/GoodsSpuPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/GoodsCategoryPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/FreightModelPoMapper.xml"/>
+<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>-->
+<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>-->
+<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>-->
+<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>-->
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/ShareActivityPoMapper.xml"/>
+    </mappers>
 </configuration>

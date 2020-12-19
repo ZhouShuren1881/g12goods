@@ -82,9 +82,7 @@ public enum ResponseCode {
     USER_HASSHOP(908,"用户已经有店铺"),
     COUPON_NOTBEGIN(909,"未到优惠卷领取时间"),
     COUPON_FINISH(910,"优惠卷领罄"),
-    COUPON_END(911,"优惠卷活动终止"),
-
-    SAME_NAME_SHOP(912, "已经有同名店铺");
+    COUPON_END(911,"优惠卷活动终止");
 
     private int code;
     private String message;
