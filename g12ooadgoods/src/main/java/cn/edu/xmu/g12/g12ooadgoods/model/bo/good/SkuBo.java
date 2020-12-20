@@ -2,12 +2,13 @@ package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
 
 import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.GoodsSkuPo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class SkuDetailBo implements VoObject {
+public class SkuBo implements VoObject {
 //    "id": 0,
 //    "name": "string",
 //    "skuSn": "string",
@@ -36,7 +37,9 @@ public class SkuDetailBo implements VoObject {
     private Byte state;
     private String configuration;
     private Long weight;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtCreate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtModified;
     private Boolean disable;
     private Boolean shareable;
@@ -61,9 +64,9 @@ public class SkuDetailBo implements VoObject {
         // Miss Price and shareable
     }
 
-    public SkuDetailBo() { }
+    public SkuBo() { }
 
-    public SkuDetailBo(GoodsSkuPo po, Long price, Boolean shareable, SpuOverview spu) {
+    public SkuBo(GoodsSkuPo po, Long price, Boolean shareable, SpuOverview spu) {
         this();
         this.copyFromPo(po);
         this.setPrice(price);

@@ -1,14 +1,12 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
 
 import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
-import cn.edu.xmu.g12.g12ooadgoods.model.po.GoodsSkuPo;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class SkuListDetailBo implements VoObject {
+public class SkuListBo implements VoObject {
     //    "page": 0,
     //    "pageSize": 0,
     //    "total": 0,
@@ -31,10 +29,10 @@ public class SkuListDetailBo implements VoObject {
     protected Integer pages;
     protected List<SkuOverview> list;
 
-    public SkuListDetailBo() { }
+    public SkuListBo() { }
 
-    public SkuListDetailBo(Integer page, Integer pageSize, Long total, Integer pages,
-                           List<SkuOverview> skuOverviewList) {
+    public SkuListBo(Integer page, Integer pageSize, Long total, Integer pages,
+                     List<SkuOverview> skuOverviewList) {
         this();
         this.page       = page;
         this.pageSize   = pageSize;

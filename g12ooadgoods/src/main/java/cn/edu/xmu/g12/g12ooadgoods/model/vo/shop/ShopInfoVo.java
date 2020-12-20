@@ -1,6 +1,7 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.shop;
 
 import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,9 @@ public class ShopInfoVo implements VoObject {
     private Long id;
     private String name;
     private Byte state;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtCreate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtModified;
 
     public Object createVo() {

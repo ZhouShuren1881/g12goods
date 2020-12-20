@@ -1,13 +1,15 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
 
+import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class SpuOverview {
+public class SpuOverview implements VoObject {
 
 //    "spu": {
 //      "id": 0,
@@ -63,15 +65,17 @@ public class SpuOverview {
       private String goodsSn;
       private String detail;
       private String imageUrl;
+      @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
       private LocalDateTime gmtCreate;
+      @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
       private LocalDateTime gmtModified;
       private Boolean disable;
 
-      private SpuBrandSubOverView   brand;
+      private BrandOverview brand;
       private IdNameOverview        category;
-      private SpuFreightSubOverview freight;
+      private FreightOverview freight;
       private IdNameOverview        shop;
-      private SpuSpecSubOverview    spec;
+      private SpecOverview spec;
       private List<SkuOverview>     skuList;
 
 
@@ -93,15 +97,19 @@ public class SpuOverview {
                          GoodsCategoryPo        category,
                          FreightModelPo         freight,
                          ShopPo                 shop,
-                         SpuSpecSubOverview     spec,
+                         SpecOverview spec,
                          List<SkuOverview> skuList) {
             this();
             this.copyFromPo(po);
-            this.brand = new SpuBrandSubOverView(brand);
+            this.brand = new BrandOverview(brand);
             this.category = new IdNameOverview(category.getId(), category.getName());
-            this.freight = new SpuFreightSubOverview(freight);
+            this.freight = new FreightOverview(freight);
             this.shop = new IdNameOverview(shop.getId(), shop.getName());
             this.spec = spec;
             this.skuList = skuList;
       }
+
+      public Object createVo() { return this; }
+
+      public Object createSimpleVo() { return this; }
 }

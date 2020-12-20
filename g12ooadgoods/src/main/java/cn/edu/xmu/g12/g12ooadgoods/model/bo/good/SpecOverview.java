@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SpuSpecSubOverview {
+public class SpecOverview {
 //      "spec": {
 //        "id": 0,
 //        "name": "string",

@@ -4,7 +4,7 @@ import cn.edu.xmu.g12.g12ooadgoods.model.po.BrandPo;
 import lombok.Data;
 
 @Data
-public class SpuBrandSubOverView {
+public class BrandOverview {
 //      "category": {
 //        "id": 0,
 //        "name": "string"
@@ -13,8 +13,8 @@ public class SpuBrandSubOverView {
     private String name;
     private String imageUrl;
 
-    public SpuBrandSubOverView() { }
-    public SpuBrandSubOverView(BrandPo po) {
+    public BrandOverview() { }
+    public BrandOverview(BrandPo po) {
         id = po.getId();
         name = po.getName();
         imageUrl = po.getImageUrl();

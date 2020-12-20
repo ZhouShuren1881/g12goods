@@ -1,13 +1,14 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
 
 import cn.edu.xmu.g12.g12ooadgoods.model.po.FreightModelPo;
-import com.google.gson.annotations.SerializedName;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class SpuFreightSubOverview { // order -> freight_model
+public class FreightOverview { // order -> freight_model
 //      "freight": {
 //        "id": 0,
 //        "name": "string",
@@ -21,13 +22,15 @@ public class SpuFreightSubOverview { // order -> freight_model
     private String name;
     private Byte type;
     private Integer unit;
-    @SerializedName("default") // 转json时显示为default
+    @JSONField(name="default") // 转json时显示为default
     private Boolean defaultModel;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtCreate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtModified;
 
-    public SpuFreightSubOverview() { }
-    public SpuFreightSubOverview(FreightModelPo po) {
+    public FreightOverview() { }
+    public FreightOverview(FreightModelPo po) {
         this();
         id = po.getId();
         name = po.getName();

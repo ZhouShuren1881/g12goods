@@ -1,10 +1,11 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
 
+import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.GoodsSkuPo;
 import lombok.Data;
 
 @Data
-public class SkuOverview {
+public class SkuOverview implements VoObject {
     //    "page": 0,
     //    "pageSize": 0,
     //    "total": 0,
@@ -32,13 +33,18 @@ public class SkuOverview {
 
     public SkuOverview() {}
 
-    public SkuOverview(GoodsSkuPo goodsSkuPo, Long price) {
-        id              = goodsSkuPo.getId();
-        name            = goodsSkuPo.getName();
-        skuSn           = goodsSkuPo.getSkuSn();
-        imageUrl        = goodsSkuPo.getImageUrl();
-        originalPrice   = goodsSkuPo.getOriginalPrice();
+    public SkuOverview(GoodsSkuPo po, Long price) {
+        id              = po.getId();
+        name            = po.getName();
+        skuSn           = po.getSkuSn();
+        imageUrl        = po.getImageUrl();
+        originalPrice   = po.getOriginalPrice();
+        inventory       = po.getInventory();
         this.price      = price;
-        disable         = goodsSkuPo.getDisabled() != 0;
+        disable         = po.getDisabled() != 0;
     }
+
+    public Object createVo() {return this;}
+
+    public Object createSimpleVo() {return this;}
 }
