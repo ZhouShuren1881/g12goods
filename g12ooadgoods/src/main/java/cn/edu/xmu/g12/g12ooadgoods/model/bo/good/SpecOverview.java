@@ -1,5 +1,6 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
 
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.IdNameOverview;
 import lombok.Data;
 
 import java.util.List;

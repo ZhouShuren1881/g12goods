@@ -1,4 +1,4 @@
-package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
+package cn.edu.xmu.g12.g12ooadgoods.model.bo;
 
 import lombok.Data;
 

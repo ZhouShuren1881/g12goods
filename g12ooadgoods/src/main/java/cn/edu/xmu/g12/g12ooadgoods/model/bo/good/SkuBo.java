@@ -44,7 +44,7 @@ public class SkuBo implements VoObject {
     private Boolean disable;
     private Boolean shareable;
 
-    private SpuOverview spu;
+    private SpuBo spu;
 
     void copyFromPo(GoodsSkuPo po) {
         id = po.getId();
@@ -66,7 +66,7 @@ public class SkuBo implements VoObject {
 
     public SkuBo() { }
 
-    public SkuBo(GoodsSkuPo po, Long price, Boolean shareable, SpuOverview spu) {
+    public SkuBo(GoodsSkuPo po, Long price, Boolean shareable, SpuBo spu) {
         this();
         this.copyFromPo(po);
         this.setPrice(price);

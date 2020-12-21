@@ -1,0 +1,208 @@
+package cn.edu.xmu.g12.g12ooadgoods.dao;
+
+import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.IdNameOverview;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.ListBo;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.good.SpuOverview;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.groupon.GrouponBo;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.groupon.GrouponOverview;
+import cn.edu.xmu.g12.g12ooadgoods.model.po.GrouponActivityPo;
+import cn.edu.xmu.g12.g12ooadgoods.model.po.GrouponActivityPoExample;
+import cn.edu.xmu.g12.g12ooadgoods.model.vo.ActivityState;
+import cn.edu.xmu.g12.g12ooadgoods.model.vo.groupon.ModifyGrouponVo;
+import cn.edu.xmu.g12.g12ooadgoods.model.vo.groupon.NewGrouponVo;
+import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
+import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageInfo;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Repository;
+import com.github.pagehelper.PageHelper;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Repository
+public class GrouponDao {
+    private static final Logger logger = LoggerFactory.getLogger(GrouponDao.class);
+    @Autowired
+    SqlSessionFactory sqlSessionFactory;
+    @Autowired
+    SkuPriceDao skuPriceDao;
+
+    ObjectMapper jsonMapper = new ObjectMapper();
+
+    @Autowired(required = false)
+    PresaleActivityPoMapper presaleActivityPoMapper;
+    @Autowired(required = false)
+    GrouponActivityPoMapper grouponActivityPoMapper;
+    @Autowired(required = false)
+    ShopPoMapper shopPoMapper;
+    @Autowired(required = false)
+    GoodsSkuPoMapper goodsSkuPoMapper;
+    @Autowired(required = false)
+    GoodsSpuPoMapper goodsSpuPoMapper;
+
+    public List<ActivityState> getAllState() {
+        return ActivityState.getAllStates();
+    }
+
+    /**
+     * Private Method..
+     */
+    private ListBo<GrouponOverview> packupGrouponActivityListBo(
+            List<GrouponActivityPo> grouponList, Integer page, Integer pageSize) {
+
+        var grouponBoList = grouponList.stream()
+                .map(GrouponOverview::new).collect(Collectors.toList());
+
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(grouponList);
+        if (page != null)
+            return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), grouponBoList);
+        else
+            return new ListBo<>(1, grouponBoList.size(), (long) grouponBoList.size(), 1, grouponBoList);
+    }
+
+    // GET /groupons
+    public ListBo<GrouponOverview> getAllGroupon(@Nullable Integer timeline, @Nullable Long spuId, @Nullable Long shopId,
+                                                 @Nullable Integer page, @Nullable Integer pageSize) {
+
+        var grouponExample = new GrouponActivityPoExample();
+        var criteria = grouponExample.createCriteria();
+        criteria.andStateEqualTo((byte)1);
+
+        if (shopId != null) criteria.andShopIdEqualTo(shopId);
+        if (spuId  != null) criteria.andGoodsSpuIdEqualTo(spuId);
+
+        if (timeline != null) {
+            // timeline : 0 还未开始的， 1 明天开始的，2 正在进行中的，3 已经结束的
+            var now = LocalDateTime.now();
+            switch (timeline) {
+                case 0:
+                    criteria.andBeginTimeGreaterThan(now);
+                    break;
+                case 1:
+                    var nextday = now.plusDays(1);
+                    var nextZero = LocalDateTime.of(
+                            now.getYear(), now.getMonth(), now.getDayOfMonth(),0,0);
+                    var doubleNextZero = LocalDateTime.of(
+                            nextday.getYear(), nextday.getMonth(), nextday.getDayOfMonth(),0,0);
+                    criteria.andBeginTimeGreaterThanOrEqualTo(nextZero);
+                    criteria.andBeginTimeLessThan(doubleNextZero);
+                    break;
+                case 2:
+                    criteria.andBeginTimeLessThan(now);
+                    criteria.andEndTimeGreaterThan(now);
+                    break;
+                default:
+                    criteria.andEndTimeLessThan(now);
+            }
+        }
+
+        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        var grouponList = grouponActivityPoMapper.selectByExample(grouponExample);
+
+        return packupGrouponActivityListBo(grouponList, page, pageSize);
+    }
+
+    // GET /shops/{shopId}/groupons
+    // TODO 检查 beginTime & endTime 必须同时为null或同时不为null
+    public ListBo<GrouponOverview> getAllGroupon(Long shopId,
+                                                 @Nullable Long spuId,
+                                                 @Nullable LocalDateTime beginTime,
+                                                 @Nullable LocalDateTime endTime,
+                                                 @Nullable Byte state,
+                                                 @Nullable Integer page,
+                                                 @Nullable Integer pageSize) {
+
+        var grouponExample = new GrouponActivityPoExample();
+        var criteria = grouponExample.createCriteria();
+        criteria.andShopIdEqualTo(shopId);
+
+        /* beginTime & endTime 必须同时为null或同时不为null */
+        if (beginTime != null) criteria.andBeginTimeBetween(beginTime, endTime).andEndTimeBetween(beginTime, endTime);
+        if (spuId     != null) criteria.andGoodsSpuIdEqualTo(spuId);
+        if (state     != null) criteria.andStateEqualTo(state);
+
+        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        var grouponList = grouponActivityPoMapper.selectByExample(grouponExample);
+
+        return packupGrouponActivityListBo(grouponList, page, pageSize);
+    }
+
+    public ReturnObject<GrouponBo> newGroupon(Long shopId, Long spuId, NewGrouponVo vo) {
+
+        var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
+        var spuPo = goodsSpuPoMapper.selectByPrimaryKey(spuId);
+        if (shopPo == null || spuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+
+        var grouponExample = new GrouponActivityPoExample();
+        grouponExample.createCriteria().andGoodsSpuIdEqualTo(spuId);
+        var grouponPo = grouponActivityPoMapper.selectByExample(grouponExample);
+        if (grouponPo != null) return new ReturnObject<>(ResponseCode.PRESALE_STATENOTALLOW);
+
+        var newPo = new GrouponActivityPo();
+        newPo.setName(UUID.randomUUID().toString());
+        newPo.setBeginTime(vo.getBeginTime());
+        newPo.setEndTime(vo.getEndTime());
+        newPo.setState((byte)0);
+        newPo.setShopId(shopId);
+        newPo.setGoodsSpuId(spuId);
+        newPo.setStrategy(vo.getStrategy());
+        newPo.setGmtCreate(LocalDateTime.now());
+        newPo.setGmtModified(LocalDateTime.now());
+
+        grouponActivityPoMapper.insert(newPo);
+        return new ReturnObject<>(new GrouponBo(
+                newPo,
+                new SpuOverview(spuPo),
+                new IdNameOverview(shopPo.getId(), shopPo.getName())
+        ));
+    }
+
+    // TODO 是不是 下线状态才能修改？
+    public ResponseCode modifyGroupon(Long shopId, Long grouponId, ModifyGrouponVo vo) {
+
+        var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
+        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+
+        var grouponPo = grouponActivityPoMapper.selectByPrimaryKey(grouponId);
+        if (grouponPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (grouponPo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;
+
+        var updatePo = new GrouponActivityPo();
+        updatePo.setId(grouponId);
+        updatePo.setBeginTime(vo.getBeginTime());
+        updatePo.setEndTime(vo.getEndTime());
+        updatePo.setStrategy(vo.getStrategy());
+        updatePo.setGmtModified(LocalDateTime.now());
+
+        grouponActivityPoMapper.updateByPrimaryKey(updatePo);
+        return ResponseCode.OK;
+    }
+
+    public ResponseCode changeGrouponState(Long shopId, Long grouponId, Byte state) {
+        var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
+        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+
+        var grouponPo = grouponActivityPoMapper.selectByPrimaryKey(grouponId);
+        if (grouponPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+
+        if (state == 2 && grouponPo.getState() != 0) return ResponseCode.GROUPON_STATENOTALLOW;
+        if (state == 1 && grouponPo.getState() != 0) return ResponseCode.GROUPON_STATENOTALLOW;
+        if (state == 0 && grouponPo.getState() != 1) return ResponseCode.GROUPON_STATENOTALLOW;
+
+        var updatePo = new GrouponActivityPo();
+        updatePo.setId(grouponId);
+        updatePo.setState(state);
+        grouponActivityPoMapper.updateByPrimaryKey(updatePo);
+        return ResponseCode.OK;
+    }
+}

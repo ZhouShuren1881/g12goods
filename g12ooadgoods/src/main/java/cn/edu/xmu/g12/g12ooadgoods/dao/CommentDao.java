@@ -1,120 +1,170 @@
-//package cn.edu.xmu.g12.g12ooadgoods.dao;
-//
-//
-//import cn.edu.xmu.g12.g12ooadgoods.mapper.CommentPoMapper;
-//import cn.edu.xmu.g12.g12ooadgoods.mapper.ShopPoMapper;
-//import cn.edu.xmu.g12.g12ooadgoods.model.po.CommentPo;
-//import cn.edu.xmu.g12.g12ooadgoods.util.CommentStatus;
-//import cn.edu.xmu.g12.g12ooadgoods.util.JacksonUtil;
-//import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
-//import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
-//import com.github.pagehelper.PageInfo;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.dao.DataAccessException;
-//import org.springframework.stereotype.Repository;
-//
-//import java.time.LocalDateTime;
-//import java.util.List;
-//import java.util.Map;
-//
-//@Repository
-//public class CommentDao{
-//
-//    private static final Logger logger = LoggerFactory.getLogger(CommentDao.class);
-//
-//    @Autowired
-//    private CommentPoMapper commentPoMapper;
-//
-//    @Autowired
-//    private ShopPoMapper shopPoMapper;
-//
-//    /**
-//     * 管理员审核评论
-//     * createdBy TGF 2020/12/13 20：50
-//     * @param id 评论id
-//     * @param state 操作字段（是否通过审核）
-//     * @return Object 操作信息
-//     */
-//    public ReturnObject updateState(Long id, Object state){
-//        ReturnObject retObj = null;
-//        try{
-//            CommentPo commentPo = commentPoMapper.selectByPrimaryKey(id);
-//            if (commentPo == null) {
-//                //修改失败
-//                logger.debug("Confirm Comment State failed: orderId '" + id + "' not exist!");
-//                retObj = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
-//            } else {
-//                if(commentPo.getState() == CommentStatus.UN_CONFIRMED.getCode()){
-//                    Map messageContent= JacksonUtil.toMap(state.toString());
-//                    commentPo.setState((Byte)messageContent.get("message"));
-//                    commentPo.setGmtModified(LocalDateTime.now());
-//                    int result = commentPoMapper.updateByPrimaryKeySelective(commentPo);
-//                    if(result == 1){
-//                        // 审核成功
-//                        logger.debug("Confirm Comment State Succeed: commentId '" + id + "'");
-//                        retObj = new ReturnObject(ResponseCode.OK, "成功");
-//                    }
-//                    else{
-//                        // 审核失败
-//                        logger.debug("Confirm Comment State failed: orderId '" + id + "' has been confirmed!");
-//                        retObj = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
-//                    }
-//                }
-//                else{
-//                    // 该评论已被审核，审核失败
-//                    logger.debug("Update Order Message failed: '" + id + "' order Status Not Allowed!");
-//                    retObj = new ReturnObject(ResponseCode.ORDER_STATENOTALLOW, "订单状态禁止");
-//                }
-//            }
-//        }
-//        catch (DataAccessException e) {
-//            //数据库错误
-//            logger.debug("other sql exception : " + e.getMessage());
-//            retObj = new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR, String.format("数据库错误：%s", e.getMessage()));
-//        }
-//        catch (Exception e) {
-//            // 其他Exception错误
-//            logger.error("other exception : " + e.getMessage());
-//            retObj = new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR, String.format("发生了严重的数据库错误：%s", e.getMessage()));
-//        }
-//        return retObj;
-//    }
-//
-//    /**
-//     * 买家查询自己的评价记录
-//     * @author TGF
-//     * @created 2020/12/13 21：25
-//     * @param customerId 买家id
-//     * @return ReturnObject<CommentsVo> 查询结果
-//     */
-//    public PageInfo<CommentPo> selectMyComments(Long customerId){
-//        PageInfo<CommentPo> retObj = null;
-//        try{
-//            logger.debug("Select My Comments with customerId: " + customerId);
-//            CommentPoExample example = new CommentPoExample();
-//            CommentPoExample.Criteria criteria = example.createCriteria();
-//            if(customerId != null){
-//                criteria.andCustomerIdEqualTo(customerId);
-//                criteria.andBeDeletedIsNull();
-//                List<CommentPo> commentPos = commentPoMapper.selectByExample(example);
-//                logger.debug("Order Information Size: " + commentPos.size());
-//                retObj = new PageInfo<>(commentPos);
-//            }
-//            else{
-//                logger.debug("Select My Comment Failed: customerId " + customerId + " is null!");
-//            }
-//        }
-//        catch (DataAccessException e) {
-//            //数据库错误
-//            logger.debug("Sql exception : " + e.getMessage());
-//        }
-//        catch (Exception e) {
-//            // 其他Exception错误
-//            logger.error("System exception : " + e.getMessage());
-//        }
-//        return retObj;
-//    }
-//
-//}
+package cn.edu.xmu.g12.g12ooadgoods.dao;
+
+import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.ListBo;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.comment.CommentBo;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.comment.IdUsernameNameOverview;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.coupon.CouponActivityOverview;
+import cn.edu.xmu.g12.g12ooadgoods.model.po.*;
+import cn.edu.xmu.g12.g12ooadgoods.model.vo.comment.CommentState;
+import cn.edu.xmu.g12.g12ooadgoods.model.vo.comment.ConfirmCommentVo;
+import cn.edu.xmu.g12.g12ooadgoods.model.vo.comment.NewCommentVo;
+import cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon.CouponState;
+import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
+import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Repository
+public class CommentDao {
+    private static final Logger logger = LoggerFactory.getLogger(CouponDao.class);
+    @Autowired
+    SqlSessionFactory sqlSessionFactory;
+    @Autowired
+    SkuPriceDao skuPriceDao;
+
+    ObjectMapper jsonMapper = new ObjectMapper();
+
+    @Autowired(required = false)
+    ShopPoMapper shopPoMapper;
+    @Autowired(required = false)
+    GoodsSkuPoMapper goodsSkuPoMapper;
+    @Autowired(required = false)
+    GoodsSpuPoMapper goodsSpuPoMapper;
+    @Autowired(required = false)
+    CouponActivityPoMapper couponActivityPoMapper;
+    @Autowired(required = false)
+    CouponPoMapper couponPoMapper;
+    @Autowired(required = false)
+    CouponSkuPoMapper couponSkuPoMapper;
+    @Autowired(required = false)
+    AuthUserPoMapper authUserPoMapper;
+    @Autowired(required = false)
+    OrderItemPoMapper orderItemPoMapper;
+    @Autowired(required = false)
+    OrdersPoMapper ordersPoMapper;
+    @Autowired(required = false)
+    CommentPoMapper commentPoMapper;
+
+    public List<CommentState> getAllState() {
+        return CommentState.getAllStates();
+    }
+
+    public ReturnObject<CommentBo> NewSkuComment(Long orderId, Long userId, NewCommentVo vo) {
+        var orderItemPo = orderItemPoMapper.selectByPrimaryKey(orderId);
+        if (orderItemPo == null) return new ReturnObject<>(ResponseCode.USER_NOTBUY);
+
+        var ordersPo = ordersPoMapper.selectByPrimaryKey(orderItemPo.getOrderId());
+        if (!ordersPo.getCustomerId().equals(userId)) return new ReturnObject<>(ResponseCode.USER_NOTBUY);
+
+        var commentPo = new CommentPo();
+        commentPo.setCustomerId(ordersPo.getCustomerId());
+        commentPo.setGoodsSkuId(orderItemPo.getGoodsSkuId());
+        commentPo.setType(vo.getType());
+        commentPo.setContent(vo.getContent());
+        commentPo.setState((byte)0);
+        commentPo.setGmtCreate(LocalDateTime.now());
+        commentPo.setGmtModified(LocalDateTime.now());
+
+        commentPoMapper.insert(commentPo);
+        var userPo = authUserPoMapper.selectByPrimaryKey(userId);
+        return new ReturnObject<>(new CommentBo(commentPo, new IdUsernameNameOverview(userPo)));
+    }
+
+    /**
+     * Private Method..
+     */
+    private ListBo<CommentBo> packupCommentListBo(
+            List<CommentPo> commentPoList, Integer page, Integer pageSize) {
+
+        var commentBoList = commentPoList.stream()
+                .map(item-> new CommentBo(
+                        item,
+                        new IdUsernameNameOverview(authUserPoMapper.selectByPrimaryKey(item.getCustomerId()))
+                )).collect(Collectors.toList());
+
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(commentPoList);
+        if (page != null)
+            return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), commentBoList);
+        else
+            return new ListBo<>(1, commentBoList.size(), (long) commentBoList.size(), 1, commentBoList);
+    }
+
+    public ReturnObject<ListBo<CommentBo>> getSkuCommentValid(Long skuId,
+                                                @Nullable Integer page, @Nullable Integer pageSize) {
+
+        var skuPo = goodsSkuPoMapper.selectByPrimaryKey(skuId);
+        if (skuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+
+        var commentExample = new CommentPoExample();
+        commentExample.createCriteria().andGoodsSkuIdEqualTo(skuId);
+        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        var commentPoList = commentPoMapper.selectByExample(commentExample);
+
+        return new ReturnObject<>(packupCommentListBo(commentPoList, page, pageSize));
+    }
+
+    public ResponseCode confirmComment(Long shopId, Long commentId, ConfirmCommentVo vo) {
+        var commentPo = commentPoMapper.selectByPrimaryKey(commentId);
+        if (commentPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        var orderitemPo = orderItemPoMapper.selectByPrimaryKey(commentPo.getOrderitemId());
+        var ordersPo = ordersPoMapper.selectByPrimaryKey(orderitemPo.getOrderId());
+        if (!ordersPo.getShopId().equals(shopId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
+
+        var updatePo = new CommentPo();
+        updatePo.setId(commentId);
+        updatePo.setState(vo.getConclusion() ? (byte)1 : (byte)2);
+        updatePo.setGmtModified(LocalDateTime.now());
+        commentPoMapper.updateByPrimaryKey(updatePo);
+        return ResponseCode.OK;
+    }
+
+    public ReturnObject<ListBo<CommentBo>> getSkuCommentByAdmin(Long skuId, Long shopId, @Nullable Byte state,
+                                                              @Nullable Integer page, @Nullable Integer pageSize) {
+
+        // TODO 手动实现的评论分页
+
+        var skuPo = goodsSkuPoMapper.selectByPrimaryKey(skuId);
+        if (skuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+
+        var commentExample = new CommentPoExample();
+        var criteria = commentExample.createCriteria();
+        criteria.andGoodsSkuIdEqualTo(skuId);
+        if (state != null) criteria.andStateEqualTo(state);
+
+        var commentPoList = commentPoMapper.selectByExample(commentExample);
+        if (page == null || pageSize == null) {
+            return new ReturnObject<>(packupCommentListBo(commentPoList, null, null));
+        } else {
+            List<CommentBo> splitCommentList = new ArrayList<>();
+            int sindex = (page - 1) * pageSize;
+            int eindex = page * pageSize;
+            for (int i = sindex; i < eindex && i < commentPoList.size(); i++) {
+                var commentBo = new CommentBo(
+                        commentPoList.get(i),
+                        new IdUsernameNameOverview(
+                                authUserPoMapper.selectByPrimaryKey(commentPoList.get(i).getCustomerId()) )
+                );
+                splitCommentList.add(commentBo);
+            }
+            int _pagesize = pageSize == 0 ? commentPoList.size() : pageSize;
+            int pages = commentPoList.size() / _pagesize;
+            long totalSize = commentPoList.size();
+            return new ReturnObject<>(new ListBo<>(page, pageSize, totalSize, pages, splitCommentList));
+        }
+    }
+}

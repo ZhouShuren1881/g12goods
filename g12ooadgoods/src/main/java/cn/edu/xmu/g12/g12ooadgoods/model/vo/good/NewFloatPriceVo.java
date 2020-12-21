@@ -1,5 +1,6 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.good;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -15,9 +16,11 @@ public class NewFloatPriceVo {
     private Long activityPrice;
 
     @NotNull(message = "beginTime不得为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
 
     @NotNull(message = "endTime不得为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     @NotNull(message = "activityPrice不得为空")

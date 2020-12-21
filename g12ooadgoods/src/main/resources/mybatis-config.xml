@@ -18,18 +18,45 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/CommentPoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/ShopPoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/AuthUserPoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/GoodsSkuPoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/GoodsSpuPoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/GoodsCategoryPoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/FreightModelPoMapper.xml"/>
-<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>-->
-<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>-->
-<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>-->
-<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/BrandPoMapper.xml"/>-->
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/ShareActivityPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/addressPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/advertisementPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/aftersale_servicePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/auth_new_userPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/auth_privilegePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/auth_rolePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/auth_role_privilegePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/auth_userPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/auth_user_proxyPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/auth_user_rolePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/be_sharePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/brandPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/commentPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/couponPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/coupon_activityPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/coupon_skuPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/customerPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/favourite_goodsPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/flash_salePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/flash_sale_itemPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/float_pricePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/foot_printPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/freight_modelPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/goods_categoryPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/goods_skuPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/goods_spuPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/groupon_activityPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/order_itemPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/ordersPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/paymentPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/piece_freight_modelPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/presale_activityPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/refundPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/regionPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/sharePoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/share_activityPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/shopPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/shopping_cartPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/time_segmentPoMapper.xml"/>
+        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/weight_freight_modelPoMapper.xml"/>
     </mappers>
 </configuration>

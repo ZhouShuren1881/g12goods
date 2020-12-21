@@ -1,6 +1,8 @@
 package cn.edu.xmu.g12.g12ooadgoods.dao;
 
 import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.ListBo;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.UserOverview;
 import cn.edu.xmu.g12.g12ooadgoods.model.bo.good.*;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.*;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.good.*;
@@ -363,7 +365,7 @@ public class GoodDao {
         }
     }
 
-    public SpuOverview getSpuById(Long spuId) {
+    public SpuBo getSpuById(Long spuId) {
         var session = sqlSessionFactory.openSession();
         try {
             var spu = getSpu(session, spuId);
@@ -377,7 +379,7 @@ public class GoodDao {
         }
     }
 
-    private SpuOverview getSpu(SqlSession session, Long spuId) throws NotExistException {
+    private SpuBo getSpu(SqlSession session, Long spuId) throws NotExistException {
         var goodsSpuMapper = session.getMapper(GoodsSpuPoMapper.class);
         var brandMapper = session.getMapper(BrandPoMapper.class);
         var categoryMapper = session.getMapper(GoodsCategoryPoMapper.class);
@@ -407,10 +409,10 @@ public class GoodDao {
         var skuOverviewList = new ArrayList<SkuOverview>();
         for (var item : skuList) skuOverviewList.add(new SkuOverview(item, item.getOriginalPrice()));
 
-        return new SpuOverview(spu, brand, category, freightModel, shop, spec, skuOverviewList);
+        return new SpuBo(spu, brand, category, freightModel, shop, spec, skuOverviewList);
     }
 
-    public ReturnObject<SpuOverview> newSpu(NewSpuVo vo, Long shopId) {
+    public ReturnObject<SpuBo> newSpu(NewSpuVo vo, Long shopId) {
         var session = sqlSessionFactory.openSession();
         try {
             var spuMapper = session.getMapper(GoodsSpuPoMapper.class);

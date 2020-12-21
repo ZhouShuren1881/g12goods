@@ -1,6 +1,7 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
 
 import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.UserOverview;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.FloatPricePo;
 
 import java.time.LocalDateTime;
