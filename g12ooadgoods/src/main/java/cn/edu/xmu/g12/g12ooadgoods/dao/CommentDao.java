@@ -59,12 +59,12 @@ public class CommentDao {
     @Autowired(required = false)
     CommentPoMapper commentPoMapper;
 
-    public List<CommentState> getAllState() {
+    public List<CommentState> getAllStates() {
         return CommentState.getAllStates();
     }
 
-    public ReturnObject<CommentBo> NewSkuComment(Long orderId, Long userId, NewCommentVo vo) {
-        var orderItemPo = orderItemPoMapper.selectByPrimaryKey(orderId);
+    public ReturnObject<CommentBo> newSkuComment(Long orderItemId, Long userId, NewCommentVo vo) {
+        var orderItemPo = orderItemPoMapper.selectByPrimaryKey(orderItemId);
         if (orderItemPo == null) return new ReturnObject<>(ResponseCode.USER_NOTBUY);
 
         var ordersPo = ordersPoMapper.selectByPrimaryKey(orderItemPo.getOrderId());
@@ -131,6 +131,28 @@ public class CommentDao {
         updatePo.setGmtModified(LocalDateTime.now());
         commentPoMapper.updateByPrimaryKey(updatePo);
         return ResponseCode.OK;
+    }
+
+    public ReturnObject<ListBo<CommentBo>> getCommentOfUser(Long userId,
+                                                            @Nullable Integer page, @Nullable Integer pageSize) {
+        var userPo = authUserPoMapper.selectByPrimaryKey(userId);
+        if (userPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+
+        var commentExample = new CommentPoExample();
+        commentExample.createCriteria().andCustomerIdEqualTo(userId);
+        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        var commentPoList = commentPoMapper.selectByExample(commentExample);
+
+        var commentBoList = commentPoList.stream().map(item->
+                new CommentBo(item, new IdUsernameNameOverview(userPo))).collect(Collectors.toList());
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(commentPoList);
+        if (page != null)
+            return new ReturnObject<>(
+                    new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), commentBoList));
+        else
+            return new ReturnObject<>(
+                    new ListBo<>(1, commentBoList.size(), (long) commentBoList.size(), 1, commentBoList));
     }
 
     public ReturnObject<ListBo<CommentBo>> getSkuCommentByAdmin(Long skuId, Long shopId, @Nullable Byte state,

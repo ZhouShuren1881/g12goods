@@ -2,12 +2,15 @@ package cn.edu.xmu.g12.g12ooadgoods.model.vo.comment;
 
 import lombok.Data;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Data
 public class NewCommentVo {
     @NotNull(message = "type 不得为空")
+    @Min(0)
+    @Max(2)
     private Byte type;
     @NotNull(message = "content 不得为空")
     @Min(1)
