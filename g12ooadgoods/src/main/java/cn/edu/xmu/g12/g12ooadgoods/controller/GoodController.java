@@ -53,6 +53,9 @@ public class GoodController {
 
     @GetMapping("/skus/{skuId}")
     public Object getSkuById(@PathVariable Long skuId) {
+        if (skuId == null || skuId < 0)
+            return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_NOTEXIST);
+
         return Tool.decorateReturnObject(goodDao.getSkuBoById(skuId));
     }
 
@@ -115,6 +118,8 @@ public class GoodController {
 
     @GetMapping("/categories/{pid}/subcategories")
     public Object getSubCategory(@PathVariable Long pid) {
+        if (pid == null || pid <= 0) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_NOTEXIST);
+
         return Tool.decorateReturnObject(goodDao.getSubCategory(pid));
     }
 

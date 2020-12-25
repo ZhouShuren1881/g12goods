@@ -31,6 +31,7 @@ public class Tool {
 
     public static JwtHelper.UserAndDepart parseJwtAndGetUD(HttpServletRequest request, Long shopId) {
         var userAndDepart = getUserAndDepartFromJwt(request);
+        if (userAndDepart == null) return null;
         var departId = userAndDepart.getDepartId();
         if (!departId.equals(shopId) && departId != 1) return null;
         return userAndDepart;

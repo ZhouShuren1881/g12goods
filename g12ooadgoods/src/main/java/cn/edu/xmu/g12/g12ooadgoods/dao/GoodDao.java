@@ -114,7 +114,7 @@ public class GoodDao {
         var criteria = skuExample.createCriteria();
         if (skuSn != null) criteria.andSkuSnEqualTo(skuSn);
         if (spuIdList != null) criteria.andGoodsSpuIdIn(spuIdList);
-        if (page == null && pageSize == null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var skuPoList = skuPoMapper.selectByExample(skuExample);
         var skuBoList = skuPoList.stream().map(item -> new SkuOverview(item,
                 skuPriceDao.getSkuPrice(item))).collect(Collectors.toList());
@@ -125,7 +125,6 @@ public class GoodDao {
     }
 
     public ReturnObject<SkuBo> getSkuBoById(Long skuId) {
-
         var targetSku = skuPoMapper.selectByPrimaryKey(skuId);
         if (targetSku == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
 
@@ -191,6 +190,8 @@ public class GoodDao {
     }
 
     public ReturnObject<List<GoodsCategoryPo>> getSubCategory(Long pid) {
+        logger.info("getSubCategory(Long pid): pid="+pid);
+
         // if pid==zero no subcategory
         var categoryPo = categoryPoMapper.selectByPrimaryKey(pid);
         if (categoryPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
@@ -403,7 +404,7 @@ public class GoodDao {
 
     public ReturnObject<ListBo<BrandBo>> getAllBrands(Integer page, Integer pageSize) {
         var brandPoExample = new BrandPoExample();
-        brandPoExample.createCriteria().andGmtCreateNotEqualTo(null);
+        brandPoExample.createCriteria().andGmtCreateIsNotNull();
         if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var brandPoList = brandPoMapper.selectByExample(brandPoExample);
 
