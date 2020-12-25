@@ -39,8 +39,6 @@ public class CouponDao {
     @Autowired
     SkuPriceDao skuPriceDao;
 
-    ObjectMapper jsonMapper = new ObjectMapper();
-
     @Autowired(required = false)
     ShopPoMapper shopPoMapper;
     @Autowired(required = false)
@@ -60,7 +58,7 @@ public class CouponDao {
         return CouponState.getAllStates();
     }
 
-    public ReturnObject<CouponActivityBo> NewCouponActivity(Long shopId, Long userId, NewCouponVo vo) {
+    public ReturnObject<CouponActivityBo> newCouponActivity(Long shopId, Long userId, NewCouponVo vo) {
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
         var userPo = authUserPoMapper.selectByPrimaryKey(userId);
         if (shopPo == null || userPo == null) return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);
@@ -74,7 +72,7 @@ public class CouponDao {
         couponActPo.setShopId(shopId);
         couponActPo.setQuantity(vo.getQuantity());
         couponActPo.setValidTerm(vo.getValidTerm());
-//        couponActPo.setImageUrl(null);
+        couponActPo.setImageUrl(null);
         couponActPo.setStrategy(vo.getStrategy());
         couponActPo.setCreatedBy(userId);
         couponActPo.setModiBy(userId);
@@ -92,21 +90,24 @@ public class CouponDao {
     }
 
     // TODO 上传照片
+    public ResponseCode uploadCouponImg() {
+        return ResponseCode.OK;
+    }
 
     /**
      * Private Method..
      */
     private ListBo<CouponActivityOverview> packupCouponActivityListBo(
-            List<CouponActivityPo> grouponList, Integer page, Integer pageSize) {
+            List<CouponActivityPo> couponList, Integer page, Integer pageSize) {
 
-        var couponActivityOverviewList = grouponList.stream()
+        var couponActivityOverviewList = couponList.stream()
                 .map(CouponActivityOverview::new).collect(Collectors.toList());
 
-        // 返回分页信息
-        var pageInfo = new PageInfo<>(grouponList);
-        if (page != null)
+        if (page != null) {
+            // 返回分页信息
+            var pageInfo = new PageInfo<>(couponList);
             return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), couponActivityOverviewList);
-        else
+        } else
             return new ListBo<>(1, couponActivityOverviewList.size(), (long) couponActivityOverviewList.size(), 1, couponActivityOverviewList);
     }
 
@@ -156,10 +157,9 @@ public class CouponDao {
                                                         @Nullable Integer page, @Nullable Integer pageSize) {
 
         var couponActExample = new CouponActivityPoExample();
-        var criteria = couponActExample.createCriteria();
-        criteria.andStateEqualTo((byte)0);
-
-        if (shopId != null) criteria.andShopIdEqualTo(shopId);
+        couponActExample.createCriteria()
+                .andStateEqualTo((byte)0)
+                .andShopIdEqualTo(shopId);
 
         if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var cuoponActList = couponActivityPoMapper.selectByExample(couponActExample);
@@ -167,10 +167,9 @@ public class CouponDao {
         return packupCouponActivityListBo(cuoponActList, page, pageSize);
     }
 
-    // GET /shops/{shopId}/couponactivities/invalid
+    // GET /couponactivities/{couponActId}/skus
     public ListBo<SkuOverview> getSkuInCouponAct(Long couponActId,
                                                  @Nullable Integer page, @Nullable Integer pageSize) {
-
         var couponSkuExample = new CouponSkuPoExample();
         couponSkuExample.createCriteria().andActivityIdEqualTo(couponActId);
 
@@ -186,16 +185,16 @@ public class CouponDao {
                 .map(item -> new SkuOverview(item, item.getOriginalPrice()))
                 .collect(Collectors.toList());
 
-        // 返回分页信息
-        var pageInfo = new PageInfo<>(couponSkuList);
-        if (page != null)
+        if (page != null) {
+            // 返回分页信息
+            var pageInfo = new PageInfo<>(couponSkuList);
             return new ListBo<>(
                     page,
                     pageSize,
                     pageInfo.getTotal(),
                     pageInfo.getPages(),
                     skuOverviewList);
-        else
+        } else
             return new ListBo<>(
                     1,
                     skuOverviewList.size(),
@@ -260,16 +259,10 @@ public class CouponDao {
     }
 
     public ResponseCode addSkuListIntoCouponSku(Long shopId, Long couponActId, List<Long> skuIdList) {
-        var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-
-        var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
-        if (couponActPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-
         var skuPoList = new ArrayList<GoodsSkuPo>();
         for (var item : skuIdList) {
             var skuPo = goodsSkuPoMapper.selectByPrimaryKey(item);
-            if (skuPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+            if (skuPo == null || skuPo.getState() == 2) return ResponseCode.RESOURCE_ID_NOTEXIST;
             var spuPo = goodsSpuPoMapper.selectByPrimaryKey(skuPo.getGoodsSpuId());
             if (spuPo == null || !spuPo.getShopId().equals(shopId))
                 return ResponseCode.RESOURCE_ID_OUTSCOPE;
@@ -325,11 +318,11 @@ public class CouponDao {
             couponOvList.add(new CouponOverview(item, activityPo));
         }
 
-        // 返回分页信息
-        var pageInfo = new PageInfo<>(couponList);
-        if (page != null)
-            return new ListBo<>( page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), couponOvList);
-        else
+        if (page != null) {
+            // 返回分页信息
+            var pageInfo = new PageInfo<>(couponList);
+            return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), couponOvList);
+        } else
             return new ListBo<>( 1, couponOvList.size(), (long) couponOvList.size(), 1, couponOvList);
     }
 

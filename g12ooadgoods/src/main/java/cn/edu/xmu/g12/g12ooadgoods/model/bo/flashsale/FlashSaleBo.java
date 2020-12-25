@@ -24,16 +24,16 @@ public class FlashSaleBo implements VoObject {
     Long id;
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDateTime flashDate;
-    TimeSeqOverview timeSeq;
+    TimeSegOverview timeSeq;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime gmtCreate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime gmtModified;
 
-    public FlashSaleBo(FlashSalePo po, TimeSeqOverview timeSeqOverview) {
+    public FlashSaleBo(FlashSalePo po, TimeSegOverview timeSegOverview) {
         id = po.getId();
         flashDate = po.getFlashDate();
-        timeSeq = timeSeqOverview;
+        timeSeq = timeSegOverview;
         gmtCreate = po.getGmtCreate();
         gmtModified = po.getGmtModified();
     }

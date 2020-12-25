@@ -1,13 +1,14 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.shop;
 
 import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
+import cn.edu.xmu.g12.g12ooadgoods.model.po.ShopPo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class ShopInfoVo implements VoObject {
+public class ShopInfoVo {
 //        {
 //            "errno": 0,
 //                "errmsg": "成功",
@@ -27,11 +28,11 @@ public class ShopInfoVo implements VoObject {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtModified;
 
-    public Object createVo() {
-        return this;
-    }
-
-    public Object createSimpleVo() {
-        return this;
+    public ShopInfoVo(ShopPo po) {
+        id = po.getId();
+        name = po.getName();
+        state = po.getState();
+        gmtCreate = po.getGmtCreate();
+        gmtModified = po.getGmtModified();
     }
 }

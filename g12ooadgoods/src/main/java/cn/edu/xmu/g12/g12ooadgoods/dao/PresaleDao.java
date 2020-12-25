@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // TODO 预售与团购不同时存在
 
@@ -34,8 +35,6 @@ public class PresaleDao {
     SqlSessionFactory sqlSessionFactory;
     @Autowired
     SkuPriceDao skuPriceDao;
-
-    ObjectMapper jsonMapper = new ObjectMapper();
 
     @Autowired(required = false)
     PresaleActivityPoMapper presaleActivityPoMapper;
@@ -48,14 +47,14 @@ public class PresaleDao {
     @Autowired(required = false)
     GoodsSpuPoMapper goodsSpuPoMapper;
 
-    public List<ActivityState> getAllState() {
-        return ActivityState.getAllStates();
+    public ReturnObject<List<ActivityState>> getAllState() {
+        return new ReturnObject<>(ActivityState.getAllStates());
     }
 
     /**
      * Private Method..
      */
-    private ListBo<PresaleBo> packupPresaleActivityListBo(
+    private ReturnObject<ListBo<PresaleBo>> packupPresaleActivityListBo(
             List<PresaleActivityPo> presaleList, Integer page, Integer pageSize) {
         var presaleBoList = new ArrayList<PresaleBo>();
         for (var item : presaleList) {
@@ -68,17 +67,19 @@ public class PresaleDao {
             ));
         }
 
-        // 返回分页信息
-        var pageInfo = new PageInfo<>(presaleBoList);
-        if (page != null)
-            return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), presaleBoList);
-        else
-            return new ListBo<>(1, presaleBoList.size(), (long) presaleBoList.size(), 1, presaleBoList);
+        if (page != null) {
+            // 返回分页信息
+            var pageInfo = new PageInfo<>(presaleBoList);
+            return new ReturnObject<>(new ListBo<>(
+                    page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), presaleBoList));
+        } else
+            return new ReturnObject<>(new ListBo<>(
+                    1, presaleBoList.size(), (long) presaleBoList.size(), 1, presaleBoList));
     }
 
     // GET /presales
-    public ListBo<PresaleBo> getAllValidPresaleActivity(Long shopId, Integer timeline, Long skuId,
-                                                        Integer page, Integer pageSize) {
+    public ReturnObject<ListBo<PresaleBo>> getAllValidPresaleActivity(
+            Long shopId, Integer timeline, Long skuId, Integer page, Integer pageSize) {
         var presaleExample = new PresaleActivityPoExample();
         var criteria = presaleExample.createCriteria();
         criteria.andStateEqualTo((byte)1);
@@ -89,7 +90,7 @@ public class PresaleDao {
         if (timeline != null) {
             // timeline : 0 还未开始的， 1 明天开始的，2 正在进行中的，3 已经结束的
             var now = LocalDateTime.now();
-            switch (timeline.intValue()) {
+            switch (timeline) {
                 case 0:
                     criteria.andBeginTimeGreaterThan(now);
                     break;
@@ -118,29 +119,35 @@ public class PresaleDao {
     }
 
     // GET /shops/{shopId}/presales
-    public ListBo<PresaleBo> getSkuAllPresaleActivity(Long shopId, @Nullable Long skuId, @Nullable Byte state,
-                                                      Integer page, Integer pageSize) {
+    public ReturnObject<List<PresaleBo>> getSkuAllPresaleActivity(
+            Long shopId, @Nullable Long skuId, @Nullable Byte state) {
         var presaleExample = new PresaleActivityPoExample();
         var criteria = presaleExample.createCriteria();
 
         if (shopId != null) criteria.andShopIdEqualTo(shopId);
         if (skuId  != null) criteria.andGoodsSkuIdEqualTo(skuId);
-        if (state  != null)
-            criteria.andStateEqualTo(state);
-        else
-            criteria.andStateEqualTo((byte)1);
+        criteria.andStateEqualTo(Objects.requireNonNullElseGet(state, () -> (byte) 1));
 
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var presaleList = presaleActivityPoMapper.selectByExample(presaleExample);
 
-        return packupPresaleActivityListBo(presaleList, page, pageSize);
+        var presaleBoList = new ArrayList<PresaleBo>();
+        for (var item : presaleList) {
+            var sku = goodsSkuPoMapper.selectByPrimaryKey(item.getGoodsSkuId());
+            var shop = shopPoMapper.selectByPrimaryKey(item.getShopId());
+            presaleBoList.add(new PresaleBo(
+                    item,
+                    new SkuOverview(sku, skuPriceDao.getSkuPrice(sku)),
+                    new IdNameOverview(shop.getId(), shop.getName())
+            ));
+        }
+
+        return new ReturnObject<>(presaleBoList);
     }
 
     public ReturnObject<PresaleBo> newPresale(Long shopId, Long skuId, NewPreSaleVo vo) {
 
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
         var skuPo = goodsSkuPoMapper.selectByPrimaryKey(skuId);
-        if (shopPo == null || skuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
 
         var presaleExample = new PresaleActivityPoExample();
         presaleExample.createCriteria().andGoodsSkuIdEqualTo(skuId);
@@ -170,11 +177,7 @@ public class PresaleDao {
     }
 
     // TODO 是不是 下线状态才能修改？
-    public ResponseCode modifyPresale(Long shopId, Long presaleId, ModifyPreSaleVo vo) {
-
-        var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-
+    public ResponseCode modifyPresale(Long presaleId, ModifyPreSaleVo vo) {
         var presalePo = presaleActivityPoMapper.selectByPrimaryKey(presaleId);
         if (presalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if (presalePo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;
@@ -194,12 +197,8 @@ public class PresaleDao {
         return ResponseCode.OK;
     }
 
-    public ResponseCode changePresaleState(Long shopId, Long presaleId, Byte state) {
-        var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-
+    public ResponseCode changePresaleState(Long presaleId, Byte state) {
         var presalePo = presaleActivityPoMapper.selectByPrimaryKey(presaleId);
-        if (presalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
 
         if (state == 2 && presalePo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;
         if (state == 1 && presalePo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;

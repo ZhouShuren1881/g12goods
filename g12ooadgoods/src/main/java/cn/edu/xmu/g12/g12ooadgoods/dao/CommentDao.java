@@ -1,5 +1,7 @@
 package cn.edu.xmu.g12.g12ooadgoods.dao;
 
+import cn.edu.xmu.g12.g12ooadgoods.OrderOtherUnion.CustomerServiceUnion;
+import cn.edu.xmu.g12.g12ooadgoods.OrderOtherUnion.OrderServiceUnion;
 import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
 import cn.edu.xmu.g12.g12ooadgoods.model.bo.ListBo;
 import cn.edu.xmu.g12.g12ooadgoods.model.bo.comment.CommentBo;
@@ -51,37 +53,35 @@ public class CommentDao {
     @Autowired(required = false)
     CouponSkuPoMapper couponSkuPoMapper;
     @Autowired(required = false)
-    AuthUserPoMapper authUserPoMapper;
-    @Autowired(required = false)
-    OrderItemPoMapper orderItemPoMapper;
-    @Autowired(required = false)
-    OrdersPoMapper ordersPoMapper;
-    @Autowired(required = false)
     CommentPoMapper commentPoMapper;
 
-    public List<CommentState> getAllStates() {
-        return CommentState.getAllStates();
+    @Autowired
+    OrderServiceUnion orderServiceUnion;
+    @Autowired
+    CustomerServiceUnion customerServiceUnion;
+
+    public ReturnObject<List<CommentState>> getAllStates() {
+        return new ReturnObject<>(CommentState.getAllStates());
     }
 
     public ReturnObject<CommentBo> newSkuComment(Long orderItemId, Long userId, NewCommentVo vo) {
-        var orderItemPo = orderItemPoMapper.selectByPrimaryKey(orderItemId);
-        if (orderItemPo == null) return new ReturnObject<>(ResponseCode.USER_NOTBUY);
-
-        var ordersPo = ordersPoMapper.selectByPrimaryKey(orderItemPo.getOrderId());
-        if (!ordersPo.getCustomerId().equals(userId)) return new ReturnObject<>(ResponseCode.USER_NOTBUY);
+        var returnOrderDTO = orderServiceUnion.getUserSelectSOrderInfo(userId, orderItemId);
+        if (returnOrderDTO.getCode() != ResponseCode.OK) return new ReturnObject<>(returnOrderDTO.getCode());
+        var orderDTO = returnOrderDTO.getData();
 
         var commentPo = new CommentPo();
-        commentPo.setCustomerId(ordersPo.getCustomerId());
-        commentPo.setGoodsSkuId(orderItemPo.getGoodsSkuId());
+        commentPo.setCustomerId(userId);
+        commentPo.setGoodsSkuId(orderDTO.getSkuId());
         commentPo.setType(vo.getType());
         commentPo.setContent(vo.getContent());
         commentPo.setState((byte)0);
         commentPo.setGmtCreate(LocalDateTime.now());
         commentPo.setGmtModified(LocalDateTime.now());
-
         commentPoMapper.insert(commentPo);
-        var userPo = authUserPoMapper.selectByPrimaryKey(userId);
-        return new ReturnObject<>(new CommentBo(commentPo, new IdUsernameNameOverview(userPo)));
+
+        var returnCustomerDTO = customerServiceUnion.findCustomerByUserId(userId);
+        var customerDTO = returnCustomerDTO.getData(); /* 经过权限模块校验,必定命中 */
+        return new ReturnObject<>(new CommentBo(commentPo, new IdUsernameNameOverview(userId, customerDTO)));
     }
 
     /**
@@ -93,14 +93,16 @@ public class CommentDao {
         var commentBoList = commentPoList.stream()
                 .map(item-> new CommentBo(
                         item,
-                        new IdUsernameNameOverview(authUserPoMapper.selectByPrimaryKey(item.getCustomerId()))
+                        new IdUsernameNameOverview(item.getCustomerId(),
+                                customerServiceUnion.findCustomerByUserId(item.getCustomerId()).getData()
+                        )
                 )).collect(Collectors.toList());
 
-        // 返回分页信息
-        var pageInfo = new PageInfo<>(commentPoList);
-        if (page != null)
+        if (page != null) {
+            // 返回分页信息
+            var pageInfo = new PageInfo<>(commentPoList);
             return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), commentBoList);
-        else
+        } else
             return new ListBo<>(1, commentBoList.size(), (long) commentBoList.size(), 1, commentBoList);
     }
 
@@ -112,18 +114,22 @@ public class CommentDao {
 
         var commentExample = new CommentPoExample();
         commentExample.createCriteria().andGoodsSkuIdEqualTo(skuId);
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var commentPoList = commentPoMapper.selectByExample(commentExample);
 
         return new ReturnObject<>(packupCommentListBo(commentPoList, page, pageSize));
     }
 
+    /**
+     *
+     * @param shopId PathVariable JWT校验过，无需验证
+     */
     public ResponseCode confirmComment(Long shopId, Long commentId, ConfirmCommentVo vo) {
         var commentPo = commentPoMapper.selectByPrimaryKey(commentId);
-        if (commentPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-        var orderitemPo = orderItemPoMapper.selectByPrimaryKey(commentPo.getOrderitemId());
-        var ordersPo = ordersPoMapper.selectByPrimaryKey(orderitemPo.getOrderId());
-        if (!ordersPo.getShopId().equals(shopId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
+
+        var returnOrderDTO
+                = orderServiceUnion.getShopSelectOrderInfo(shopId, commentPo.getOrderitemId());
+        if (returnOrderDTO.getCode() != ResponseCode.OK) return returnOrderDTO.getCode();
 
         var updatePo = new CommentPo();
         updatePo.setId(commentId);
@@ -133,10 +139,14 @@ public class CommentDao {
         return ResponseCode.OK;
     }
 
+    /**
+     *
+     * @param userId JWT,无需Dao验证
+     */
     public ReturnObject<ListBo<CommentBo>> getCommentOfUser(Long userId,
                                                             @Nullable Integer page, @Nullable Integer pageSize) {
-        var userPo = authUserPoMapper.selectByPrimaryKey(userId);
-        if (userPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        var returnCustomerDTO = customerServiceUnion.findCustomerByUserId(userId);
+        var customerDTO = returnCustomerDTO.getData(); /* 必中，userId经过了校验 */
 
         var commentExample = new CommentPoExample();
         commentExample.createCriteria().andCustomerIdEqualTo(userId);
@@ -144,49 +154,42 @@ public class CommentDao {
         var commentPoList = commentPoMapper.selectByExample(commentExample);
 
         var commentBoList = commentPoList.stream().map(item->
-                new CommentBo(item, new IdUsernameNameOverview(userPo))).collect(Collectors.toList());
-        // 返回分页信息
-        var pageInfo = new PageInfo<>(commentPoList);
-        if (page != null)
+                new CommentBo(item, new IdUsernameNameOverview(userId, customerDTO))).collect(Collectors.toList());
+
+        if (page != null) {
+            // 返回分页信息
+            var pageInfo = new PageInfo<>(commentPoList);
             return new ReturnObject<>(
                     new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), commentBoList));
-        else
+        } else
             return new ReturnObject<>(
                     new ListBo<>(1, commentBoList.size(), (long) commentBoList.size(), 1, commentBoList));
     }
 
-    public ReturnObject<ListBo<CommentBo>> getSkuCommentByAdmin(Long skuId, Long shopId, @Nullable Byte state,
+    /**
+     * /shops/{id}/comments/all 管理员查看评论列表
+     *
+     * @param shopId PathVariable [带访问权限-Controller验证] shopId必定存在
+     * @param state BodyVariable [state大小验证-Controller]
+     */
+    public ReturnObject<ListBo<CommentBo>> getShopCommentByAdmin(Long shopId, @Nullable Byte state,
                                                               @Nullable Integer page, @Nullable Integer pageSize) {
+        var spuExample = new GoodsSpuPoExample();
+        spuExample.createCriteria().andShopIdEqualTo(shopId);
+        var spuList = goodsSpuPoMapper.selectByExample(spuExample);
+        var spuIdList = spuList.stream().map(GoodsSpuPo::getId).collect(Collectors.toList());
 
-        // TODO 手动实现的评论分页
-
-        var skuPo = goodsSkuPoMapper.selectByPrimaryKey(skuId);
-        if (skuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        var skuExample = new GoodsSkuPoExample();
+        skuExample.createCriteria().andGoodsSpuIdIn(spuIdList);
+        var skuPoList = goodsSkuPoMapper.selectByExample(skuExample);
+        var skuIdList = skuPoList.stream().map(GoodsSkuPo::getId).collect(Collectors.toList());
 
         var commentExample = new CommentPoExample();
         var criteria = commentExample.createCriteria();
-        criteria.andGoodsSkuIdEqualTo(skuId);
+        criteria.andGoodsSkuIdIn(skuIdList);
         if (state != null) criteria.andStateEqualTo(state);
 
         var commentPoList = commentPoMapper.selectByExample(commentExample);
-        if (page == null || pageSize == null) {
-            return new ReturnObject<>(packupCommentListBo(commentPoList, null, null));
-        } else {
-            List<CommentBo> splitCommentList = new ArrayList<>();
-            int sindex = (page - 1) * pageSize;
-            int eindex = page * pageSize;
-            for (int i = sindex; i < eindex && i < commentPoList.size(); i++) {
-                var commentBo = new CommentBo(
-                        commentPoList.get(i),
-                        new IdUsernameNameOverview(
-                                authUserPoMapper.selectByPrimaryKey(commentPoList.get(i).getCustomerId()) )
-                );
-                splitCommentList.add(commentBo);
-            }
-            int _pagesize = pageSize == 0 ? commentPoList.size() : pageSize;
-            int pages = commentPoList.size() / _pagesize;
-            long totalSize = commentPoList.size();
-            return new ReturnObject<>(new ListBo<>(page, pageSize, totalSize, pages, splitCommentList));
-        }
+        return new ReturnObject<>(packupCommentListBo(commentPoList, page, pageSize));
     }
 }

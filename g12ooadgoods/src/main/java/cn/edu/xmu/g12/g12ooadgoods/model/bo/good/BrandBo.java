@@ -14,8 +14,6 @@ public class BrandBo {
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
-    public BrandBo() { }
-
     public BrandBo(BrandPo po) {
         id          = po.getId();
         name        = po.getName();

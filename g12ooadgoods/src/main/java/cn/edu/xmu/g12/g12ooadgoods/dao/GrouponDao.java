@@ -49,7 +49,7 @@ public class GrouponDao {
     @Autowired(required = false)
     GoodsSpuPoMapper goodsSpuPoMapper;
 
-    public List<ActivityState> getAllState() {
+    public List<ActivityState> getAllStates() {
         return ActivityState.getAllStates();
     }
 
@@ -58,22 +58,23 @@ public class GrouponDao {
      */
     private ListBo<GrouponOverview> packupGrouponActivityListBo(
             List<GrouponActivityPo> grouponList, Integer page, Integer pageSize) {
-
         var grouponBoList = grouponList.stream()
                 .map(GrouponOverview::new).collect(Collectors.toList());
 
-        // 返回分页信息
-        var pageInfo = new PageInfo<>(grouponList);
-        if (page != null)
+        if (page != null) {
+            // 返回分页信息
+            var pageInfo = new PageInfo<>(grouponList);
             return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), grouponBoList);
-        else
+        } else
             return new ListBo<>(1, grouponBoList.size(), (long) grouponBoList.size(), 1, grouponBoList);
     }
 
     // GET /groupons
-    public ListBo<GrouponOverview> getAllGroupon(@Nullable Integer timeline, @Nullable Long spuId, @Nullable Long shopId,
-                                                 @Nullable Integer page, @Nullable Integer pageSize) {
-
+    public ListBo<GrouponOverview> getAllGrouponByCustomer(@Nullable Integer timeline,
+                                                           @Nullable Long spuId,
+                                                           @Nullable Long shopId,
+                                                           @Nullable Integer page,
+                                                           @Nullable Integer pageSize) {
         var grouponExample = new GrouponActivityPoExample();
         var criteria = grouponExample.createCriteria();
         criteria.andStateEqualTo((byte)1);
@@ -114,14 +115,13 @@ public class GrouponDao {
 
     // GET /shops/{shopId}/groupons
     // TODO 检查 beginTime & endTime 必须同时为null或同时不为null
-    public ListBo<GrouponOverview> getAllGroupon(Long shopId,
+    public ListBo<GrouponOverview> getAllGrouponByAdmin(Long shopId,
                                                  @Nullable Long spuId,
                                                  @Nullable LocalDateTime beginTime,
                                                  @Nullable LocalDateTime endTime,
                                                  @Nullable Byte state,
                                                  @Nullable Integer page,
                                                  @Nullable Integer pageSize) {
-
         var grouponExample = new GrouponActivityPoExample();
         var criteria = grouponExample.createCriteria();
         criteria.andShopIdEqualTo(shopId);
@@ -131,17 +131,15 @@ public class GrouponDao {
         if (spuId     != null) criteria.andGoodsSpuIdEqualTo(spuId);
         if (state     != null) criteria.andStateEqualTo(state);
 
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var grouponList = grouponActivityPoMapper.selectByExample(grouponExample);
 
         return packupGrouponActivityListBo(grouponList, page, pageSize);
     }
 
     public ReturnObject<GrouponBo> newGroupon(Long shopId, Long spuId, NewGrouponVo vo) {
-
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
         var spuPo = goodsSpuPoMapper.selectByPrimaryKey(spuId);
-        if (shopPo == null || spuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
 
         var grouponExample = new GrouponActivityPoExample();
         grouponExample.createCriteria().andGoodsSpuIdEqualTo(spuId);
@@ -169,7 +167,6 @@ public class GrouponDao {
 
     // TODO 是不是 下线状态才能修改？
     public ResponseCode modifyGroupon(Long shopId, Long grouponId, ModifyGrouponVo vo) {
-
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
         if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
 
@@ -188,12 +185,8 @@ public class GrouponDao {
         return ResponseCode.OK;
     }
 
-    public ResponseCode changeGrouponState(Long shopId, Long grouponId, Byte state) {
-        var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-
+    public ResponseCode changeGrouponState(Long grouponId, Byte state) {
         var grouponPo = grouponActivityPoMapper.selectByPrimaryKey(grouponId);
-        if (grouponPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
 
         if (state == 2 && grouponPo.getState() != 0) return ResponseCode.GROUPON_STATENOTALLOW;
         if (state == 1 && grouponPo.getState() != 0) return ResponseCode.GROUPON_STATENOTALLOW;
