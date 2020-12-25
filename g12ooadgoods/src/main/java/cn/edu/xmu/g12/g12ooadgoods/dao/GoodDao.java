@@ -38,8 +38,8 @@ public class GoodDao {
     GoodsSkuPoMapper skuPoMapper;
     @Autowired(required = false)
     BrandPoMapper brandPoMapper;
-    @Autowired(required = false)
-    GoodsCategoryPoMapper categoryPoMapper;
+    @Autowired//(required = false)
+    GoodsCategoryPoMapper goodsCategoryPoMapper;
     @Autowired(required = false)
     FreightModelPoMapper freightModelPoMapper;
     @Autowired(required = false)
@@ -193,18 +193,18 @@ public class GoodDao {
         logger.info("getSubCategory(Long pid): pid="+pid);
 
         // if pid==zero no subcategory
-        var categoryPo = categoryPoMapper.selectByPrimaryKey(pid);
+        var categoryPo = goodsCategoryPoMapper.selectByPrimaryKey(pid);
         if (categoryPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
 
         var categoryExample = new GoodsCategoryPoExample();
         categoryExample.createCriteria().andPidEqualTo(pid);
-        var subCategoryPoList = categoryPoMapper.selectByExample(categoryExample);
+        var subCategoryPoList = goodsCategoryPoMapper.selectByExample(categoryExample);
         return new ReturnObject<>(subCategoryPoList);
     }
 
     public ReturnObject<CategoryBo> newCategory(Long pid, String name) {
         if (pid != 0) {
-            var categoryParent = categoryPoMapper.selectByPrimaryKey(pid);
+            var categoryParent = goodsCategoryPoMapper.selectByPrimaryKey(pid);
             if (categoryParent == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
 
@@ -213,7 +213,7 @@ public class GoodDao {
         categoryPo.setPid(pid);
         categoryPo.setGmtCreate(LocalDateTime.now());
         categoryPo.setGmtModified(LocalDateTime.now());
-        categoryPoMapper.insert(categoryPo);
+        goodsCategoryPoMapper.insert(categoryPo);
         return new ReturnObject<>(new CategoryBo(categoryPo));
     }
 
@@ -221,7 +221,7 @@ public class GoodDao {
         var categoryPo = new GoodsCategoryPo();
         categoryPo.setId(categoryId);
         categoryPo.setName(name);
-        int rows = categoryPoMapper.updateByPrimaryKey(categoryPo);
+        int rows = goodsCategoryPoMapper.updateByPrimaryKey(categoryPo);
         if (rows == 0) return ResponseCode.RESOURCE_ID_NOTEXIST;
         return ResponseCode.OK;
     }
@@ -230,7 +230,7 @@ public class GoodDao {
         // 将子类目的pid设置为被删除的类目的pid
         // 将spu中的类目设置为类目的pid
 
-        var targetCategory = categoryPoMapper.selectByPrimaryKey(categoryId);
+        var targetCategory = goodsCategoryPoMapper.selectByPrimaryKey(categoryId);
         if (targetCategory == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
 
         var childCategoryExample = new GoodsCategoryPoExample();
@@ -242,9 +242,9 @@ public class GoodDao {
         childSpuExample.createCriteria().andCategoryIdEqualTo(targetCategory.getId());
         childSpuPo.setCategoryId(targetCategory.getPid());
 
-        categoryPoMapper.updateByExampleSelective(childCategoryPo, childCategoryExample);
+        goodsCategoryPoMapper.updateByExampleSelective(childCategoryPo, childCategoryExample);
         spuPoMapper.updateByExampleSelective(childSpuPo, childSpuExample);
-        categoryPoMapper.deleteByPrimaryKey(categoryId);
+        goodsCategoryPoMapper.deleteByPrimaryKey(categoryId);
         return ResponseCode.OK;
     }
 
@@ -260,7 +260,7 @@ public class GoodDao {
         if (spu == null) return null;
 
         var brand = brandPoMapper.selectByPrimaryKey(spu.getBrandId());
-        var category = categoryPoMapper.selectByPrimaryKey(spu.getCategoryId());
+        var category = goodsCategoryPoMapper.selectByPrimaryKey(spu.getCategoryId());
         var freightModel = freightModelPoMapper.selectByPrimaryKey(spu.getFreightId());
         var shop = shopPoMapper.selectByPrimaryKey(spu.getShopId());
         SpecOverview spec;
@@ -444,7 +444,7 @@ public class GoodDao {
 
     public ResponseCode addSpuIntoCategory(Long spuId, Long categoryId) {
         // spuId 由Controller层检查
-        var category = categoryPoMapper.selectByPrimaryKey(categoryId);
+        var category = goodsCategoryPoMapper.selectByPrimaryKey(categoryId);
         if (category == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
 
         var spuPo = new GoodsSpuPo();
@@ -456,7 +456,7 @@ public class GoodDao {
 
     public ResponseCode removeSpuFromCategory(Long spuId, Long categoryId) {
         // spuId 由Controller层检查
-        var category = categoryPoMapper.selectByPrimaryKey(categoryId);
+        var category = goodsCategoryPoMapper.selectByPrimaryKey(categoryId);
         if (category == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
 
         var spuPo = new GoodsSpuPo();

@@ -13,7 +13,6 @@ public class BrandOverview {
     private String name;
     private String imageUrl;
 
-    public BrandOverview() { }
     public BrandOverview(BrandPo po) {
         id = po.getId();
         name = po.getName();

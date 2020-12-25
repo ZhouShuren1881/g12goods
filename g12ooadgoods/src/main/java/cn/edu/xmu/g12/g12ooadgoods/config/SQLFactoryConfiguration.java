@@ -2,8 +2,6 @@ package cn.edu.xmu.g12.g12ooadgoods.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -17,7 +15,7 @@ public class SQLFactoryConfiguration {
 
     @Bean
     public SqlSessionFactory BuildSQLFactory() throws IOException {
-        Resource resource = new ClassPathResource("mybatis-config.xml");
+        Resource resource = new ClassPathResource("mybatis/mybatis-config.xml");
         InputStream is = resource.getInputStream();
         return new SqlSessionFactoryBuilder().build(is);
     }

@@ -102,10 +102,10 @@ public class SpuBo implements VoObject {
                    List<SkuOverview> skuList) {
             this();
             this.copyFromPo(po);
-            this.brand = new BrandOverview(brand);
-            this.category = new IdNameOverview(category.getId(), category.getName());
-            this.freight = new FreightOverview(freight);
-            this.shop = new IdNameOverview(shop.getId(), shop.getName());
+            this.brand =      brand == null ? null : new BrandOverview(brand);
+            this.category =   category == null ? null : new IdNameOverview(category.getId(), category.getName());
+            this.freight =    freight == null ? null : new FreightOverview(freight);
+            this.shop =       shop == null ? null : new IdNameOverview(shop.getId(), shop.getName());
             this.spec = spec;
             this.skuList = skuList;
       }
