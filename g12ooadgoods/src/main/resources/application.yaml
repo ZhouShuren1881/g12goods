@@ -113,7 +113,3 @@ privilegeservice:
 #pagehelper分页插件配置
 pagehelper:
   helper-dialect: mysql
-
-
-
-
