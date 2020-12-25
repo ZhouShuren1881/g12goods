@@ -5,29 +5,23 @@ import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+
 @Repository
 public class ExistBelongDao {
-    @Autowired(required = false)
+    @Resource
     GoodsSpuPoMapper spuPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSkuPoMapper skuPoMapper;
-    @Autowired(required = false)
-    BrandPoMapper brandPoMapper;
-    @Autowired(required = false)
-    GoodsCategoryPoMapper categoryPoMapper;
-    @Autowired(required = false)
-    ShopPoMapper shopPoMapper;
-    @Autowired(required = false)
-    SkuPriceDao skuPriceDao;
-    @Autowired(required = false)
+    @Resource
     FloatPricePoMapper floatPricePoMapper;
-    @Autowired(required = false)
+    @Resource
     CommentPoMapper commentPoMapper;
-    @Autowired(required = false)
+    @Resource
     PresaleActivityPoMapper presaleActivityPoMapper;
-    @Autowired(required = false)
+    @Resource
     GrouponActivityPoMapper grouponActivityPoMapper;
-    @Autowired(required = false)
+    @Resource
     CouponActivityPoMapper couponActivityPoMapper;
 
     ResponseCode notexist;

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +31,11 @@ public class FlashsaleDao {
     @Autowired
     SkuPriceDao skuPriceDao;
 
-    @Autowired(required = false)
+    @Resource
     FlashSalePoMapper flashSalePoMapper;
-    @Autowired(required = false)
+    @Resource
     FlashSaleItemPoMapper flashSaleItemPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSkuPoMapper goodsSkuPoMapper;
 
     @Autowired

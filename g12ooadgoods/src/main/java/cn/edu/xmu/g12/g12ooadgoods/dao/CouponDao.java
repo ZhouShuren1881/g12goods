@@ -1,5 +1,6 @@
 package cn.edu.xmu.g12.g12ooadgoods.dao;
 
+import cn.edu.xmu.g12.g12ooadgoods.OrderOtherUnion.CustomerServiceUnion;
 import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
 import cn.edu.xmu.g12.g12ooadgoods.model.VoListObject;
 import cn.edu.xmu.g12.g12ooadgoods.model.bo.IdNameOverview;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,21 +40,21 @@ public class CouponDao {
     SqlSessionFactory sqlSessionFactory;
     @Autowired
     SkuPriceDao skuPriceDao;
+    @Autowired
+    CustomerServiceUnion customerServiceUnion;
 
-    @Autowired(required = false)
+    @Resource
     ShopPoMapper shopPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSkuPoMapper goodsSkuPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSpuPoMapper goodsSpuPoMapper;
-    @Autowired(required = false)
+    @Resource
     CouponActivityPoMapper couponActivityPoMapper;
-    @Autowired(required = false)
+    @Resource
     CouponPoMapper couponPoMapper;
-    @Autowired(required = false)
+    @Resource
     CouponSkuPoMapper couponSkuPoMapper;
-    @Autowired(required = false)
-    AuthUserPoMapper authUserPoMapper;
 
     public List<CouponState> getAllState() {
         return CouponState.getAllStates();
@@ -60,8 +62,10 @@ public class CouponDao {
 
     public ReturnObject<CouponActivityBo> newCouponActivity(Long shopId, Long userId, NewCouponVo vo) {
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        var userPo = authUserPoMapper.selectByPrimaryKey(userId);
-        if (shopPo == null || userPo == null) return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);
+        var retObjectUserDTO = customerServiceUnion.findCustomerByUserId(userId);
+        if (shopPo == null || retObjectUserDTO.getCode() != ResponseCode.OK)
+            return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);
+        var userDTO = retObjectUserDTO.getData();
 
         var couponActPo = new CouponActivityPo();
         couponActPo.setName(vo.getName());
@@ -84,8 +88,8 @@ public class CouponDao {
         return new ReturnObject<>( new CouponActivityBo(
                 couponActPo,
                 new IdNameOverview(shopPo.getId(), shopPo.getName()),
-                new UserOverview(userPo),
-                new UserOverview(userPo)
+                new UserOverview(userId, userDTO),
+                new UserOverview(userId, userDTO)
         ));
     }
 
@@ -211,14 +215,24 @@ public class CouponDao {
         if (couponAct == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
 
         shop = shopPoMapper.selectByPrimaryKey(couponAct.getShopId());
-        var createUser = authUserPoMapper.selectByPrimaryKey(couponAct.getCreatedBy());
-        var modifyUser = authUserPoMapper.selectByPrimaryKey(couponAct.getModiBy());
+
+        var roCreateUserDTO
+                = customerServiceUnion.findCustomerByUserId(couponAct.getCreatedBy());
+        if (roCreateUserDTO.getCode() != ResponseCode.OK)
+            return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);
+        var createUserDTO = roCreateUserDTO.getData();
+
+        var roModifyUserDTO
+                = customerServiceUnion.findCustomerByUserId(couponAct.getCreatedBy());
+        if (roModifyUserDTO.getCode() != ResponseCode.OK)
+            return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);
+        var modifyUserDTO = roModifyUserDTO.getData();
 
         return new ReturnObject<>(new CouponActivityBo(
                 couponAct,
                 new IdNameOverview(shop.getId(), shop.getName()),
-                new UserOverview(createUser),
-                new UserOverview(modifyUser)
+                new UserOverview(couponAct.getCreatedBy(), createUserDTO),
+                new UserOverview(couponAct.getModiBy(), modifyUserDTO)
         ));
     }
 

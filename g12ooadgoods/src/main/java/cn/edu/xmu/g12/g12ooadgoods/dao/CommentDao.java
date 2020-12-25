@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,21 +39,11 @@ public class CommentDao {
     @Autowired
     SkuPriceDao skuPriceDao;
 
-    ObjectMapper jsonMapper = new ObjectMapper();
-
-    @Autowired(required = false)
-    ShopPoMapper shopPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSkuPoMapper goodsSkuPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSpuPoMapper goodsSpuPoMapper;
-    @Autowired(required = false)
-    CouponActivityPoMapper couponActivityPoMapper;
-    @Autowired(required = false)
-    CouponPoMapper couponPoMapper;
-    @Autowired(required = false)
-    CouponSkuPoMapper couponSkuPoMapper;
-    @Autowired(required = false)
+    @Resource
     CommentPoMapper commentPoMapper;
 
     @Autowired

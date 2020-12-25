@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.github.pagehelper.PageHelper;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,26 +33,26 @@ public class GoodDao {
     private static final Logger logger = LoggerFactory.getLogger(GoodDao.class);
     ObjectMapper jsonMapper = new ObjectMapper();
 
-    @Autowired(required = false)
+    @Resource
     GoodsSpuPoMapper spuPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSkuPoMapper skuPoMapper;
-    @Autowired(required = false)
+    @Resource
     BrandPoMapper brandPoMapper;
-    @Autowired//(required = false)
+    @Resource
     GoodsCategoryPoMapper goodsCategoryPoMapper;
-    @Autowired(required = false)
+    @Resource
     FreightModelPoMapper freightModelPoMapper;
-    @Autowired(required = false)
+    @Resource
     ShopPoMapper shopPoMapper;
-    @Autowired(required = false)
+    @Resource
     SkuPriceDao skuPriceDao;
-    @Autowired(required = false)
+    @Resource
     FloatPricePoMapper floatPricePoMapper;
 
-    @Autowired(required = false)
+    @Autowired
     CustomerServiceUnion customerUnion;
-    @Autowired(required = false)
+    @Autowired
     ShareServiceUnion shareUnion;
 
     public Object getStates() {

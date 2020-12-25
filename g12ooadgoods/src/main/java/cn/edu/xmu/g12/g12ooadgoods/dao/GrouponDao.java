@@ -23,6 +23,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import com.github.pagehelper.PageHelper;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -36,17 +37,11 @@ public class GrouponDao {
     @Autowired
     SkuPriceDao skuPriceDao;
 
-    ObjectMapper jsonMapper = new ObjectMapper();
-
-    @Autowired(required = false)
-    PresaleActivityPoMapper presaleActivityPoMapper;
-    @Autowired(required = false)
+    @Resource
     GrouponActivityPoMapper grouponActivityPoMapper;
-    @Autowired(required = false)
+    @Resource
     ShopPoMapper shopPoMapper;
-    @Autowired(required = false)
-    GoodsSkuPoMapper goodsSkuPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSpuPoMapper goodsSpuPoMapper;
 
     public List<ActivityState> getAllStates() {

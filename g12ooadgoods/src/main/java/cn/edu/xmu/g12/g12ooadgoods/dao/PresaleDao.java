@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +37,12 @@ public class PresaleDao {
     @Autowired
     SkuPriceDao skuPriceDao;
 
-    @Autowired(required = false)
+    @Resource
     PresaleActivityPoMapper presaleActivityPoMapper;
-    @Autowired(required = false)
-    GrouponActivityPoMapper grouponActivityPoMapper;
-    @Autowired(required = false)
+    @Resource
     ShopPoMapper shopPoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSkuPoMapper goodsSkuPoMapper;
-    @Autowired(required = false)
-    GoodsSpuPoMapper goodsSpuPoMapper;
 
     public ReturnObject<List<ActivityState>> getAllState() {
         return new ReturnObject<>(ActivityState.getAllStates());

@@ -9,16 +9,20 @@ import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseUtil;
 import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public class ShopDao {
+    private static final Logger logger = LoggerFactory.getLogger(ShopDao.class);
 
-    @Autowired(required = false)
+    @Resource
     ShopPoMapper shopPoMapper;
 
     public ReturnObject<List<ShopState>> getStates() {

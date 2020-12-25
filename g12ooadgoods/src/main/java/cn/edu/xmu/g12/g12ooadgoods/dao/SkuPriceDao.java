@@ -13,17 +13,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 
 @Repository
 public class SkuPriceDao {
     private static final Logger logger = LoggerFactory.getLogger(SkuPriceDao.class);
 
-    ObjectMapper jsonMapper = new ObjectMapper();
-
-    @Autowired(required = false)
+    @Resource
     FloatPricePoMapper floatPricePoMapper;
-    @Autowired(required = false)
+    @Resource
     GoodsSkuPoMapper skuPoMapper;
 
     public Long getSkuPrice(Long skuId) {
