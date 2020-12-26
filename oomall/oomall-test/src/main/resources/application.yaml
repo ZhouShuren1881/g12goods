@@ -1,3 +1,0 @@
-oomall-test:
-  managementgate: 192.168.43.90:8881
-  mallgate: 192.168.43.90:8880
