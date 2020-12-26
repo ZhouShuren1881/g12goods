@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan("cn.edu.xmu.g12.g12ooadgoods.mapper")
-@NacosPropertySource(dataId = "g12nacos-data-id", autoRefreshed = true)
 public class G12ooadgoodsApplication {
 
     public static void main(String[] args) {
