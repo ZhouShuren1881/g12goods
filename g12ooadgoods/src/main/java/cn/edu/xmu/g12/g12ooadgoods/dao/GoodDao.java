@@ -85,8 +85,7 @@ public class GoodDao {
             Long    spuId,
             String  spuSn,
             Integer page,
-            Integer pageSize
-    ) {
+            Integer pageSize) {
         List<Long> spuIdList = null;
         if (shopId != null) {
             var spuExample = new GoodsSpuPoExample();
@@ -114,7 +113,11 @@ public class GoodDao {
         var skuExample = new GoodsSkuPoExample();
         var criteria = skuExample.createCriteria();
         if (skuSn != null) criteria.andSkuSnEqualTo(skuSn);
-        if (spuIdList != null) criteria.andGoodsSpuIdIn(spuIdList);
+        if (spuIdList != null)
+            if (spuIdList.isEmpty())
+                criteria.andIdIsNull(); // 防止空数组出错
+            else
+                criteria.andGoodsSpuIdIn(spuIdList);
         if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var skuPoList = skuPoMapper.selectByExample(skuExample);
         var skuBoList = skuPoList.stream().map(item -> new SkuOverview(item,

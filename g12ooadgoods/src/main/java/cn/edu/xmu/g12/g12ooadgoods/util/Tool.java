@@ -30,10 +30,11 @@ public class Tool {
     }
 
     public static JwtHelper.UserAndDepart parseJwtAndGetUD(HttpServletRequest request, Long shopId) {
+        if (shopId == null) return null;
         var userAndDepart = getUserAndDepartFromJwt(request);
         if (userAndDepart == null) return null;
         var departId = userAndDepart.getDepartId();
-        if (!departId.equals(shopId) && departId != 1) return null;
+        if (!departId.equals(shopId) && departId != 1 || shopId < 0) return null; // shopId可以为0
         return userAndDepart;
     }
 

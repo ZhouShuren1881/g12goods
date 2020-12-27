@@ -182,7 +182,10 @@ public class CouponDao {
         var skuIdList = couponSkuList.stream().map(CouponSkuPo::getSkuId).collect(Collectors.toList());
 
         var skuExample = new GoodsSkuPoExample();
-        skuExample.createCriteria().andIdIn(skuIdList);
+        if (skuIdList.isEmpty())
+            skuExample.createCriteria().andIdIsNull(); // 防止空数组出错
+        else
+            skuExample.createCriteria().andIdIn(skuIdList);
         var skuPoList = goodsSkuPoMapper.selectByExample(skuExample);
         var skuOverviewList
                 = skuPoList.stream()

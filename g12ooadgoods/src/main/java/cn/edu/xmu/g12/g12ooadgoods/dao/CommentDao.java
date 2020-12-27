@@ -113,7 +113,7 @@ public class CommentDao {
 
     /**
      *
-     * @param shopId PathVariable JWT校验过，无需验证
+     * @param shopId PathVariable JWT校验过，无需验证, shopId=0管理员
      */
     public ResponseCode confirmComment(Long shopId, Long commentId, ConfirmCommentVo vo) {
         var commentPo = commentPoMapper.selectByPrimaryKey(commentId);
@@ -160,26 +160,37 @@ public class CommentDao {
     /**
      * /shops/{id}/comments/all 管理员查看评论列表
      *
-     * @param shopId PathVariable [带访问权限-Controller验证] shopId必定存在
+     * @param shopId PathVariable [带访问权限-Controller验证] shopId可以为零，只有管理员可以这样
      * @param state BodyVariable [state大小验证-Controller]
      */
     public ReturnObject<ListBo<CommentBo>> getShopCommentByAdmin(Long shopId, @Nullable Byte state,
                                                               @Nullable Integer page, @Nullable Integer pageSize) {
-        var spuExample = new GoodsSpuPoExample();
-        spuExample.createCriteria().andShopIdEqualTo(shopId);
-        var spuList = goodsSpuPoMapper.selectByExample(spuExample);
-        var spuIdList = spuList.stream().map(GoodsSpuPo::getId).collect(Collectors.toList());
-
-        var skuExample = new GoodsSkuPoExample();
-        skuExample.createCriteria().andGoodsSpuIdIn(spuIdList);
-        var skuPoList = goodsSkuPoMapper.selectByExample(skuExample);
-        var skuIdList = skuPoList.stream().map(GoodsSkuPo::getId).collect(Collectors.toList());
-
         var commentExample = new CommentPoExample();
         var criteria = commentExample.createCriteria();
-        criteria.andGoodsSkuIdIn(skuIdList);
-        if (state != null) criteria.andStateEqualTo(state);
 
+        if (shopId > 0) {
+            var spuExample = new GoodsSpuPoExample();
+            spuExample.createCriteria().andShopIdEqualTo(shopId);
+            var spuList = goodsSpuPoMapper.selectByExample(spuExample);
+            var spuIdList = spuList.stream().map(GoodsSpuPo::getId).collect(Collectors.toList());
+            if (spuIdList.isEmpty()) {
+                criteria.andIdIsNull(); // 防止空数组出错
+            } else {
+                var skuExample = new GoodsSkuPoExample();
+                skuExample.createCriteria().andGoodsSpuIdIn(spuIdList);
+                var skuPoList = goodsSkuPoMapper.selectByExample(skuExample);
+                var skuIdList = skuPoList.stream().map(GoodsSkuPo::getId).collect(Collectors.toList());
+                if (skuIdList.isEmpty())
+                    criteria.andIdIsNull(); // 防止空数组出错
+                else
+                    criteria.andGoodsSkuIdIn(skuIdList);
+            }
+        }
+
+        if (state != null) criteria.andStateEqualTo(state);
+        if (!(shopId > 0 && state != null)) criteria.andIdIsNotNull(); // 选择所有
+
+        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var commentPoList = commentPoMapper.selectByExample(commentExample);
         return new ReturnObject<>(packupCommentListBo(commentPoList, page, pageSize));
     }

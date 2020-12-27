@@ -55,7 +55,10 @@ public class FlashsaleDao {
 
         var flashsaleIdList = flashsaleList.stream().map(FlashSalePo::getId).collect(Collectors.toList());
         var itemExample = new FlashSaleItemPoExample();
-        itemExample.createCriteria().andSaleIdIn(flashsaleIdList);
+        if (flashsaleIdList.isEmpty())
+            itemExample.createCriteria().andIdIsNull(); // 防止空数组出错
+        else
+            itemExample.createCriteria().andSaleIdIn(flashsaleIdList);
         var flashsaleItemList = flashSaleItemPoMapper.selectByExample(itemExample);
 
         List<FlashSaleItemBo> flashsaleItemBoList = new ArrayList<>();
