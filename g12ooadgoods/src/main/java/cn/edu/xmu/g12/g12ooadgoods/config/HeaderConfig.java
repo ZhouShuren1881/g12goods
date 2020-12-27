@@ -20,7 +20,7 @@ public class HeaderConfig extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
-        logger.info(httpServletRequest.getRequestURL().toString());
+        logger.info(httpServletRequest.getRequestURL().toString()+" - FilterDone");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
