@@ -33,6 +33,10 @@ dubbo:
     check: false
 
 spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
   application:
     name: g12service
   cloud:
