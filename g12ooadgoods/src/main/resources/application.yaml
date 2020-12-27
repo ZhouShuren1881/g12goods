@@ -9,8 +9,8 @@ server:
   tomcat:
     threads:
       max: 1000
-  servlet:
-    context-path: /goods
+#  servlet:
+#    context-path: /goods
 
 dubbo:
   # 配置服务信息

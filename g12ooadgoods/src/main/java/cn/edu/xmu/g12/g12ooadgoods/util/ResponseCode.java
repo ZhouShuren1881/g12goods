@@ -3,7 +3,6 @@ package cn.edu.xmu.g12.g12ooadgoods.util;
 /**
  * 返回的错误码
  * @author Ming Qiu
- * @modified Lu Xun
  */
 public enum ResponseCode {
     OK(0,"成功"),
@@ -40,6 +39,9 @@ public enum ResponseCode {
     FLASHSALE_OUTLIMIT(607,"达到时段秒杀上限"),
     ADVERTISEMENT_STATENOTALLOW(608,"广告状态禁止"),
     AFTERSALE_STATENOTALLOW(609,"售后单状态禁止"),
+    Log_Bigger(610,"开始时间大于结束时间"),
+    Log_BEGIN_NULL(611,"开始时间不能为空"),
+    Log_END_NULL(612,"结束时间不能为空"),
     /***************************************************
      *    权限模块错误码
      **************************************************/
@@ -52,6 +54,7 @@ public enum ResponseCode {
     EMAIL_REGISTERED(732, "邮箱已被注册"),
     MOBILE_REGISTERED(733,"电话已被注册"),
     ROLE_REGISTERED(736, "角色名已存在"),
+    USER_ROLE_REGISTERED(737, "用户已拥有该角色"),
     PASSWORD_SAME(741,"不能与旧密码相同"),
     URL_SAME(742,"权限url与RequestType重复"),
     PRIVILEGE_SAME(743,"权限名称重复"),
@@ -61,6 +64,10 @@ public enum ResponseCode {
     USERPROXY_CONFLICT(747,"同一时间段有冲突的代理关系"),
     EMAIL_NOTVERIFIED(748,"Email未确认"),
     MOBILE_NOTVERIFIED(749,"电话号码未确认"),
+    USERPROXY_BIGGER(750,"开始时间要小于失效时间"),
+    USERPROXY_SELF(751,"自己不可以代理自己"),
+    USERPROXY_DEPART_CONFLICT(752,"两个代理双方的部门冲突"),
+    USERPROXY_DEPART_MANAGER_CONFLICT(753,"管理员无此部门权限"),
     /***************************************************
      *    订单模块错误码
      **************************************************/
@@ -68,6 +75,11 @@ public enum ResponseCode {
     FREIGHTNAME_SAME(802,"运费模板名重复"),
     REGION_SAME(803,"运费模板中该地区已经定义"),
     REFUND_MORE(804,"退款金额超过支付金额"),
+    REGION_NOT_REACH(805,"该地区不可达"),
+    SHOP_ID_NOTEXIST(825,"不存在对应的shopid"),
+    DEFAULTMODEL_EXISTED(826,"已经存在对应的默认模板"),
+    MODEL_ID_NOTEXIST(827,"shopid不存在对应的模板id"),
+    MODEL_TYPE_DISMATCH(827,"模板ype dismatch"),
     /***************************************************
      *    商品模块错误码
      **************************************************/
@@ -82,7 +94,19 @@ public enum ResponseCode {
     USER_HASSHOP(908,"用户已经有店铺"),
     COUPON_NOTBEGIN(909,"未到优惠卷领取时间"),
     COUPON_FINISH(910,"优惠卷领罄"),
-    COUPON_END(911,"优惠卷活动终止");
+    COUPON_END(911,"优惠卷活动终止"),
+    STATE_NOCHANGE(920,"状态未改变"),
+    CATEALTER_INVALID(921,"对SPU类别操作无效"),
+    BRANDALTER_INVALID(922,"对SPU品牌操作无效"),
+    ACTIVITYALTER_INVALID(923,"对活动的无效操作"),
+    ACTIVITY_NOTFOUND(924,"无符合条件的优惠活动"),
+    SHOP_NOTOPERABLE(925,"不可对该商铺进行操作"),
+    SPU_NOTOPERABLE(926,"失效的SPU"),
+    DELETE_ONLINE_NOTALLOW(931, "不允许删除已上线状态的活动"),
+    COMMENT_EXISTED(941,"该订单条目已评论"),
+    BRAND_NAME_SAME(990,"品牌名称已存在"),
+    CATEGORY_NAME_SAME(991, "类目名称已存在"),
+    SHOP_STATENOTALLOW(980, "当前店铺状态不允许进行此类操作");
 
     private int code;
     private String message;

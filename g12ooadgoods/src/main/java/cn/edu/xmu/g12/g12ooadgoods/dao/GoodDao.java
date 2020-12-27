@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.github.pagehelper.PageHelper;
 
 import javax.annotation.Resource;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -212,6 +213,11 @@ public class GoodDao {
             if (categoryParent == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
 
+        var categoryExample = new GoodsCategoryPoExample();
+        categoryExample.createCriteria().andNameEqualTo(name);
+        var categoryList = goodsCategoryPoMapper.selectByExample(categoryExample);
+        if (categoryList.isEmpty()) return new ReturnObject<>(ResponseCode.CATEGORY_NAME_SAME);
+
         var categoryPo = new GoodsCategoryPo();
         categoryPo.setName(name);
         categoryPo.setPid(pid);
@@ -222,6 +228,11 @@ public class GoodDao {
     }
 
     public ResponseCode modifyCategory(Long categoryId, String name) {
+        var categoryExample = new GoodsCategoryPoExample();
+        categoryExample.createCriteria().andNameEqualTo(name);
+        var categoryList = goodsCategoryPoMapper.selectByExample(categoryExample);
+        if (categoryList.isEmpty()) return ResponseCode.CATEGORY_NAME_SAME;
+
         var categoryPo = new GoodsCategoryPo();
         categoryPo.setId(categoryId);
         categoryPo.setName(name);
@@ -391,6 +402,11 @@ public class GoodDao {
     }
 
     public ReturnObject<BrandBo> newBrand(NewBrandVo vo) {
+        var brandExample = new BrandPoExample();
+        brandExample.createCriteria().andNameEqualTo(vo.getName());
+        var brandList = brandPoMapper.selectByExample(brandExample);
+        if (brandList.isEmpty()) return new ReturnObject<>(ResponseCode.BRAND_NAME_SAME);
+
         var brandPo = new BrandPo();
         brandPo.setName(vo.getName());
         brandPo.setDetail(vo.getDetail());
@@ -424,6 +440,12 @@ public class GoodDao {
     }
 
     public ResponseCode modifyBrand(ModifyBrandVo vo, Long brandId) {
+        var brand = brandPoMapper.selectByPrimaryKey(brandId);
+        if (brand == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (vo.getName() != null) {
+            if (brand.getName().equals(vo.getName())) return ResponseCode.BRAND_NAME_SAME;
+        }
+
         var brandPo = new BrandPo();
         brandPo.setId(brandId);
         brandPo.setName(vo.getName());
