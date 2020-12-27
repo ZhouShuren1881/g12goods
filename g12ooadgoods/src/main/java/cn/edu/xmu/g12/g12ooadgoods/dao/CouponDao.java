@@ -268,7 +268,7 @@ public class CouponDao {
         var updatePo = new CouponActivityPo();
         updatePo.setId(couponActId);
         updatePo.setState(state);
-        couponActivityPoMapper.updateByPrimaryKey(updatePo);
+        couponActivityPoMapper.updateByPrimaryKeySelective(updatePo);
         return ResponseCode.OK;
     }
 
@@ -359,7 +359,7 @@ public class CouponDao {
             var updateCouponActivityPo = new CouponActivityPo();
             updateCouponActivityPo.setId(couponActPo.getId());
             updateCouponActivityPo.setQuantity(couponActPo.getQuantity()-1);
-            couponActivityPoMapper.updateByPrimaryKey(updateCouponActivityPo);
+            couponActivityPoMapper.updateByPrimaryKeySelective(updateCouponActivityPo);
             snNum = 1;
         } else {
             snNum = couponActPo.getQuantity();

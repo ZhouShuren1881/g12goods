@@ -26,11 +26,13 @@ public class PresaleController {
     @Autowired
     ExistBelongDao existBelongDao;
 
+    @ResponseBody
     @GetMapping("/presales/states")
     public Object getAllState() {
         return Tool.decorateReturnObject(presaleDao.getAllState());
     }
 
+    @ResponseBody
     @GetMapping("/presales")
     public Object getAllValidPresaleActivity(
             @RequestParam(required = false) Long    shopId,
@@ -52,6 +54,7 @@ public class PresaleController {
     }
 
     /** 管理员 */
+    @ResponseBody
     @GetMapping("/shops/{shopId}/presales")
     public Object getSkuAllPresaleActivity(@PathVariable Long shopId,
                                            @RequestParam(required = false) Long skuId,
@@ -68,6 +71,7 @@ public class PresaleController {
         return Tool.decorateReturnObject(presaleDao.getSkuAllPresaleActivity(shopId, skuId, state));
     }
 
+    @ResponseBody
     @PostMapping("/shops/{shopId}/skus/{skuId}/presales")
     public Object newPresale(@PathVariable Long shopId, @PathVariable Long skuId,
                              @Validated @RequestBody NewPreSaleVo vo, BindingResult bindingResult,
@@ -85,6 +89,7 @@ public class PresaleController {
         return Tool.decorateReturnObject(presaleDao.newPresale(shopId, skuId, vo));
     }
 
+    @ResponseBody
     @PostMapping("/shops/{shopId}/presales/{presaleId}")
     public Object modifyPresale(@PathVariable Long shopId, @PathVariable Long presaleId,
                                 @Validated @RequestBody ModifyPreSaleVo vo, BindingResult bindingResult,
@@ -102,6 +107,7 @@ public class PresaleController {
         return Tool.decorateResponseCode(presaleDao.modifyPresale(presaleId, vo));
     }
 
+    @ResponseBody
     @DeleteMapping("/shops/{shopId}/presales/{presaleId}")
     public Object deletePresale(@PathVariable Long shopId, @PathVariable Long presaleId,
                                 HttpServletRequest request) {
@@ -114,6 +120,7 @@ public class PresaleController {
         return Tool.decorateResponseCode(presaleDao.changePresaleState(presaleId, (byte)2));
     }
 
+    @ResponseBody
     @PostMapping("/shops/{shopId}/presales/{presaleId}/onshelves")
     public Object onshelvesPresale(@PathVariable Long shopId, @PathVariable Long presaleId,
                                    HttpServletRequest request) {
@@ -126,6 +133,7 @@ public class PresaleController {
         return Tool.decorateResponseCode(presaleDao.changePresaleState(presaleId, (byte)1));
     }
 
+    @ResponseBody
     @PostMapping("/shops/{shopId}/presales/{presaleId}/offshelves")
     public Object offshelvesPresale(@PathVariable Long shopId, @PathVariable Long presaleId,
                                     HttpServletRequest request) {

@@ -49,7 +49,7 @@ public class ShopDao {
         shopSet.setId(shopId);
         shopSet.setName(name);
         shopSet.setGmtModified(LocalDateTime.now());
-        shopPoMapper.updateByPrimaryKey(shopSet);
+        shopPoMapper.updateByPrimaryKeySelective(shopSet);
         return ResponseCode.OK;
     }
 
@@ -58,7 +58,7 @@ public class ShopDao {
         shopPo.setId(shopId);
         shopPo.setState(state);
         shopPo.setGmtModified(LocalDateTime.now());
-        shopPoMapper.updateByPrimaryKey(shopPo);
+        shopPoMapper.updateByPrimaryKeySelective(shopPo);
         return ResponseCode.OK;
     }
 }

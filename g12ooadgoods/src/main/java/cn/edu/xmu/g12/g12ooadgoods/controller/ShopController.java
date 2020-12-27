@@ -28,11 +28,13 @@ public class ShopController {
         jwt = new JwtHelper();
     }
 
+    @ResponseBody
     @GetMapping("/shops/states")
     public Object getStates() {
         return Tool.decorateReturnObject(shopDao.getStates());
     }
 
+    @ResponseBody
     @PostMapping("/shops")
     public Object createShop(@Validated @RequestBody ShopNameVo vo, BindingResult bindingResult,
                              HttpServletRequest request, HttpServletResponse response ) {
@@ -50,6 +52,7 @@ public class ShopController {
         return Tool.decorateReturnObject(returnObject);
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}")
     public Object modifyShop(@PathVariable Long shopId,
                              @Validated @RequestBody ShopNameVo vo, BindingResult bindingResult,
@@ -66,6 +69,7 @@ public class ShopController {
         return Tool.decorateResponseCode(responseCode);
     }
 
+    @ResponseBody
     @DeleteMapping("/shops/{shopId}")
     public Object deleteShop(@PathVariable Long shopId, HttpServletRequest request) {
         logger.info("deleteShop controller id = "+shopId);
@@ -76,6 +80,7 @@ public class ShopController {
         return Tool.decorateResponseCode(responseCode);
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/newshops/{id}/audit")
     public Object auditShop(@PathVariable Long shopId, @PathVariable Long id,
                             @Validated @RequestBody NewShopAuditVo vo, BindingResult bindingResult,
@@ -95,6 +100,7 @@ public class ShopController {
         return Tool.decorateResponseCode(responseCode);
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/onshelves")
     public Object shopOnshelves(@PathVariable Long shopId, HttpServletRequest request) {
         logger.info("shopOnshelves controller id= "+shopId);
@@ -109,6 +115,7 @@ public class ShopController {
         return Tool.decorateResponseCode(responseCode);
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/offshelves")
     public Object shopOffshelves(@PathVariable Long shopId, HttpServletRequest request) {
         logger.info("shopOffshelves controller id= "+shopId);

@@ -178,7 +178,7 @@ public class GoodDao {
         skuPo.setId(skuId);
         skuPo.setState(state);
         skuPo.setGmtModified(LocalDateTime.now());
-        skuPoMapper.updateByPrimaryKey(skuPo);
+        skuPoMapper.updateByPrimaryKeySelective(skuPo);
         return ResponseCode.OK;
     }
 
@@ -186,7 +186,7 @@ public class GoodDao {
         var skuPo = vo.convertToGoodsSkuPo();
         skuPo.setId(skuId);
         skuPo.setGmtModified(LocalDateTime.now());
-        skuPoMapper.updateByPrimaryKey(skuPo);
+        skuPoMapper.updateByPrimaryKeySelective(skuPo);
         return ResponseCode.OK;
     }
 
@@ -222,7 +222,7 @@ public class GoodDao {
         var categoryPo = new GoodsCategoryPo();
         categoryPo.setId(categoryId);
         categoryPo.setName(name);
-        int rows = goodsCategoryPoMapper.updateByPrimaryKey(categoryPo);
+        int rows = goodsCategoryPoMapper.updateByPrimaryKeySelective(categoryPo);
         if (rows == 0) return ResponseCode.RESOURCE_ID_NOTEXIST;
         return ResponseCode.OK;
     }
@@ -318,7 +318,7 @@ public class GoodDao {
         spuPo.setSpec(vo.getSpecs());
         spuPo.setGmtModified(LocalDateTime.now());
 
-        spuPoMapper.updateByPrimaryKey(spuPo);
+        spuPoMapper.updateByPrimaryKeySelective(spuPo);
         return ResponseCode.OK;
     }
 
@@ -328,13 +328,13 @@ public class GoodDao {
         var updateSkuPo = new GoodsSkuPo();
         updateSkuPo.setGoodsSpuId(0L);
         updateSkuPo.setState((byte)6);
-        skuPoMapper.updateByExample(updateSkuPo, skuExample);
+        skuPoMapper.updateByExampleSelective(updateSkuPo, skuExample);
 
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setDisabled((byte)1);
         spuPo.setGmtModified(LocalDateTime.now());
-        spuPoMapper.updateByPrimaryKey(spuPo);
+        spuPoMapper.updateByPrimaryKeySelective(spuPo);
         return ResponseCode.OK;
     }
 
@@ -383,7 +383,7 @@ public class GoodDao {
         floatPricePo.setInvalidBy(userId);
         floatPricePo.setValid((byte)0);
         floatPricePo.setGmtModified(LocalDateTime.now());
-        floatPricePoMapper.updateByPrimaryKey(floatPricePo);
+        floatPricePoMapper.updateByPrimaryKeySelective(floatPricePo);
         return ResponseCode.OK;
     }
 
@@ -426,7 +426,7 @@ public class GoodDao {
         brandPo.setName(vo.getName());
         brandPo.setDetail(vo.getDetail());
         brandPo.setGmtModified(LocalDateTime.now());
-        int rows = brandPoMapper.updateByPrimaryKey(brandPo);
+        int rows = brandPoMapper.updateByPrimaryKeySelective(brandPo);
         if (rows == 0) return ResponseCode.RESOURCE_ID_NOTEXIST;
         return ResponseCode.OK;
     }
@@ -439,7 +439,7 @@ public class GoodDao {
         var spuPo = new GoodsSpuPo();
         spuExample.createCriteria().andBrandIdEqualTo(brandId);
         spuPo.setBrandId(0L);
-        spuPoMapper.updateByExample(spuPo, spuExample);
+        spuPoMapper.updateByExampleSelective(spuPo, spuExample);
         return ResponseCode.OK;
     }
 
@@ -451,7 +451,7 @@ public class GoodDao {
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setCategoryId(categoryId);
-        spuPoMapper.updateByPrimaryKey(spuPo);
+        spuPoMapper.updateByPrimaryKeySelective(spuPo);
         return ResponseCode.OK;
     }
 
@@ -463,7 +463,7 @@ public class GoodDao {
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setCategoryId(0L);
-        spuPoMapper.updateByPrimaryKey(spuPo);
+        spuPoMapper.updateByPrimaryKeySelective(spuPo);
         return ResponseCode.OK;
     }
 
@@ -475,7 +475,7 @@ public class GoodDao {
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setBrandId(brandId);
-        spuPoMapper.updateByPrimaryKey(spuPo);
+        spuPoMapper.updateByPrimaryKeySelective(spuPo);
         return ResponseCode.OK;
     }
 
@@ -487,7 +487,7 @@ public class GoodDao {
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setBrandId(0L);
-        spuPoMapper.updateByPrimaryKey(spuPo);
+        spuPoMapper.updateByPrimaryKeySelective(spuPo);
         return ResponseCode.OK;
     }
 }

@@ -35,15 +35,21 @@ public class FlashsaleController {
     TimeServiceUnion timeServiceUnion;
 
     /** TODO 响应式API */
+    @ResponseBody
     @GetMapping("/timesegments/{timesegId}/flashsales")
     public Object getFlashSaleItemInTimeSeg(@PathVariable Long timesegId) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         return flashsaleDao.getFlashSaleItemInTimeSeg(timesegId);
     }
 
+    @ResponseBody
     @PostMapping("/shops/{shopId}/timesegments/{timesegId}/flashsales")
     public Object newFlashSale(@PathVariable Long shopId, @PathVariable Long timesegId,
                                @Validated @RequestBody NewFlashSaleVo vo, BindingResult bindingResult,
                                HttpServletRequest request, HttpServletResponse response) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
@@ -54,23 +60,32 @@ public class FlashsaleController {
     }
 
     /** TODO 响应式API */
+    @ResponseBody
     @GetMapping("/flashsales/current")
     public Object getFlashSaleItemTimeSegNow() {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         return flashsaleDao.getFlashSaleItemTimeSegNow();
     }
 
+    @ResponseBody
     @DeleteMapping("/shops/{shopId}/flashsales/{flashsaleId}")
     public Object deleteFlashSale(@PathVariable Long shopId, @PathVariable Long flashsaleId,
                                   HttpServletRequest request) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateResponseCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)2));
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/flashsales/{flashsaleId}")
     public Object modifyFlashSale(@PathVariable Long shopId, @PathVariable Long flashsaleId,
                                   @Validated @RequestBody ModifyFlashSaleVo vo, BindingResult bindingResult,
                                   HttpServletRequest request, HttpServletResponse response) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
@@ -80,26 +95,35 @@ public class FlashsaleController {
         return Tool.decorateResponseCode(flashsaleDao.modifyFlashSale(vo, flashsaleId));
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/flashsales/{flashsaleId}/onshelves")
     public Object onshelvesFlashSale(@PathVariable Long shopId, @PathVariable Long flashsaleId,
                                      HttpServletRequest request) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateResponseCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)1));
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/flashsales/{flashsaleId}/offshelves")
     public Object offshelvesFlashSale(@PathVariable Long shopId, @PathVariable Long flashsaleId,
                                       HttpServletRequest request) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateResponseCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)0));
     }
 
+    @ResponseBody
     @PostMapping("/shops/{shopId}/flashsales/{flashsaleId}/flashitems")
     public Object newFlashSaleItem(@PathVariable Long shopId, @PathVariable Long flashsaleId,
                                    @Validated @RequestBody NewFlashSaleSkuVo vo, BindingResult bindingResult,
                                    HttpServletRequest request, HttpServletResponse response) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
@@ -109,10 +133,13 @@ public class FlashsaleController {
         return Tool.decorateReturnObject(flashsaleDao.newFlashSaleItem(flashsaleId, vo));
     }
 
+    @ResponseBody
     @DeleteMapping("/shops/{shopId}/flashsales/{flashsaleId}/flashitems/{flashsaleItemId}")
     public Object deleteFlashSaleItem(@PathVariable Long shopId,
                                       @PathVariable Long flashsaleId, @PathVariable Long flashsaleItemId,
                                       HttpServletRequest request, HttpServletResponse response) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateResponseCode(flashsaleDao.deleteFlashSaleItem(flashsaleId, flashsaleItemId));

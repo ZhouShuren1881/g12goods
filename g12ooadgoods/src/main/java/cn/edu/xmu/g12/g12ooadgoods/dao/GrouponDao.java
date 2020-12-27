@@ -176,7 +176,7 @@ public class GrouponDao {
         updatePo.setStrategy(vo.getStrategy());
         updatePo.setGmtModified(LocalDateTime.now());
 
-        grouponActivityPoMapper.updateByPrimaryKey(updatePo);
+        grouponActivityPoMapper.updateByPrimaryKeySelective(updatePo);
         return ResponseCode.OK;
     }
 
@@ -190,7 +190,7 @@ public class GrouponDao {
         var updatePo = new GrouponActivityPo();
         updatePo.setId(grouponId);
         updatePo.setState(state);
-        grouponActivityPoMapper.updateByPrimaryKey(updatePo);
+        grouponActivityPoMapper.updateByPrimaryKeySelective(updatePo);
         return ResponseCode.OK;
     }
 }

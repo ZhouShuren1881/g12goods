@@ -32,18 +32,23 @@ public class CommentController {
         jwt = new JwtHelper();
     }
 
+    @ResponseBody
     @GetMapping("/comments/states")
     public Object getAllStates() {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         return Tool.decorateReturnObject(commentDao.getAllStates());
     }
 
+    @ResponseBody
     @PostMapping("/orderitems/{orderItemId}/comments")
     public Object newSkuComment(@PathVariable Long orderItemId,
                                 @Validated @RequestBody NewCommentVo vo, BindingResult bindingResult,
                                 HttpServletRequest request, HttpServletResponse response) {
+        logger.info("newSkuComment controller orderItemId="+orderItemId+" NewCommentVo="+vo.toString());
+
         var userId = Tool.parseJwtAndGetUser(request);
 
-        logger.info("newSkuComment controller orderItemId="+orderItemId+" NewCommentVo="+vo.toString());
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if(object != null) return object;
@@ -52,6 +57,7 @@ public class CommentController {
         return Tool.decorateReturnObject(returnObject);
     }
 
+    @ResponseBody
     @GetMapping("/skus/{skuId}/comments")
     public Object getSkuCommentValid(@PathVariable Long skuId,
                                      @RequestParam(required = false) Integer page,
@@ -65,16 +71,18 @@ public class CommentController {
         return Tool.decorateReturnObject(returnObject);
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/comments/{commentId}/confirm")
     public Object confirmComment(@PathVariable Long shopId,
                                  @PathVariable Long commentId,
                                  @Validated @RequestBody ConfirmCommentVo vo, BindingResult bindingResult,
                                  HttpServletRequest request, HttpServletResponse response) {
+        logger.info("confirmComment controller shopId="+shopId+" commentId="+commentId+" ConfirmCommentVo="+vo.toString());
+
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.commentBelongToShop(commentId, shopId);
         if (code != ResponseCode.OK) return code;
 
-        logger.info("confirmComment controller shopId="+shopId+" commentId="+commentId+" ConfirmCommentVo="+vo.toString());
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if(object != null) return object;
@@ -83,10 +91,13 @@ public class CommentController {
         return Tool.decorateResponseCode(responseCode);
     }
 
+    @ResponseBody
     @GetMapping("/comments")
     public Object getCommentOfUser(@RequestParam(required = false) Integer page,
                                    @RequestParam(required = false) Integer pageSize,
                                    HttpServletRequest request) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         var userId = Tool.parseJwtAndGetUser(request);
 
         if (Tool.checkPageParam(page,pageSize) !=  ResponseCode.OK)
@@ -97,12 +108,15 @@ public class CommentController {
         return Tool.decorateReturnObject(returnObject);
     }
 
+    @ResponseBody
     @GetMapping("/shops/{shopId}/comments/all")
     public Object getShopCommentByAdmin(@PathVariable Long shopId,
                                         @RequestParam(required = false) Byte state,
                                         @RequestParam(required = false) Integer page,
                                         @RequestParam(required = false) Integer pageSize,
                                         HttpServletRequest request) {
+        logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         if (state != null && (state < 0 || state > 2)) return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);

@@ -190,7 +190,7 @@ public class PresaleDao {
         updatePo.setRestPayPrice(vo.getRestPayPrice());
         updatePo.setGmtModified(LocalDateTime.now());
 
-        presaleActivityPoMapper.updateByPrimaryKey(updatePo);
+        presaleActivityPoMapper.updateByPrimaryKeySelective(updatePo);
         return ResponseCode.OK;
     }
 
@@ -204,7 +204,7 @@ public class PresaleDao {
         var updatePo = new PresaleActivityPo();
         updatePo.setId(presaleId);
         updatePo.setState(state);
-        presaleActivityPoMapper.updateByPrimaryKey(updatePo);
+        presaleActivityPoMapper.updateByPrimaryKeySelective(updatePo);
         return ResponseCode.OK;
     }
 }

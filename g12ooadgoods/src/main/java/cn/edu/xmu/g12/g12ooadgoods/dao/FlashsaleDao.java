@@ -115,7 +115,7 @@ public class FlashsaleDao {
         var po = new FlashSalePo();
         po.setId(flashsaleId);
         po.setState(state);
-        flashSalePoMapper.updateByPrimaryKey(po);
+        flashSalePoMapper.updateByPrimaryKeySelective(po);
         return ResponseCode.OK;
     }
 
@@ -124,7 +124,7 @@ public class FlashsaleDao {
         var po = new FlashSalePo();
         po.setId(flashsaleId);
         po.setFlashDate(flashDate);
-        int rows = flashSalePoMapper.updateByPrimaryKey(po);
+        int rows = flashSalePoMapper.updateByPrimaryKeySelective(po);
         if (rows == 0) return ResponseCode.RESOURCE_ID_NOTEXIST;
         else return ResponseCode.OK;
     }

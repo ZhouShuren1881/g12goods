@@ -126,7 +126,7 @@ public class CommentDao {
         updatePo.setId(commentId);
         updatePo.setState(vo.getConclusion() ? (byte)1 : (byte)2);
         updatePo.setGmtModified(LocalDateTime.now());
-        commentPoMapper.updateByPrimaryKey(updatePo);
+        commentPoMapper.updateByPrimaryKeySelective(updatePo);
         return ResponseCode.OK;
     }
 

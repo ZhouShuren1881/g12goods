@@ -27,11 +27,13 @@ public class GrouponController {
     @Autowired
     ExistBelongDao existBelongDao;
 
+    @ResponseBody
     @GetMapping("/groupons/states")
     public Object getAllStates() {
         return ResponseUtil.ok(grouponDao.getAllStates());
     }
 
+    @ResponseBody
     @GetMapping("/groupons")
     public Object getAllGrouponByCustomer(
             @RequestParam(required = false, name = "timeline")  Integer timeline,
@@ -52,6 +54,7 @@ public class GrouponController {
         return ResponseUtil.ok(grouponDao.getAllGrouponByCustomer(timeline, spuId, shopId, page, pageSize));
     }
 
+    @ResponseBody
     @GetMapping("/shops/{shopId}/groupons")
     public Object getAllGrouponByAdmin(
             @PathVariable Long shopId,
@@ -81,6 +84,7 @@ public class GrouponController {
                 grouponDao.getAllGrouponByAdmin(shopId, spuId, beginTime, endTime, state, page, pageSize));
     }
 
+    @ResponseBody
     @PostMapping("/shops/{shopId}/spus/{spuId}/groupons")
     public Object newGroupon(@PathVariable Long shopId, @PathVariable Long spuId,
                              @Validated @RequestBody NewGrouponVo vo, BindingResult bindingResult,
@@ -98,6 +102,7 @@ public class GrouponController {
         return Tool.decorateReturnObject(grouponDao.newGroupon(shopId, spuId, vo));
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/groupons/{grouponId}")
     public Object modifyGroupon(@PathVariable Long shopId, @PathVariable Long grouponId,
                                 @Validated @RequestBody ModifyGrouponVo vo, BindingResult bindingResult,
@@ -115,6 +120,7 @@ public class GrouponController {
         return Tool.decorateResponseCode(grouponDao.modifyGroupon(shopId, grouponId, vo));
     }
 
+    @ResponseBody
     @DeleteMapping("/shops/{shopId}/groupons/{grouponId}")
     public Object deleteGroupon(@PathVariable Long shopId, @PathVariable Long grouponId,
                                 HttpServletRequest request) {
@@ -127,6 +133,7 @@ public class GrouponController {
         return Tool.decorateResponseCode(grouponDao.changeGrouponState(grouponId, (byte)2));
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/groupons/{grouponId}/onshelves")
     public Object onshelvesGroupon(@PathVariable Long shopId, @PathVariable Long grouponId,
                                    HttpServletRequest request) {
@@ -139,6 +146,7 @@ public class GrouponController {
         return Tool.decorateResponseCode(grouponDao.changeGrouponState(grouponId, (byte)1));
     }
 
+    @ResponseBody
     @PutMapping("/shops/{shopId}/groupons/{grouponId}/offshelves")
     public Object offshelvesGroupon(@PathVariable Long shopId, @PathVariable Long grouponId,
                                     HttpServletRequest request) {
