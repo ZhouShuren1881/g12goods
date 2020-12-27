@@ -9,6 +9,8 @@ server:
   tomcat:
     threads:
       max: 1000
+  servlet:
+    context-path: /goods
 
 dubbo:
   # 配置服务信息
@@ -25,7 +27,7 @@ dubbo:
     name: dubbo
     port: -1 # -1 表示端口自增 from 20880
     # 设置超时时间
-    host: 172.16.1.135              # Clinet 主服务器地址
+    host: 172.16.1.135              # Client 主服务器地址
   consumer:
     timeout: 4000
     check: false
@@ -37,7 +39,7 @@ spring:
     nacos:
       discovery:
         server-addr: 172.16.1.156:8848
-        ip: 172.16.1.135              # Clinet 主服务器地址
+        ip: 172.16.1.135              # Client 主服务器地址
   profiles:
     active: dev
   datasource:
