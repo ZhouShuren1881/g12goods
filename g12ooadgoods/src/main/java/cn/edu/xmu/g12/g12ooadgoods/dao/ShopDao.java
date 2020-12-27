@@ -36,7 +36,7 @@ public class ShopDao {
         shop.setGmtCreate(LocalDateTime.now());
         shop.setGmtModified(LocalDateTime.now());
 
-        shopPoMapper.insert(shop);
+        shopPoMapper.insertSelective(shop);
         // TODO 更新角色DepartId
         return new ReturnObject<>(new ShopInfoVo(shop));
     }

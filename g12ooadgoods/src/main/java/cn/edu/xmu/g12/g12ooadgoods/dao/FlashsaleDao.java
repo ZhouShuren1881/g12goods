@@ -95,7 +95,7 @@ public class FlashsaleDao {
         flashsalePo.setGmtCreate(LocalDateTime.now());
         flashsalePo.setGmtModified(LocalDateTime.now());
         flashsalePo.setState((byte)0);
-        flashSalePoMapper.insert(flashsalePo);
+        flashSalePoMapper.insertSelective(flashsalePo);
 
         var flashsaleBo = new FlashSaleBo(flashsalePo, timeServiceUnion.getTimeSegOverviewById(timesegId));
         return new ReturnObject<>(flashsaleBo);
@@ -147,7 +147,7 @@ public class FlashsaleDao {
         flashSaleItemPo.setQuantity(vo.getQuantity());
         flashSaleItemPo.setGmtCreate(LocalDateTime.now());
         flashSaleItemPo.setGmtModified(LocalDateTime.now());
-        flashSaleItemPoMapper.insert(flashSaleItemPo);
+        flashSaleItemPoMapper.insertSelective(flashSaleItemPo);
 
         return new ReturnObject<>( new FlashSaleItemBo(flashSaleItemPo, skuOverview));
     }

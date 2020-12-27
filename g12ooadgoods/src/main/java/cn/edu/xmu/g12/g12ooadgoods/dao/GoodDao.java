@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.github.pagehelper.PageHelper;
 
 import javax.annotation.Resource;
+import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -167,7 +168,7 @@ public class GoodDao {
         newSkuPo.setGmtModified(LocalDateTime.now());
         newSkuPo.setState((byte)0);
 
-        skuPoMapper.insert(newSkuPo);
+        skuPoMapper.insertSelective(newSkuPo);
 
         return new ReturnObject<>(new SkuOverview(newSkuPo, skuPriceDao.getSkuPrice(newSkuPo)));
     }
@@ -216,14 +217,18 @@ public class GoodDao {
         var categoryExample = new GoodsCategoryPoExample();
         categoryExample.createCriteria().andNameEqualTo(name);
         var categoryList = goodsCategoryPoMapper.selectByExample(categoryExample);
-        if (categoryList.isEmpty()) return new ReturnObject<>(ResponseCode.CATEGORY_NAME_SAME);
+        if (!categoryList.isEmpty()) return new ReturnObject<>(ResponseCode.CATEGORY_NAME_SAME);
 
         var categoryPo = new GoodsCategoryPo();
         categoryPo.setName(name);
         categoryPo.setPid(pid);
         categoryPo.setGmtCreate(LocalDateTime.now());
         categoryPo.setGmtModified(LocalDateTime.now());
-        goodsCategoryPoMapper.insert(categoryPo);
+        try {
+            goodsCategoryPoMapper.insertSelective(categoryPo);
+        } catch (Exception e) {
+
+        }
         return new ReturnObject<>(new CategoryBo(categoryPo));
     }
 
@@ -231,7 +236,7 @@ public class GoodDao {
         var categoryExample = new GoodsCategoryPoExample();
         categoryExample.createCriteria().andNameEqualTo(name);
         var categoryList = goodsCategoryPoMapper.selectByExample(categoryExample);
-        if (categoryList.isEmpty()) return ResponseCode.CATEGORY_NAME_SAME;
+        if (!categoryList.isEmpty()) return ResponseCode.CATEGORY_NAME_SAME;
 
         var categoryPo = new GoodsCategoryPo();
         categoryPo.setId(categoryId);
@@ -319,7 +324,7 @@ public class GoodDao {
         spuPo.setGmtCreate(LocalDateTime.now());
         spuPo.setGmtModified(LocalDateTime.now());
 
-        spuPoMapper.insert(spuPo);
+        spuPoMapper.insertSelective(spuPo);
         var spuBo = getSpu(spuPo.getId());
         return new ReturnObject<>(spuBo);
     }
@@ -382,7 +387,7 @@ public class GoodDao {
         floatPricePo.setValid((byte)1);
         floatPricePo.setGmtCreate(LocalDateTime.now());
         floatPricePo.setGmtModified(LocalDateTime.now());
-        floatPricePoMapper.insert(floatPricePo);
+        floatPricePoMapper.insertSelective(floatPricePo);
 
         var customerDTO = customerUnion.findCustomerByUserId(userId).getData();
         var userOverview = new UserOverview(userId, customerDTO);
@@ -405,7 +410,7 @@ public class GoodDao {
         var brandExample = new BrandPoExample();
         brandExample.createCriteria().andNameEqualTo(vo.getName());
         var brandList = brandPoMapper.selectByExample(brandExample);
-        if (brandList.isEmpty()) return new ReturnObject<>(ResponseCode.BRAND_NAME_SAME);
+        if (!brandList.isEmpty()) return new ReturnObject<>(ResponseCode.BRAND_NAME_SAME);
 
         var brandPo = new BrandPo();
         brandPo.setName(vo.getName());
@@ -413,7 +418,7 @@ public class GoodDao {
         brandPo.setImageUrl("");
         brandPo.setGmtCreate(LocalDateTime.now());
         brandPo.setGmtCreate(LocalDateTime.now());
-        brandPoMapper.insert(brandPo);
+        brandPoMapper.insertSelective(brandPo);
         return new ReturnObject<>(new BrandBo(brandPo));
     }
 
@@ -440,10 +445,11 @@ public class GoodDao {
     }
 
     public ResponseCode modifyBrand(ModifyBrandVo vo, Long brandId) {
-        var brand = brandPoMapper.selectByPrimaryKey(brandId);
-        if (brand == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if (vo.getName() != null) {
-            if (brand.getName().equals(vo.getName())) return ResponseCode.BRAND_NAME_SAME;
+            var brandExample = new BrandPoExample();
+            brandExample.createCriteria().andNameEqualTo(vo.getName());
+            var brandList = brandPoMapper.selectByExample(brandExample);
+            if (!brandList.isEmpty()) return ResponseCode.BRAND_NAME_SAME;
         }
 
         var brandPo = new BrandPo();

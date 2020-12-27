@@ -152,7 +152,7 @@ public class GrouponDao {
         newPo.setGmtCreate(LocalDateTime.now());
         newPo.setGmtModified(LocalDateTime.now());
 
-        grouponActivityPoMapper.insert(newPo);
+        grouponActivityPoMapper.insertSelective(newPo);
         return new ReturnObject<>(new GrouponBo(
                 newPo,
                 new SpuOverview(spuPo),

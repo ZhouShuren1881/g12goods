@@ -84,7 +84,7 @@ public class CouponDao {
         couponActPo.setGmtModified(LocalDateTime.now());
         couponActPo.setQuantitiyType(vo.getQuantityType());
 
-        couponActivityPoMapper.insert(couponActPo);
+        couponActivityPoMapper.insertSelective(couponActPo);
         return new ReturnObject<>( new CouponActivityBo(
                 couponActPo,
                 new IdNameOverview(shopPo.getId(), shopPo.getName()),
@@ -291,7 +291,7 @@ public class CouponDao {
             couponSkuPo.setSkuId(item.getId());
             couponSkuPo.setGmtCreate(LocalDateTime.now());
             couponSkuPo.setGmtModified(LocalDateTime.now());
-            couponSkuPoMapper.insert(couponSkuPo);
+            couponSkuPoMapper.insertSelective(couponSkuPo);
         }
         return ResponseCode.OK;
     }
@@ -370,11 +370,11 @@ public class CouponDao {
         for (int i = 0 ; i < snNum; i++) {
             String sn = null;
             while (sn == null) {
-                sn = UUID.randomUUID().toString();
+                sn = UUID.randomUUID().toString().replaceAll("-", "");
                 var couponExample = new CouponPoExample();
                 couponExample.createCriteria().andCouponSnEqualTo(sn);
                 var sameSnPo = couponPoMapper.selectByExample(couponExample);
-                if (sameSnPo != null) sn = null;
+                if (!sameSnPo.isEmpty()) sn = null;
             }
 
             var newCoupon = new CouponPo();
@@ -387,7 +387,7 @@ public class CouponDao {
             newCoupon.setState((byte)1);
             newCoupon.setGmtCreate(LocalDateTime.now());
             newCoupon.setGmtModified(LocalDateTime.now());
-            couponPoMapper.insert(newCoupon);
+            couponPoMapper.insertSelective(newCoupon);
 
             snList.add(sn);
         }

@@ -68,7 +68,7 @@ public class CommentDao {
         commentPo.setState((byte)0);
         commentPo.setGmtCreate(LocalDateTime.now());
         commentPo.setGmtModified(LocalDateTime.now());
-        commentPoMapper.insert(commentPo);
+        commentPoMapper.insertSelective(commentPo);
 
         var returnCustomerDTO = customerServiceUnion.findCustomerByUserId(userId);
         var customerDTO = returnCustomerDTO.getData(); /* 经过权限模块校验,必定命中 */

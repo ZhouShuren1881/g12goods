@@ -90,7 +90,7 @@ public class PresaleController {
     }
 
     @ResponseBody
-    @PostMapping("/shops/{shopId}/presales/{presaleId}")
+    @PutMapping("/shops/{shopId}/presales/{presaleId}")
     public Object modifyPresale(@PathVariable Long shopId, @PathVariable Long presaleId,
                                 @Validated @RequestBody ModifyPreSaleVo vo, BindingResult bindingResult,
                                 HttpServletRequest request, HttpServletResponse response) {

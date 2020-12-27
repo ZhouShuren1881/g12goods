@@ -165,7 +165,7 @@ public class PresaleDao {
         newPo.setGmtCreate(LocalDateTime.now());
         newPo.setGmtModified(LocalDateTime.now());
 
-        presaleActivityPoMapper.insert(newPo);
+        presaleActivityPoMapper.insertSelective(newPo);
         return new ReturnObject<>(new PresaleBo(
                 newPo,
                 new SkuOverview(skuPo, skuPriceDao.getSkuPrice(skuPo)),
