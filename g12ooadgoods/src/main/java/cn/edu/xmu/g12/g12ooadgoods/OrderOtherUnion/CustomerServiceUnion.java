@@ -3,13 +3,14 @@ package cn.edu.xmu.g12.g12ooadgoods.OrderOtherUnion;
 import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
 import cn.edu.xmu.oomall.other.model.CustomerDTO;
 import cn.edu.xmu.oomall.other.service.ICustomerService;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CustomerServiceUnion {
 
-    @Autowired
+    @DubboReference
     ICustomerService customerService;
 
     public ReturnObject<CustomerDTO> findCustomerByUserId(Long userId) {

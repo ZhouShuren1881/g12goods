@@ -5,6 +5,7 @@ import cn.edu.xmu.g12.g12ooadgoods.model.bo.flashsale.TimeSegOverview;
 import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
 import cn.edu.xmu.oomall.other.model.TimeDTO;
 import cn.edu.xmu.oomall.other.service.ITimeService;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import javax.annotation.Resource;
 @Service
 public class TimeServiceUnion {
 
-    @Autowired
+    @DubboReference
     ITimeService timeService;
     @Resource
     TimeSegmentPoMapper timeSegmentPoMapper;
