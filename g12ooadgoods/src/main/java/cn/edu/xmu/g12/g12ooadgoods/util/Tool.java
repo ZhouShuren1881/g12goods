@@ -1,5 +1,7 @@
 package cn.edu.xmu.g12.g12ooadgoods.util;
 
+import org.springframework.http.HttpStatus;
+
 import javax.servlet.http.HttpServletRequest;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -9,19 +11,20 @@ import java.time.format.DateTimeFormatter;
  * @author Luxun 2020
  */
 public class Tool {
-    public static ResponseCode checkPageParam(Integer page, Integer pageSize) {
-        if ((page == null) != (pageSize == null)) return ResponseCode.FIELD_NOTVALID;
-        if (page == null /* && pageSize == null*/) return ResponseCode.OK;
-        if (page <= 0 || pageSize <= 0) return ResponseCode.FIELD_NOTVALID;
-        return ResponseCode.OK;
+    public static Object decorateCode(ResponseCode responseCode) {
+        return Common.decorateReturnObject(new ReturnObject<>(responseCode), null);
     }
 
-    public static Object decorateResponseCode(ResponseCode responseCode) {
-        return Common.decorateReturnObject(new ReturnObject<>(responseCode));
+    public static Object decorateObject(ReturnObject returnObject) {
+        return Common.decorateReturnObject(returnObject, null);
     }
 
-    public static Object decorateReturnObject(ReturnObject returnObject) {
-        return Common.decorateReturnObject(returnObject);
+    public static Object decorateCodeOKStatus(ResponseCode responseCode, HttpStatus httpStatus) {
+        return Common.decorateReturnObject(new ReturnObject<>(responseCode), httpStatus);
+    }
+
+    public static Object decorateObjectOKStatus(ReturnObject returnObject, HttpStatus httpStatus) {
+        return Common.decorateReturnObject(returnObject, httpStatus);
     }
 
     private static JwtHelper.UserAndDepart getUserAndDepartFromJwt(HttpServletRequest request) {
@@ -35,7 +38,7 @@ public class Tool {
         if (userAndDepart == null) return null;
         var departId = userAndDepart.getDepartId();
         var userId = userAndDepart.getUserId();
-        if (!departId.equals(shopId) && departId != 1 && userId != 0 || shopId < 0) return null; // shopId可以为0
+        if (!(departId.equals(shopId) && shopId != 0) && userId != 1 || shopId < 0) return null; // shopId可以为0
         return userAndDepart;
     }
 

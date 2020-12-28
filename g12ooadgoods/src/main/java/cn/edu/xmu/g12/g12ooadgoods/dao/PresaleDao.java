@@ -22,6 +22,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class PresaleDao {
      * Private Method..
      */
     private ReturnObject<ListBo<PresaleBo>> packupPresaleActivityListBo(
-            List<PresaleActivityPo> presaleList, Integer page, Integer pageSize) {
+            List<PresaleActivityPo> presaleList, @NotNull Integer page, @NotNull Integer pageSize) {
         var presaleBoList = new ArrayList<PresaleBo>();
         for (var item : presaleList) {
             var sku = goodsSkuPoMapper.selectByPrimaryKey(item.getGoodsSkuId());
@@ -64,19 +65,16 @@ public class PresaleDao {
             ));
         }
 
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(presaleBoList);
-            return new ReturnObject<>(new ListBo<>(
-                    page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), presaleBoList));
-        } else
-            return new ReturnObject<>(new ListBo<>(
-                    1, presaleBoList.size(), (long) presaleBoList.size(), 1, presaleBoList));
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(presaleBoList);
+        return new ReturnObject<>(new ListBo<>(
+                page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), presaleBoList));
     }
 
     // GET /presales
     public ReturnObject<ListBo<PresaleBo>> getAllValidPresaleActivity(
-            Long shopId, Integer timeline, Long skuId, Integer page, Integer pageSize) {
+            Long shopId, Integer timeline, Long skuId,
+            @NotNull Integer page, @NotNull Integer pageSize) {
         var presaleExample = new PresaleActivityPoExample();
         var criteria = presaleExample.createCriteria();
         criteria.andStateEqualTo((byte)1);
@@ -109,7 +107,7 @@ public class PresaleDao {
             }
         }
 
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var presaleList = presaleActivityPoMapper.selectByExample(presaleExample);
 
         return packupPresaleActivityListBo(presaleList, page, pageSize);

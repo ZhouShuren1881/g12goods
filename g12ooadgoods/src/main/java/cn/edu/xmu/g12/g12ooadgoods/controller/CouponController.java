@@ -4,14 +4,11 @@ import cn.edu.xmu.g12.g12ooadgoods.dao.CouponDao;
 import cn.edu.xmu.g12.g12ooadgoods.dao.ExistBelongDao;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon.ModifyCouponActivityVo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon.NewCouponVo;
-import cn.edu.xmu.g12.g12ooadgoods.model.vo.groupon.ModifyGrouponVo;
-import cn.edu.xmu.g12.g12ooadgoods.util.Common;
-import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
-import cn.edu.xmu.g12.g12ooadgoods.util.ResponseUtil;
-import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
+import cn.edu.xmu.g12.g12ooadgoods.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,15 +42,15 @@ public class CouponController {
             HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var userId = Tool.parseJwtAndGetUser(request);
-        if (userId == null) return Tool.decorateResponseCode(ResponseCode.AUTH_JWT_EXPIRED);
+        if (userId == null) return Tool.decorateCode(ResponseCode.AUTH_JWT_EXPIRED);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateReturnObject(couponDao.newCouponActivity(shopId, userId, vo));
+        return Tool.decorateObjectOKStatus(couponDao.newCouponActivity(shopId, userId, vo), HttpStatus.CREATED);
     }
 
     @ResponseBody
@@ -62,11 +59,11 @@ public class CouponController {
                                   HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         if (existBelongDao.couponActBelongToShop(shopId, couponActId) != ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
-        return Tool.decorateResponseCode(couponDao.uploadCouponImg());
+        return Tool.decorateCodeOKStatus(couponDao.uploadCouponImg(), HttpStatus.CREATED);
     }
 
     /** 无需登录 */
@@ -80,9 +77,16 @@ public class CouponController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         if (shopId != null && shopId <= 0
-            || timeline != null && (timeline < 0 || timeline > 3)
-            || Tool.checkPageParam(page, pageSize) != ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+            || timeline != null && (timeline < 0 || timeline > 3))
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         return ResponseUtil.ok(couponDao.getAllCoupon(shopId, timeline, page, pageSize));
     }
@@ -96,10 +100,15 @@ public class CouponController {
             HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
-        if (Tool.checkPageParam(page, pageSize) != ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         return ResponseUtil.ok(couponDao.getOffShelveCoupon(shopId, page, pageSize));
     }
@@ -112,9 +121,16 @@ public class CouponController {
             @RequestParam(required = false, name = "pageSize") Integer pageSize) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (couponActId != null && couponActId <= 0
-            || Tool.checkPageParam(page, pageSize) != ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        if (couponActId != null && couponActId <= 0)
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         return ResponseUtil.ok(couponDao.getSkuInCouponAct(couponActId, page, pageSize));
     }
@@ -129,7 +145,7 @@ public class CouponController {
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return code;
 
-        return Tool.decorateReturnObject(couponDao.getCouponActivityDetail(shopId, couponActId));
+        return Tool.decorateObject(couponDao.getCouponActivityDetail(shopId, couponActId));
     }
 
     @ResponseBody
@@ -141,7 +157,7 @@ public class CouponController {
             HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return code;
 
@@ -149,7 +165,7 @@ public class CouponController {
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateResponseCode(couponDao.modifyCouponActivity(shopId, couponActId, vo));
+        return Tool.decorateCode(couponDao.modifyCouponActivity(shopId, couponActId, vo));
     }
 
     @ResponseBody
@@ -160,11 +176,11 @@ public class CouponController {
             HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return code;
 
-        return Tool.decorateResponseCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)2));
+        return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)2));
     }
 
     @ResponseBody
@@ -176,16 +192,16 @@ public class CouponController {
             HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return code;
 
         if (skuIdList == null || skuIdList.size() == 0)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
         skuIdList = skuIdList.stream().filter(item -> item == null || item <= 0).collect(Collectors.toList());
-        if (skuIdList.size() == 0) return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        if (skuIdList.size() == 0) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        return Tool.decorateResponseCode(couponDao.addSkuListIntoCouponSku(shopId, couponActId, skuIdList));
+        return Tool.decorateCode(couponDao.addSkuListIntoCouponSku(shopId, couponActId, skuIdList));
     }
 
     @ResponseBody
@@ -197,16 +213,16 @@ public class CouponController {
             HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return code;
 
         if (skuIdList == null || skuIdList.size() == 0)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
         skuIdList = skuIdList.stream().filter(item -> item == null || item <= 0).collect(Collectors.toList());
-        if (skuIdList.size() == 0) return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        if (skuIdList.size() == 0) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        return Tool.decorateResponseCode(couponDao.deleteSkuListFromCouponSku(shopId, couponActId, skuIdList));
+        return Tool.decorateCode(couponDao.deleteSkuListFromCouponSku(shopId, couponActId, skuIdList));
     }
 
     @ResponseBody
@@ -219,10 +235,18 @@ public class CouponController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         var userId = Tool.parseJwtAndGetUser(request);
-        if (userId == null) return Tool.decorateResponseCode(ResponseCode.AUTH_JWT_EXPIRED);
+        if (userId == null) return Tool.decorateCode(ResponseCode.AUTH_JWT_EXPIRED);
 
-        if (state != null && (state < 0 || state > 3) || Tool.checkPageParam(page, pageSize) != ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        if (state != null && (state < 0 || state > 3))
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         return ResponseUtil.ok(couponDao.getMyCouponList(userId, state, page, pageSize));
     }
@@ -233,9 +257,9 @@ public class CouponController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         var userId = Tool.parseJwtAndGetUser(request);
-        if (userId == null) return Tool.decorateResponseCode(ResponseCode.AUTH_JWT_EXPIRED);
+        if (userId == null) return Tool.decorateCode(ResponseCode.AUTH_JWT_EXPIRED);
 
-        return Tool.decorateReturnObject(couponDao.customerGetCoupon(userId, couponActId));
+        return Tool.decorateObject(couponDao.customerGetCoupon(userId, couponActId));
     }
 
     @ResponseBody
@@ -244,12 +268,12 @@ public class CouponController {
                                           HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return code;
 
-        return Tool.decorateResponseCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)1));
+        return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)1));
     }
 
     @ResponseBody
@@ -258,12 +282,12 @@ public class CouponController {
                                            HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return code;
 
-        return Tool.decorateResponseCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)0));
+        return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)0));
     }
 
 

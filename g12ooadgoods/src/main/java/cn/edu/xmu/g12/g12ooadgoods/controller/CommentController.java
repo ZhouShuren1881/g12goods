@@ -8,6 +8,7 @@ import cn.edu.xmu.g12.g12ooadgoods.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +38,7 @@ public class CommentController {
     public Object getAllStates() {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        return Tool.decorateReturnObject(commentDao.getAllStates());
+        return Tool.decorateObject(commentDao.getAllStates());
     }
 
     @ResponseBody
@@ -54,7 +55,7 @@ public class CommentController {
         if(object != null) return object;
 
         var returnObject = commentDao.newSkuComment(orderItemId, userId, vo);
-        return Tool.decorateReturnObject(returnObject);
+        return Tool.decorateObjectOKStatus(returnObject, HttpStatus.CREATED);
     }
 
     @ResponseBody
@@ -64,11 +65,16 @@ public class CommentController {
                                      @RequestParam(required = false) Integer pageSize) {
         logger.info("getSkuCommentValid controller skuId="+skuId);
 
-        if (Tool.checkPageParam(page,pageSize) !=  ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         var returnObject = commentDao.getSkuCommentValid(skuId, page, pageSize);
-        return Tool.decorateReturnObject(returnObject);
+        return Tool.decorateObject(returnObject);
     }
 
     @ResponseBody
@@ -79,7 +85,7 @@ public class CommentController {
                                  HttpServletRequest request, HttpServletResponse response) {
         logger.info("confirmComment controller shopId="+shopId+" commentId="+commentId+" ConfirmCommentVo="+vo.toString());
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.commentBelongToShop(commentId, shopId);
         if (code != ResponseCode.OK) return code;
 
@@ -88,7 +94,7 @@ public class CommentController {
         if(object != null) return object;
 
         var responseCode = commentDao.confirmComment(shopId, commentId, vo);
-        return Tool.decorateResponseCode(responseCode);
+        return Tool.decorateCode(responseCode);
     }
 
     @ResponseBody
@@ -100,12 +106,17 @@ public class CommentController {
 
         var userId = Tool.parseJwtAndGetUser(request);
 
-        if (Tool.checkPageParam(page,pageSize) !=  ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         var returnObject
                 = commentDao.getCommentOfUser(userId, page, pageSize);
-        return Tool.decorateReturnObject(returnObject);
+        return Tool.decorateObject(returnObject);
     }
 
     @ResponseBody
@@ -117,15 +128,20 @@ public class CommentController {
                                         HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
-        if (state != null && (state < 0 || state > 2)) return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
-        if (Tool.checkPageParam(page,pageSize) !=  ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        if (state != null && (state < 0 || state > 2)) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         var returnObject
                 = commentDao.getShopCommentByAdmin(shopId, state, page, pageSize);
-        return Tool.decorateReturnObject(returnObject);
+        return Tool.decorateObject(returnObject);
     }
 
 }

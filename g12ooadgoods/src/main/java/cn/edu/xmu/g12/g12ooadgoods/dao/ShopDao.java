@@ -29,7 +29,7 @@ public class ShopDao {
         return new ReturnObject<>(ShopState.getAllStates());
     }
 
-    public ReturnObject<ShopInfoVo> createShop(Long userId, String name) {
+    public ReturnObject<ShopInfoVo> newShop(Long userId, String name) {
         var shop = new ShopPo();
         shop.setName(name);
         shop.setState((byte)0);

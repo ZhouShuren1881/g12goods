@@ -5,11 +5,13 @@ import cn.edu.xmu.g12.g12ooadgoods.dao.PresaleDao;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.presale.ModifyPreSaleVo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.presale.NewPreSaleVo;
 import cn.edu.xmu.g12.g12ooadgoods.util.Common;
+import cn.edu.xmu.g12.g12ooadgoods.util.PageTool;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +31,7 @@ public class PresaleController {
     @ResponseBody
     @GetMapping("/presales/states")
     public Object getAllState() {
-        return Tool.decorateReturnObject(presaleDao.getAllState());
+        return Tool.decorateObject(presaleDao.getAllState());
     }
 
     @ResponseBody
@@ -44,12 +46,17 @@ public class PresaleController {
 
         if (timeline!= null && (timeline < 0 || timeline > 3)
                 || skuId!= null && skuId < 0)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        if (Tool.checkPageParam(page,pageSize) !=  ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
-        return Tool.decorateReturnObject(
+        return Tool.decorateObject(
                 presaleDao.getAllValidPresaleActivity(shopId, timeline, skuId, page, pageSize));
     }
 
@@ -62,13 +69,13 @@ public class PresaleController {
                                            HttpServletRequest request) {
         logger.info("getSkuAllPresaleActivity controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         if (state!= null && (state < 0 || state > 2)
                 || skuId!= null && skuId < 0)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        return Tool.decorateReturnObject(presaleDao.getSkuAllPresaleActivity(shopId, skuId, state));
+        return Tool.decorateObject(presaleDao.getSkuAllPresaleActivity(shopId, skuId, state));
     }
 
     @ResponseBody
@@ -78,15 +85,15 @@ public class PresaleController {
                              HttpServletRequest request, HttpServletResponse response) {
         logger.info("newPresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateResponseCode(code);
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateReturnObject(presaleDao.newPresale(shopId, skuId, vo));
+        return Tool.decorateObjectOKStatus(presaleDao.newPresale(shopId, skuId, vo), HttpStatus.CREATED);
     }
 
     @ResponseBody
@@ -96,15 +103,15 @@ public class PresaleController {
                                 HttpServletRequest request, HttpServletResponse response) {
         logger.info("modifyPresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateResponseCode(code);
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateResponseCode(presaleDao.modifyPresale(presaleId, vo));
+        return Tool.decorateCode(presaleDao.modifyPresale(presaleId, vo));
     }
 
     @ResponseBody
@@ -113,11 +120,11 @@ public class PresaleController {
                                 HttpServletRequest request) {
         logger.info("deletePresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateResponseCode(code);
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
-        return Tool.decorateResponseCode(presaleDao.changePresaleState(presaleId, (byte)2));
+        return Tool.decorateCode(presaleDao.changePresaleState(presaleId, (byte)2));
     }
 
     @ResponseBody
@@ -126,11 +133,11 @@ public class PresaleController {
                                    HttpServletRequest request) {
         logger.info("onshelvesPresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateResponseCode(code);
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
-        return Tool.decorateResponseCode(presaleDao.changePresaleState(presaleId, (byte)1));
+        return Tool.decorateCode(presaleDao.changePresaleState(presaleId, (byte)1));
     }
 
     @ResponseBody
@@ -139,10 +146,10 @@ public class PresaleController {
                                     HttpServletRequest request) {
         logger.info("offshelvesPresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateResponseCode(code);
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
-        return Tool.decorateResponseCode(presaleDao.changePresaleState(presaleId, (byte)0));
+        return Tool.decorateCode(presaleDao.changePresaleState(presaleId, (byte)0));
     }
 }

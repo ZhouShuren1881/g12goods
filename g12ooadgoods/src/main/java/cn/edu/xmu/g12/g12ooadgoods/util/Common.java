@@ -170,14 +170,15 @@ public class Common {
     }
 
     /**
+     * Modify by Luxun
      * 根据 errCode 修饰 API 返回对象的 HTTP Status
      * @param returnObject 原返回 Object
      * @return 修饰后的返回 Object
      */
-    public static Object decorateReturnObject(ReturnObject returnObject) {
+    public static Object decorateReturnObject(ReturnObject returnObject, HttpStatus httpStatus) {
         switch (returnObject.getCode()) {
             case RESOURCE_ID_NOTEXIST:
-                // 404：资源不存在
+                // 504：资源不存在
                 return new ResponseEntity(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.NOT_FOUND);
@@ -186,13 +187,29 @@ public class Common {
                 return new ResponseEntity(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.INTERNAL_SERVER_ERROR);
+            case FIELD_NOTVALID:
+                // 503：字段不合法
+                return new ResponseEntity(
+                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                        HttpStatus.BAD_REQUEST);
+            case RESOURCE_ID_OUTSCOPE:
+                // 505：操作的资源id不是自己的对象
+                return new ResponseEntity(
+                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                        HttpStatus.FORBIDDEN);
             case OK:
                 // 200: 无错误
                 Object data = returnObject.getData();
                 if (data != null){
-                    return ResponseUtil.ok(data);
-                }else{
-                    return ResponseUtil.ok();
+                    if (httpStatus == null)
+                        return ResponseUtil.ok(data);
+                    else
+                        return new ResponseEntity(ResponseUtil.ok(data), httpStatus);
+                } else {
+                    if (httpStatus == null)
+                        return ResponseUtil.ok();
+                    else
+                        return new ResponseEntity(ResponseUtil.ok(), httpStatus);
                 }
             default:
                 return ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg());

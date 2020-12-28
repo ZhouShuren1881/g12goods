@@ -12,6 +12,7 @@ import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,13 +51,13 @@ public class FlashsaleController {
                                HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateReturnObject(flashsaleDao.newFlashSale(vo, timesegId));
+        return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSale(vo, timesegId), HttpStatus.CREATED);
     }
 
     /** TODO 响应式API */
@@ -74,9 +75,9 @@ public class FlashsaleController {
                                   HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
-        return Tool.decorateResponseCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)2));
+        return Tool.decorateCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)2));
     }
 
     @ResponseBody
@@ -86,13 +87,13 @@ public class FlashsaleController {
                                   HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateResponseCode(flashsaleDao.modifyFlashSale(vo, flashsaleId));
+        return Tool.decorateCode(flashsaleDao.modifyFlashSale(vo, flashsaleId));
     }
 
     @ResponseBody
@@ -101,9 +102,9 @@ public class FlashsaleController {
                                      HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
-        return Tool.decorateResponseCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)1));
+        return Tool.decorateCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)1));
     }
 
     @ResponseBody
@@ -112,9 +113,9 @@ public class FlashsaleController {
                                       HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
-        return Tool.decorateResponseCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)0));
+        return Tool.decorateCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)0));
     }
 
     @ResponseBody
@@ -124,13 +125,13 @@ public class FlashsaleController {
                                    HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateReturnObject(flashsaleDao.newFlashSaleItem(flashsaleId, vo));
+        return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSaleItem(flashsaleId, vo), HttpStatus.CREATED);
     }
 
     @ResponseBody
@@ -140,8 +141,8 @@ public class FlashsaleController {
                                       HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
-        return Tool.decorateResponseCode(flashsaleDao.deleteFlashSaleItem(flashsaleId, flashsaleItemId));
+        return Tool.decorateCode(flashsaleDao.deleteFlashSaleItem(flashsaleId, flashsaleItemId));
     }
 }

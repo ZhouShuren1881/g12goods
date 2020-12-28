@@ -25,6 +25,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,7 @@ public class CommentDao {
      * Private Method..
      */
     private ListBo<CommentBo> packupCommentListBo(
-            List<CommentPo> commentPoList, Integer page, Integer pageSize) {
+            List<CommentPo> commentPoList, @NotNull Integer page, @NotNull Integer pageSize) {
 
         var commentBoList = commentPoList.stream()
                 .map(item-> new CommentBo(
@@ -89,23 +90,20 @@ public class CommentDao {
                         )
                 )).collect(Collectors.toList());
 
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(commentPoList);
-            return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), commentBoList);
-        } else
-            return new ListBo<>(1, commentBoList.size(), (long) commentBoList.size(), 1, commentBoList);
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(commentPoList);
+        return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), commentBoList);
     }
 
-    public ReturnObject<ListBo<CommentBo>> getSkuCommentValid(Long skuId,
-                                                @Nullable Integer page, @Nullable Integer pageSize) {
+    public ReturnObject<ListBo<CommentBo>> getSkuCommentValid(
+            Long skuId, @NotNull  Integer page, @NotNull  Integer pageSize) {
 
         var skuPo = goodsSkuPoMapper.selectByPrimaryKey(skuId);
         if (skuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
 
         var commentExample = new CommentPoExample();
         commentExample.createCriteria().andGoodsSkuIdEqualTo(skuId);
-        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var commentPoList = commentPoMapper.selectByExample(commentExample);
 
         return new ReturnObject<>(packupCommentListBo(commentPoList, page, pageSize));
@@ -134,27 +132,23 @@ public class CommentDao {
      *
      * @param userId JWT,无需Dao验证
      */
-    public ReturnObject<ListBo<CommentBo>> getCommentOfUser(Long userId,
-                                                            @Nullable Integer page, @Nullable Integer pageSize) {
+    public ReturnObject<ListBo<CommentBo>> getCommentOfUser(
+            Long userId, @NotNull  Integer page, @NotNull Integer pageSize) {
         var returnCustomerDTO = customerServiceUnion.findCustomerByUserId(userId);
         var customerDTO = returnCustomerDTO.getData(); /* 必中，userId经过了校验 */
 
         var commentExample = new CommentPoExample();
         commentExample.createCriteria().andCustomerIdEqualTo(userId);
-        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var commentPoList = commentPoMapper.selectByExample(commentExample);
 
         var commentBoList = commentPoList.stream().map(item->
                 new CommentBo(item, new IdUsernameNameOverview(userId, customerDTO))).collect(Collectors.toList());
 
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(commentPoList);
-            return new ReturnObject<>(
-                    new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), commentBoList));
-        } else
-            return new ReturnObject<>(
-                    new ListBo<>(1, commentBoList.size(), (long) commentBoList.size(), 1, commentBoList));
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(commentPoList);
+        return new ReturnObject<>(
+                new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), commentBoList));
     }
 
     /**
@@ -163,8 +157,9 @@ public class CommentDao {
      * @param shopId PathVariable [带访问权限-Controller验证] shopId可以为零，只有管理员可以这样
      * @param state BodyVariable [state大小验证-Controller]
      */
-    public ReturnObject<ListBo<CommentBo>> getShopCommentByAdmin(Long shopId, @Nullable Byte state,
-                                                              @Nullable Integer page, @Nullable Integer pageSize) {
+    public ReturnObject<ListBo<CommentBo>> getShopCommentByAdmin(
+            Long shopId, @Nullable Byte state,
+            @NotNull Integer page, @NotNull Integer pageSize) {
         var commentExample = new CommentPoExample();
         var criteria = commentExample.createCriteria();
 
@@ -190,7 +185,7 @@ public class CommentDao {
         if (state != null) criteria.andStateEqualTo(state);
         if (!(shopId > 0 && state != null)) criteria.andIdIsNotNull(); // 选择所有
 
-        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var commentPoList = commentPoMapper.selectByExample(commentExample);
         return new ReturnObject<>(packupCommentListBo(commentPoList, page, pageSize));
     }

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.github.pagehelper.PageHelper;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
@@ -61,33 +62,38 @@ public class GoodDao {
         return ResponseUtil.ok(GoodState.getAllStates());
     }
 
-    private ReturnObject<ListBo<SkuOverview>> emptyReturnListBo(Integer page, Integer pageSize) {
-        if (page == null && pageSize == null) return new ReturnObject<>(
-                    new ListBo<>(1, 0, 0L, 1, new ArrayList<>()));
-        else return new ReturnObject<>(
+    private ReturnObject<ListBo<SkuOverview>> emptyReturnListBo(
+            @NotNull Integer page, @NotNull Integer pageSize) {
+        return new ReturnObject<>(
                     new ListBo<>(page, pageSize, 0L, 1, new ArrayList<>()));
     }
 
     private ReturnObject<ListBo<SkuOverview>> makeReturnListBo(
             List<GoodsSkuPo> poList, List<SkuOverview> boList,
-            Integer page, Integer pageSize) {
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(poList);
-            return new ReturnObject<>(new ListBo<>(
-                    page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), boList));
-        } else
-            return new ReturnObject<>(new ListBo<>(
-                    1, boList.size(), (long) boList.size(), 1, boList));
+            @NotNull Integer page, @NotNull Integer pageSize) {
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(poList);
+        return new ReturnObject<>(new ListBo<>(
+                page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), boList));
     }
 
+    /**
+     * 多参数查询 Sku列表
+     * @param shopId
+     * @param skuSn
+     * @param spuId
+     * @param spuSn
+     * @param page
+     * @param pageSize
+     * @return
+     */
     public ReturnObject<ListBo<SkuOverview>> getSkuList(
             Long    shopId,
             String  skuSn,
             Long    spuId,
             String  spuSn,
-            Integer page,
-            Integer pageSize) {
+            @NotNull Integer page,
+            @NotNull Integer pageSize) {
         List<Long> spuIdList = null;
         if (shopId != null) {
             var spuExample = new GoodsSpuPoExample();
@@ -120,7 +126,7 @@ public class GoodDao {
                 criteria.andIdIsNull(); // 防止空数组出错
             else
                 criteria.andGoodsSpuIdIn(spuIdList);
-        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var skuPoList = skuPoMapper.selectByExample(skuExample);
         var skuBoList = skuPoList.stream().map(item -> new SkuOverview(item,
                 skuPriceDao.getSkuPrice(item))).collect(Collectors.toList());
@@ -427,21 +433,18 @@ public class GoodDao {
         return ResponseCode.OK;
     }
 
-    public ReturnObject<ListBo<BrandBo>> getAllBrands(Integer page, Integer pageSize) {
+    public ReturnObject<ListBo<BrandBo>> getAllBrands(@NotNull Integer page, @NotNull Integer pageSize) {
         var brandPoExample = new BrandPoExample();
         brandPoExample.createCriteria().andGmtCreateIsNotNull();
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var brandPoList = brandPoMapper.selectByExample(brandPoExample);
 
         List<BrandBo> brandBoList = new ArrayList<>();
         for (var item : brandPoList) brandBoList.add(new BrandBo(item));
 
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(brandPoList);
-            return new ReturnObject<>(new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), brandBoList));
-        } else
-            return new ReturnObject<>(new ListBo<>(1, brandPoList.size(), (long) brandPoList.size(), 1, brandBoList));
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(brandPoList);
+        return new ReturnObject<>(new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), brandBoList));
     }
 
     public ResponseCode modifyBrand(ModifyBrandVo vo, Long brandId) {

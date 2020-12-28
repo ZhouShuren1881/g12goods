@@ -27,6 +27,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,22 +103,20 @@ public class CouponDao {
      * Private Method..
      */
     private ListBo<CouponActivityOverview> packupCouponActivityListBo(
-            List<CouponActivityPo> couponList, Integer page, Integer pageSize) {
+            List<CouponActivityPo> couponList, @NotNull Integer page, @NotNull Integer pageSize) {
 
         var couponActivityOverviewList = couponList.stream()
                 .map(CouponActivityOverview::new).collect(Collectors.toList());
 
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(couponList);
-            return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), couponActivityOverviewList);
-        } else
-            return new ListBo<>(1, couponActivityOverviewList.size(), (long) couponActivityOverviewList.size(), 1, couponActivityOverviewList);
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(couponList);
+        return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), couponActivityOverviewList);
     }
 
     // GET /couponactivities
-    public ListBo<CouponActivityOverview> getAllCoupon(@Nullable Long shopId, @Nullable Integer timeline,
-                                                 @Nullable Integer page, @Nullable Integer pageSize) {
+    public ListBo<CouponActivityOverview> getAllCoupon(
+            @Nullable Long shopId, @Nullable Integer timeline,
+            @NotNull Integer page, @NotNull Integer pageSize) {
 
         var couponActExample = new CouponActivityPoExample();
         var criteria = couponActExample.createCriteria();
@@ -150,34 +149,34 @@ public class CouponDao {
             }
         }
 
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var cuoponActList = couponActivityPoMapper.selectByExample(couponActExample);
 
         return packupCouponActivityListBo(cuoponActList, page, pageSize);
     }
 
     // GET /shops/{shopId}/couponactivities/invalid
-    public ListBo<CouponActivityOverview> getOffShelveCoupon(Long shopId,
-                                                        @Nullable Integer page, @Nullable Integer pageSize) {
+    public ListBo<CouponActivityOverview> getOffShelveCoupon(
+            Long shopId, @NotNull Integer page, @NotNull Integer pageSize) {
 
         var couponActExample = new CouponActivityPoExample();
         couponActExample.createCriteria()
                 .andStateEqualTo((byte)0)
                 .andShopIdEqualTo(shopId);
 
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var cuoponActList = couponActivityPoMapper.selectByExample(couponActExample);
 
         return packupCouponActivityListBo(cuoponActList, page, pageSize);
     }
 
     // GET /couponactivities/{couponActId}/skus
-    public ListBo<SkuOverview> getSkuInCouponAct(Long couponActId,
-                                                 @Nullable Integer page, @Nullable Integer pageSize) {
+    public ListBo<SkuOverview> getSkuInCouponAct(
+            Long couponActId, @NotNull Integer page, @NotNull Integer pageSize) {
         var couponSkuExample = new CouponSkuPoExample();
         couponSkuExample.createCriteria().andActivityIdEqualTo(couponActId);
 
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var couponSkuList = couponSkuPoMapper.selectByExample(couponSkuExample);
         var skuIdList = couponSkuList.stream().map(CouponSkuPo::getSkuId).collect(Collectors.toList());
 
@@ -192,22 +191,14 @@ public class CouponDao {
                 .map(item -> new SkuOverview(item, item.getOriginalPrice()))
                 .collect(Collectors.toList());
 
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(couponSkuList);
-            return new ListBo<>(
-                    page,
-                    pageSize,
-                    pageInfo.getTotal(),
-                    pageInfo.getPages(),
-                    skuOverviewList);
-        } else
-            return new ListBo<>(
-                    1,
-                    skuOverviewList.size(),
-                    (long) skuOverviewList.size(),
-                    1,
-                    skuOverviewList);
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(couponSkuList);
+        return new ListBo<>(
+                page,
+                pageSize,
+                pageInfo.getTotal(),
+                pageInfo.getPages(),
+                skuOverviewList);
     }
 
     public ReturnObject<CouponActivityBo> getCouponActivityDetail(Long shopId, Long couponActId) {
@@ -319,14 +310,15 @@ public class CouponDao {
         return ResponseCode.OK;
     }
 
-    public ListBo<CouponOverview> getMyCouponList(Long userId, @Nullable Byte state,
-                                                  @Nullable Integer page, @Nullable Integer pageSize) {
+    public ListBo<CouponOverview> getMyCouponList(
+            Long userId, @Nullable Byte state,
+            @NotNull Integer page, @NotNull Integer pageSize) {
         var couponExample = new CouponPoExample();
         var criteria = couponExample.createCriteria();
         criteria.andCustomerIdEqualTo(userId);
         if (state != null) criteria.andStateEqualTo(state);
 
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var couponList = couponPoMapper.selectByExample(couponExample);
 
         var couponOvList = new ArrayList<CouponOverview>();
@@ -335,12 +327,9 @@ public class CouponDao {
             couponOvList.add(new CouponOverview(item, activityPo));
         }
 
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(couponList);
-            return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), couponOvList);
-        } else
-            return new ListBo<>( 1, couponOvList.size(), (long) couponOvList.size(), 1, couponOvList);
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(couponList);
+        return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), couponOvList);
     }
 
     public ReturnObject<VoListObject<String>> customerGetCoupon(Long userId, Long couponActId) {

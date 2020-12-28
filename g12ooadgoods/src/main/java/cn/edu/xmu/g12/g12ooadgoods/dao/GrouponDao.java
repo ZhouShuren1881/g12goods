@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 import com.github.pagehelper.PageHelper;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -52,24 +53,21 @@ public class GrouponDao {
      * Private Method..
      */
     private ListBo<GrouponOverview> packupGrouponActivityListBo(
-            List<GrouponActivityPo> grouponList, Integer page, Integer pageSize) {
+            List<GrouponActivityPo> grouponList, @NotNull Integer page, @NotNull Integer pageSize) {
         var grouponBoList = grouponList.stream()
                 .map(GrouponOverview::new).collect(Collectors.toList());
 
-        if (page != null) {
-            // 返回分页信息
-            var pageInfo = new PageInfo<>(grouponList);
-            return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), grouponBoList);
-        } else
-            return new ListBo<>(1, grouponBoList.size(), (long) grouponBoList.size(), 1, grouponBoList);
+        // 返回分页信息
+        var pageInfo = new PageInfo<>(grouponList);
+        return new ListBo<>(page, pageSize, pageInfo.getTotal(), pageInfo.getPages(), grouponBoList);
     }
 
     // GET /groupons
     public ListBo<GrouponOverview> getAllGrouponByCustomer(@Nullable Integer timeline,
                                                            @Nullable Long spuId,
                                                            @Nullable Long shopId,
-                                                           @Nullable Integer page,
-                                                           @Nullable Integer pageSize) {
+                                                           @NotNull Integer page,
+                                                           @NotNull Integer pageSize) {
         var grouponExample = new GrouponActivityPoExample();
         var criteria = grouponExample.createCriteria();
         criteria.andStateEqualTo((byte)1);
@@ -102,7 +100,7 @@ public class GrouponDao {
             }
         }
 
-        if (page != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var grouponList = grouponActivityPoMapper.selectByExample(grouponExample);
 
         return packupGrouponActivityListBo(grouponList, page, pageSize);
@@ -110,13 +108,14 @@ public class GrouponDao {
 
     // GET /shops/{shopId}/groupons
     // TODO 检查 beginTime & endTime 必须同时为null或同时不为null
-    public ListBo<GrouponOverview> getAllGrouponByAdmin(Long shopId,
-                                                 @Nullable Long spuId,
-                                                 @Nullable LocalDateTime beginTime,
-                                                 @Nullable LocalDateTime endTime,
-                                                 @Nullable Byte state,
-                                                 @Nullable Integer page,
-                                                 @Nullable Integer pageSize) {
+    public ListBo<GrouponOverview> getAllGrouponByAdmin(
+            Long shopId,
+            @Nullable Long spuId,
+            @Nullable LocalDateTime beginTime,
+            @Nullable LocalDateTime endTime,
+            @Nullable Byte state,
+            @NotNull Integer page,
+            @NotNull Integer pageSize) {
         var grouponExample = new GrouponActivityPoExample();
         var criteria = grouponExample.createCriteria();
         criteria.andShopIdEqualTo(shopId);
@@ -126,7 +125,7 @@ public class GrouponDao {
         if (spuId     != null) criteria.andGoodsSpuIdEqualTo(spuId);
         if (state     != null) criteria.andStateEqualTo(state);
 
-        if (page != null && pageSize != null) PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
+        PageHelper.startPage(page, pageSize); // 设置整个线程的Page选项
         var grouponList = grouponActivityPoMapper.selectByExample(grouponExample);
 
         return packupGrouponActivityListBo(grouponList, page, pageSize);

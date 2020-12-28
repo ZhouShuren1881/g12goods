@@ -4,13 +4,11 @@ import cn.edu.xmu.g12.g12ooadgoods.dao.ExistBelongDao;
 import cn.edu.xmu.g12.g12ooadgoods.dao.GrouponDao;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.groupon.ModifyGrouponVo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.groupon.NewGrouponVo;
-import cn.edu.xmu.g12.g12ooadgoods.util.Common;
-import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
-import cn.edu.xmu.g12.g12ooadgoods.util.ResponseUtil;
-import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
+import cn.edu.xmu.g12.g12ooadgoods.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,10 +44,15 @@ public class GrouponController {
         if (timeline != null && (timeline < 0 || timeline > 3)
                 || shopId != null && shopId <= 0
                 || spuId != null && spuId <= 0)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        if (Tool.checkPageParam(page,pageSize) !=  ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         return ResponseUtil.ok(grouponDao.getAllGrouponByCustomer(timeline, spuId, shopId, page, pageSize));
     }
@@ -67,18 +70,23 @@ public class GrouponController {
             HttpServletRequest request) {
         logger.info("getAllGrouponByAdmin controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         if (spuId != null && spuId <= 0 || state != null && (state < 0 || state > 2))
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         var beginTime = Tool.parseDateTime(beginTimeStr);
         var endTime = Tool.parseDateTime(endTimeStr);
         if (beginTime == null || endTime == null || !beginTime.isBefore(endTime))
-            Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+            Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        if (Tool.checkPageParam(page,pageSize) !=  ResponseCode.OK)
-            return Tool.decorateResponseCode(ResponseCode.FIELD_NOTVALID);
+        var pageTool = PageTool.newPageTool(page, pageSize);
+        if (pageTool == null) {
+            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        } else {
+            page = pageTool.getPage();
+            pageSize = pageTool.getPageSize();
+        }
 
         return ResponseUtil.ok(
                 grouponDao.getAllGrouponByAdmin(shopId, spuId, beginTime, endTime, state, page, pageSize));
@@ -91,7 +99,7 @@ public class GrouponController {
                              HttpServletRequest request, HttpServletResponse response) {
         logger.info("newGroupon controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
         if (code != ResponseCode.OK) return code;
 
@@ -99,7 +107,7 @@ public class GrouponController {
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateReturnObject(grouponDao.newGroupon(shopId, spuId, vo));
+        return Tool.decorateObjectOKStatus(grouponDao.newGroupon(shopId, spuId, vo), HttpStatus.CREATED);
     }
 
     @ResponseBody
@@ -109,7 +117,7 @@ public class GrouponController {
                                 HttpServletRequest request, HttpServletResponse response) {
         logger.info("modifyGroupon controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
         if (code != ResponseCode.OK) return code;
 
@@ -117,7 +125,7 @@ public class GrouponController {
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return object;
 
-        return Tool.decorateResponseCode(grouponDao.modifyGroupon(shopId, grouponId, vo));
+        return Tool.decorateCode(grouponDao.modifyGroupon(shopId, grouponId, vo));
     }
 
     @ResponseBody
@@ -126,11 +134,11 @@ public class GrouponController {
                                 HttpServletRequest request) {
         logger.info("deleteGroupon controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
         if (code != ResponseCode.OK) return code;
 
-        return Tool.decorateResponseCode(grouponDao.changeGrouponState(grouponId, (byte)2));
+        return Tool.decorateCode(grouponDao.changeGrouponState(grouponId, (byte)2));
     }
 
     @ResponseBody
@@ -139,11 +147,11 @@ public class GrouponController {
                                    HttpServletRequest request) {
         logger.info("onshelvesGroupon controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
         if (code != ResponseCode.OK) return code;
 
-        return Tool.decorateResponseCode(grouponDao.changeGrouponState(grouponId, (byte)1));
+        return Tool.decorateCode(grouponDao.changeGrouponState(grouponId, (byte)1));
     }
 
     @ResponseBody
@@ -152,10 +160,10 @@ public class GrouponController {
                                     HttpServletRequest request) {
         logger.info("offshelvesGroupon controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateResponseCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
         if (code != ResponseCode.OK) return code;
 
-        return Tool.decorateResponseCode(grouponDao.changeGrouponState(grouponId, (byte)0));
+        return Tool.decorateCode(grouponDao.changeGrouponState(grouponId, (byte)0));
     }
 }
