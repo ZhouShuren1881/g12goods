@@ -91,7 +91,7 @@ public class PresaleController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(presaleDao.newPresale(shopId, skuId, vo), HttpStatus.CREATED);
     }
@@ -109,7 +109,7 @@ public class PresaleController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateCode(presaleDao.modifyPresale(presaleId, vo));
     }

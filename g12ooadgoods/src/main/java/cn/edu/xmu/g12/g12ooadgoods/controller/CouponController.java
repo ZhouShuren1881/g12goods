@@ -48,7 +48,7 @@ public class CouponController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(couponDao.newCouponActivity(shopId, userId, vo), HttpStatus.CREATED);
     }
@@ -163,7 +163,7 @@ public class CouponController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateCode(couponDao.modifyCouponActivity(shopId, couponActId, vo));
     }

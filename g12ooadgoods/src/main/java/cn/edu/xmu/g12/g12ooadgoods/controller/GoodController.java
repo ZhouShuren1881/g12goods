@@ -86,7 +86,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newSku(shopId, spuId, vo), HttpStatus.CREATED);
     }
@@ -130,7 +130,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         if (vo.isAllFieldNull()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
@@ -158,7 +158,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newCategory(pid, vo.getName()), HttpStatus.CREATED);
     }
@@ -174,7 +174,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateCode(goodDao.modifyCategory(pid, vo.getName()));
     }
@@ -220,7 +220,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newSpu(vo, shopId), HttpStatus.CREATED);
     }
@@ -238,7 +238,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateCode(goodDao.modifySpu(vo, spuId));
     }
@@ -296,7 +296,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newFloatPrice(vo, skuId, userId), HttpStatus.CREATED);
     }
@@ -326,7 +326,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newBrand(vo), HttpStatus.CREATED);
     }
@@ -370,7 +370,7 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
         if (vo.getName() == null && vo.getDetail() == null)
             return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 

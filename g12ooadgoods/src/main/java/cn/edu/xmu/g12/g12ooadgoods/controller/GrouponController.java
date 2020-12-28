@@ -105,7 +105,7 @@ public class GrouponController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(grouponDao.newGroupon(shopId, spuId, vo), HttpStatus.CREATED);
     }
@@ -123,7 +123,7 @@ public class GrouponController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateCode(grouponDao.modifyGroupon(shopId, grouponId, vo));
     }

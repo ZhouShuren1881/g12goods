@@ -52,7 +52,7 @@ public class CommentController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if(object != null) return object;
+        if(object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         var returnObject = commentDao.newSkuComment(orderItemId, userId, vo);
         return Tool.decorateObjectOKStatus(returnObject, HttpStatus.CREATED);
@@ -91,7 +91,7 @@ public class CommentController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if(object != null) return object;
+        if(object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         var responseCode = commentDao.confirmComment(shopId, commentId, vo);
         return Tool.decorateCode(responseCode);

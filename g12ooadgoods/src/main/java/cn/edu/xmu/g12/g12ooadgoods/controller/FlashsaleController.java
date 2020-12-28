@@ -55,7 +55,7 @@ public class FlashsaleController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSale(vo, timesegId), HttpStatus.CREATED);
     }
@@ -91,7 +91,7 @@ public class FlashsaleController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateCode(flashsaleDao.modifyFlashSale(vo, flashsaleId));
     }
@@ -129,7 +129,7 @@ public class FlashsaleController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSaleItem(flashsaleId, vo), HttpStatus.CREATED);
     }

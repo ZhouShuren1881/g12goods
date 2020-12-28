@@ -47,7 +47,7 @@ public class ShopController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if(object != null) return object;
+        if(object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         var returnObject = shopDao.newShop(userAndDepart.getUserId(), vo.getName());
         return Tool.decorateObjectOKStatus(returnObject, HttpStatus.CREATED);
@@ -64,7 +64,7 @@ public class ShopController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return object;
+        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         var responseCode = shopDao.modifyShop(shopId, vo.getName());
         return Tool.decorateCode(responseCode);
@@ -93,7 +93,7 @@ public class ShopController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if(object != null) return object;
+        if(object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         if (!shopId.equals(id)) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
