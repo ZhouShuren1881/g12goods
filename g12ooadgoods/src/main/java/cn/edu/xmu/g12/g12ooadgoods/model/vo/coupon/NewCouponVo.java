@@ -41,15 +41,12 @@ public class NewCouponVo {
     private Byte validTerm;
 
     @NotNull(message = "couponTime 不得为空")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime couponTime;
 
     @NotNull(message = "beginTime 不得为空")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
 
     @NotNull(message = "endTime 不得为空")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     @NotNull(message = "strategy 不得为空")

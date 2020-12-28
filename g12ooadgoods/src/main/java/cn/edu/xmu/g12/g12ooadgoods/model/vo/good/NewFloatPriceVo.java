@@ -16,11 +16,9 @@ public class NewFloatPriceVo {
     private Long activityPrice;
 
     @NotNull(message = "beginTime不得为空")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
 
     @NotNull(message = "endTime不得为空")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     @NotNull(message = "quantity")

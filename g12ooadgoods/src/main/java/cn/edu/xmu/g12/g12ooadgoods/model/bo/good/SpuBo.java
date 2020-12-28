@@ -66,9 +66,9 @@ public class SpuBo implements VoObject {
       private String goodsSn;
       private String detail;
       private String imageUrl;
-      @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+      @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
       private LocalDateTime gmtCreate;
-      @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+      @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
       private LocalDateTime gmtModified;
       private Boolean disable;
 

@@ -23,9 +23,7 @@ public class ShopInfoVo {
     private Long id;
     private String name;
     private Byte state;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtCreate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime gmtModified;
 
     public ShopInfoVo(ShopPo po) {

@@ -11,6 +11,5 @@ import java.time.LocalDateTime;
 public class ModifyFlashSaleVo {
     @NotNull(message = "flashDate不得为空")
     @Size(min = 1)
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime flashDate;
 }

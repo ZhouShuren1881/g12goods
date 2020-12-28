@@ -23,11 +23,9 @@ public class ModifyCouponActivityVo {
     private Integer quantity;
 
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
 
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime end_time;
 
     @Nullable

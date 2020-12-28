@@ -24,9 +24,9 @@ public class FreightOverview { // order -> freight_model
     private Integer unit;
     @JSONField(name="default") // 转json时显示为default
     private Boolean defaultModel;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtCreate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtModified;
 
     public FreightOverview() { }

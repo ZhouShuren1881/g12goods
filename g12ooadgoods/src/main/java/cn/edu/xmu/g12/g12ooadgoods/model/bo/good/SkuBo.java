@@ -37,9 +37,9 @@ public class SkuBo implements VoObject {
     private Byte state;
     private String configuration;
     private Long weight;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtCreate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtModified;
     private Boolean disable;
     private Boolean shareable;

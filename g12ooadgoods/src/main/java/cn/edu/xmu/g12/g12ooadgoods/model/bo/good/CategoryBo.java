@@ -12,9 +12,9 @@ public class CategoryBo implements VoObject {
     private Long id;
     private Long pid;
     private String name;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtCreate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtModified;
 
     public CategoryBo() {

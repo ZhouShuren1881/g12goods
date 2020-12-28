@@ -27,9 +27,9 @@ public class CommentBo {
     private Byte type;
     private String content;
     private Byte state;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtCreate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtModified;
 
     public CommentBo(CommentPo po, IdUsernameNameOverview customerOverview) {

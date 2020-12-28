@@ -27,13 +27,10 @@ public class ModifyPreSaleVo {
     @Nullable
     private Integer quantity;
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime payTime;
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     public boolean isInvalid(PresaleActivityPo po) {

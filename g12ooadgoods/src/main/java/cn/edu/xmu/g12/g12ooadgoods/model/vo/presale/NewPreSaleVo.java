@@ -24,11 +24,8 @@ public class NewPreSaleVo {
     private Long advancePayPrice;
     private Long restPayPrice;
     private Integer quantity;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime payTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     public boolean isInvalid() {

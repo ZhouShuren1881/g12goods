@@ -25,9 +25,9 @@ public class FlashSaleBo implements VoObject {
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDateTime flashDate;
     TimeSegOverview timeSeq;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime gmtCreate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime gmtModified;
 
     public FlashSaleBo(FlashSalePo po, TimeSegOverview timeSegOverview) {

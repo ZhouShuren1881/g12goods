@@ -12,10 +12,8 @@ public class ModifyGrouponVo {
     @Nullable
     private String strategy;
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     public boolean isInvalid(GrouponActivityPo po) {
