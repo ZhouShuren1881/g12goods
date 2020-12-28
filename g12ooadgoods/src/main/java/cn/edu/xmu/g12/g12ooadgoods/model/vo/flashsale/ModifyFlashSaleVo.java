@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Data
 public class ModifyFlashSaleVo {
     @NotNull(message = "flashDate不得为空")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime flashDate;
 }
