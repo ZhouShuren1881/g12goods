@@ -143,7 +143,7 @@ public class CouponController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateObject(couponDao.getCouponActivityDetail(shopId, couponActId));
     }
@@ -159,7 +159,7 @@ public class CouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
@@ -178,7 +178,7 @@ public class CouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)2));
     }
@@ -194,7 +194,7 @@ public class CouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         if (skuIdList == null || skuIdList.size() == 0)
             return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
@@ -215,7 +215,7 @@ public class CouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         if (skuIdList == null || skuIdList.size() == 0)
             return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
@@ -271,7 +271,7 @@ public class CouponController {
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)1));
     }
@@ -285,7 +285,7 @@ public class CouponController {
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)0));
     }

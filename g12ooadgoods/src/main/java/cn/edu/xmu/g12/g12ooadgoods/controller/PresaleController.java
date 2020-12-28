@@ -128,7 +128,7 @@ public class PresaleController {
     }
 
     @ResponseBody
-    @PostMapping("/shops/{shopId}/presales/{presaleId}/onshelves")
+    @PutMapping("/shops/{shopId}/presales/{presaleId}/onshelves")
     public Object onshelvesPresale(@PathVariable Long shopId, @PathVariable Long presaleId,
                                    HttpServletRequest request) {
         logger.info("onshelvesPresale controller shopid="+shopId);
@@ -141,7 +141,7 @@ public class PresaleController {
     }
 
     @ResponseBody
-    @PostMapping("/shops/{shopId}/presales/{presaleId}/offshelves")
+    @PutMapping("/shops/{shopId}/presales/{presaleId}/offshelves")
     public Object offshelvesPresale(@PathVariable Long shopId, @PathVariable Long presaleId,
                                     HttpServletRequest request) {
         logger.info("offshelvesPresale controller shopid="+shopId);

@@ -198,8 +198,8 @@ public class Common {
                 return new ResponseEntity(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.FORBIDDEN);
-            case 200/*OK*/:
-                // 200: 无错误
+            case 0/*OK*/:
+                // 0: 无错误
                 Object data = returnObject.getData();
                 if (data != null){
                     if (httpStatus == null)

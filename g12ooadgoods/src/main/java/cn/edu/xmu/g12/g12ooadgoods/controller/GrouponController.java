@@ -101,7 +101,7 @@ public class GrouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
@@ -119,7 +119,7 @@ public class GrouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
@@ -136,7 +136,7 @@ public class GrouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(grouponDao.changeGrouponState(grouponId, (byte)2));
     }
@@ -149,7 +149,7 @@ public class GrouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(grouponDao.changeGrouponState(grouponId, (byte)1));
     }
@@ -162,7 +162,7 @@ public class GrouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(grouponDao.changeGrouponState(grouponId, (byte)0));
     }

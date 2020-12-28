@@ -82,7 +82,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
@@ -98,7 +98,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         // TODO upload image...
         return Tool.decorateCodeOKStatus(goodDao.uploadSkuImg(shopId, skuId), HttpStatus.CREATED);
@@ -112,7 +112,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.changeSkuState(skuId, (byte)6));
     }
@@ -126,7 +126,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
@@ -234,7 +234,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
@@ -251,7 +251,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.deleteSpu(spuId));
     }
@@ -264,7 +264,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.changeSkuState(skuId, (byte)4));
     }
@@ -277,7 +277,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.changeSkuState(skuId, (byte)0));
     }
@@ -292,7 +292,7 @@ public class GoodController {
         var userId = Tool.parseJwtAndGetUser(request, shopId);
         if (userId == null) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
@@ -310,7 +310,7 @@ public class GoodController {
         var userId = Tool.parseJwtAndGetUser(request, shopId);
         if (userId == null) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.floatPriceBelongToShop(floatId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.endisableFloatPrice(floatId, userId));
     }
@@ -396,7 +396,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.addSpuIntoCategory(spuId, categoryId));
     }
@@ -409,7 +409,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.removeSpuFromCategory(spuId, categoryId));
     }
@@ -422,7 +422,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.addSpuIntoBrand(spuId, brandId));
     }
@@ -435,7 +435,7 @@ public class GoodController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return code;
+        if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.removeSpuFromBrand(spuId, brandId));
     }
