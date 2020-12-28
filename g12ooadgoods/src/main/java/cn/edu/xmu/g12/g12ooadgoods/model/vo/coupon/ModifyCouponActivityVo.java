@@ -27,11 +27,13 @@ public class ModifyCouponActivityVo {
     private Integer quantity;
 
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime beginTime;
 
     @Nullable
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime end_time;
 
     @Nullable

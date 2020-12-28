@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -16,19 +17,21 @@ import java.time.LocalDateTime;
 @ApiModel("新价格浮动传值对象")
 public class NewFloatPriceVo {
     @NotNull(message = "activityPrice不得为空")
-    @Size(min = 1)
+    @Min(1)
     private Long activityPrice;
 
     @NotNull(message = "beginTime不得为空")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime beginTime;
 
     @NotNull(message = "endTime不得为空")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime endTime;
 
     @NotNull(message = "quantity")
-    @Size(min = 1)
+    @Min(1)
     private Integer quantity;
 
     public boolean isInvalid() {
