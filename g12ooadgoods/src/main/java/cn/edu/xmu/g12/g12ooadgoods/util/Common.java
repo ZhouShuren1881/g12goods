@@ -176,28 +176,29 @@ public class Common {
      * @return 修饰后的返回 Object
      */
     public static Object decorateReturnObject(ReturnObject returnObject, HttpStatus httpStatus) {
-        switch (returnObject.getCode()) {
-            case RESOURCE_ID_NOTEXIST:
-                // 504：资源不存在
-                return new ResponseEntity(
-                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
-                        HttpStatus.NOT_FOUND);
-            case INTERNAL_SERVER_ERR:
-                // 500：数据库或其他严重错误
-                return new ResponseEntity(
-                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
-            case FIELD_NOTVALID:
+        var codeInt = returnObject.getCode().getCode();
+        switch (codeInt) {
+//            case INTERNAL_SERVER_ERR:
+//                // 500：数据库或其他严重错误
+//                return new ResponseEntity(
+//                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+//                        HttpStatus.INTERNAL_SERVER_ERROR);
+            case 503/*FIELD_NOTVALID*/:
                 // 503：字段不合法
                 return new ResponseEntity(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.BAD_REQUEST);
-            case RESOURCE_ID_OUTSCOPE:
+            case 504/*RESOURCE_ID_NOTEXIST*/:
+                // 504：资源不存在
+                return new ResponseEntity(
+                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                        HttpStatus.NOT_FOUND);
+            case 505/*RESOURCE_ID_OUTSCOPE*/:
                 // 505：操作的资源id不是自己的对象
                 return new ResponseEntity(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.FORBIDDEN);
-            case OK:
+            case 200/*OK*/:
                 // 200: 无错误
                 Object data = returnObject.getData();
                 if (data != null){
@@ -212,7 +213,14 @@ public class Common {
                         return new ResponseEntity(ResponseUtil.ok(), httpStatus);
                 }
             default:
-                return ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg());
+                if (codeInt > 505 && codeInt < 600 || codeInt >= 900 && codeInt < 1000)
+                    return new ResponseEntity(
+                            ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                            HttpStatus.BAD_REQUEST);
+                else
+                    return new ResponseEntity(
+                            ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                            HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

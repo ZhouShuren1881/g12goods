@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class Tool {
     public static Object decorateCode(ResponseCode responseCode) {
-        return Common.decorateReturnObject(new ReturnObject<>(responseCode), null);
+        return Common.decorateReturnObject(new ReturnObject<>(responseCode, responseCode.getMessage()), null);
     }
 
     public static Object decorateObject(ReturnObject returnObject) {
@@ -20,7 +20,7 @@ public class Tool {
     }
 
     public static Object decorateCodeOKStatus(ResponseCode responseCode, HttpStatus httpStatus) {
-        return Common.decorateReturnObject(new ReturnObject<>(responseCode), httpStatus);
+        return Common.decorateReturnObject(new ReturnObject<>(responseCode, responseCode.getMessage()), httpStatus);
     }
 
     public static Object decorateObjectOKStatus(ReturnObject returnObject, HttpStatus httpStatus) {

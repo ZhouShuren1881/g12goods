@@ -104,9 +104,9 @@ public enum ResponseCode {
     SPU_NOTOPERABLE(926,"失效的SPU"),
     DELETE_ONLINE_NOTALLOW(931, "不允许删除已上线状态的活动"),
     COMMENT_EXISTED(941,"该订单条目已评论"),
+    SHOP_STATENOTALLOW(980, "当前店铺状态不允许进行此类操作"),
     BRAND_NAME_SAME(990,"品牌名称已存在"),
-    CATEGORY_NAME_SAME(991, "类目名称已存在"),
-    SHOP_STATENOTALLOW(980, "当前店铺状态不允许进行此类操作");
+    CATEGORY_NAME_SAME(991, "类目名称已存在");
 
     private int code;
     private String message;
