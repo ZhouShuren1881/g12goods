@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Controller
+@RestController
 public class CommentController {
 
     private  static  final Logger logger = LoggerFactory.getLogger(CommentController.class);
