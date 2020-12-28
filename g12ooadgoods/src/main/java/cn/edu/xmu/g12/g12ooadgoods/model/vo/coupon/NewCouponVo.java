@@ -1,6 +1,8 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -41,12 +43,15 @@ public class NewCouponVo {
     private Byte validTerm;
 
     @NotNull(message = "couponTime 不得为空")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime couponTime;
 
     @NotNull(message = "beginTime 不得为空")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime beginTime;
 
     @NotNull(message = "endTime 不得为空")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime endTime;
 
     @NotNull(message = "strategy 不得为空")

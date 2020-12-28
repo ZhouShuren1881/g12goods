@@ -1,6 +1,8 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.flashsale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -12,6 +14,6 @@ import java.time.LocalDateTime;
 @ApiModel("新FlashSale传值对象")
 public class NewFlashSaleVo {
     @NotNull(message = "flashDate 不得为空")
-    @Size(min = 1)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime flashDate;
 }

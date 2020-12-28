@@ -1,17 +1,13 @@
 package cn.edu.xmu.g12.g12ooadgoods.dao;
 
 import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
-import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.*;
-import cn.edu.xmu.g12.g12ooadgoods.model.vo.shop.ShopInfoVo;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.shop.ShopInfoBo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.shop.ShopState;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
-import cn.edu.xmu.g12.g12ooadgoods.util.ResponseUtil;
 import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -29,7 +25,7 @@ public class ShopDao {
         return new ReturnObject<>(ShopState.getAllStates());
     }
 
-    public ReturnObject<ShopInfoVo> newShop(String name) {
+    public ReturnObject<ShopInfoBo> newShop(String name) {
         var shop = new ShopPo();
         shop.setName(name);
         shop.setState((byte)0);
@@ -38,7 +34,7 @@ public class ShopDao {
 
         shopPoMapper.insertSelective(shop);
         // TODO 更新角色DepartId
-        return new ReturnObject<>(new ShopInfoVo(shop));
+        return new ReturnObject<>(new ShopInfoBo(shop));
     }
 
     public ResponseCode modifyShop(Long shopId, String name) {

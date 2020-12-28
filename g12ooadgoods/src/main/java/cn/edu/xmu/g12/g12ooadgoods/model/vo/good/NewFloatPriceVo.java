@@ -1,6 +1,8 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.good;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -16,9 +18,11 @@ public class NewFloatPriceVo {
     private Long activityPrice;
 
     @NotNull(message = "beginTime不得为空")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime beginTime;
 
     @NotNull(message = "endTime不得为空")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime endTime;
 
     @NotNull(message = "quantity")

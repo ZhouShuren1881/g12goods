@@ -3,6 +3,8 @@ package cn.edu.xmu.g12.g12ooadgoods.model.vo.presale;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.PresaleActivityPo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.flashsale.NewFlashSaleVo;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
@@ -24,8 +26,11 @@ public class NewPreSaleVo {
     private Long advancePayPrice;
     private Long restPayPrice;
     private Integer quantity;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime beginTime;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime payTime;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime endTime;
 
     public boolean isInvalid() {
