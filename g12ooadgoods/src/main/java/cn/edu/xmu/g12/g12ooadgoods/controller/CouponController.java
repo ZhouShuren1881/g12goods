@@ -49,6 +49,7 @@ public class CouponController {
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(couponDao.newCouponActivity(shopId, userId, vo), HttpStatus.CREATED);
     }

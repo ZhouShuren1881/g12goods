@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
+
 @Repository
 public class CouponDao {
     private static final Logger logger = LoggerFactory.getLogger(CouponDao.class);
@@ -64,8 +66,8 @@ public class CouponDao {
     public ReturnObject<CouponActivityBo> newCouponActivity(Long shopId, Long userId, NewCouponVo vo) {
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
         var retObjectUserDTO = customerServiceUnion.findCustomerByUserId(userId);
-        if (shopPo == null || retObjectUserDTO.getCode() != ResponseCode.OK)
-            return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);
+        if (shopPo == null || retObjectUserDTO.getCode() != OK)
+            return new ReturnObject<>(FIELD_NOTVALID);
         var userDTO = retObjectUserDTO.getData();
 
         var couponActPo = new CouponActivityPo();
@@ -96,7 +98,7 @@ public class CouponDao {
 
     // TODO 上传照片
     public ResponseCode uploadCouponImg() {
-        return ResponseCode.OK;
+        return OK;
     }
 
     /**
@@ -203,23 +205,23 @@ public class CouponDao {
 
     public ReturnObject<CouponActivityBo> getCouponActivityDetail(Long shopId, Long couponActId) {
         var shop = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shop == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (shop == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         var couponAct = couponActivityPoMapper.selectByPrimaryKey(couponActId);
-        if (couponAct == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (couponAct == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         shop = shopPoMapper.selectByPrimaryKey(couponAct.getShopId());
 
         var roCreateUserDTO
                 = customerServiceUnion.findCustomerByUserId(couponAct.getCreatedBy());
-        if (roCreateUserDTO.getCode() != ResponseCode.OK)
-            return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);
+        if (roCreateUserDTO.getCode() != OK)
+            return new ReturnObject<>(FIELD_NOTVALID);
         var createUserDTO = roCreateUserDTO.getData();
 
         var roModifyUserDTO
                 = customerServiceUnion.findCustomerByUserId(couponAct.getCreatedBy());
-        if (roModifyUserDTO.getCode() != ResponseCode.OK)
-            return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);
+        if (roModifyUserDTO.getCode() != OK)
+            return new ReturnObject<>(FIELD_NOTVALID);
         var modifyUserDTO = roModifyUserDTO.getData();
 
         return new ReturnObject<>(new CouponActivityBo(
@@ -232,11 +234,14 @@ public class CouponDao {
 
     public ResponseCode modifyCouponActivity(Long shopId, Long couponActId, ModifyCouponActivityVo vo) {
         var shop = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shop == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (shop == null) return RESOURCE_ID_NOTEXIST;
 
         var couponAct = couponActivityPoMapper.selectByPrimaryKey(couponActId);
-        if (couponAct == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-        if (couponAct.getState() != 0) return ResponseCode.COUPON_STATENOTALLOW;
+        if (couponAct == null) return RESOURCE_ID_NOTEXIST;
+        
+        if (vo.isInvalid(couponAct)) return FIELD_NOTVALID;
+        
+        if (couponAct.getState() != 0) return COUPON_STATENOTALLOW;
 
         couponAct = new CouponActivityPo();
         couponAct.setName(vo.getName());
@@ -245,35 +250,35 @@ public class CouponDao {
         couponAct.setEndTime(vo.getEnd_time());
         couponAct.setStrategy(vo.getStrategy());
 
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode changeCouponActivityState(Long shopId, Long couponActId, Byte state) {
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (shopPo == null) return RESOURCE_ID_NOTEXIST;
 
         var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
-        if (couponActPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (couponActPo == null) return RESOURCE_ID_NOTEXIST;
 
-        if (state == 2 && couponActPo.getState() != 0) return ResponseCode.COUPON_STATENOTALLOW;
-        if (state == 1 && couponActPo.getState() != 0) return ResponseCode.COUPON_STATENOTALLOW;
-        if (state == 0 && couponActPo.getState() != 1) return ResponseCode.COUPON_STATENOTALLOW;
+        if (state == 2 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
+        if (state == 1 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
+        if (state == 0 && couponActPo.getState() != 1) return COUPON_STATENOTALLOW;
 
         var updatePo = new CouponActivityPo();
         updatePo.setId(couponActId);
         updatePo.setState(state);
         couponActivityPoMapper.updateByPrimaryKeySelective(updatePo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode addSkuListIntoCouponSku(Long shopId, Long couponActId, List<Long> skuIdList) {
         var skuPoList = new ArrayList<GoodsSkuPo>();
         for (var item : skuIdList) {
             var skuPo = goodsSkuPoMapper.selectByPrimaryKey(item);
-            if (skuPo == null || skuPo.getState() == 2) return ResponseCode.RESOURCE_ID_NOTEXIST;
+            if (skuPo == null || skuPo.getState() == 2) return RESOURCE_ID_NOTEXIST;
             var spuPo = goodsSpuPoMapper.selectByPrimaryKey(skuPo.getGoodsSpuId());
             if (spuPo == null || !spuPo.getShopId().equals(shopId))
-                return ResponseCode.RESOURCE_ID_OUTSCOPE;
+                return RESOURCE_ID_OUTSCOPE;
             skuPoList.add(skuPo);
         }
         for (var item : skuPoList) {
@@ -284,30 +289,30 @@ public class CouponDao {
             couponSkuPo.setGmtModified(LocalDateTime.now());
             couponSkuPoMapper.insertSelective(couponSkuPo);
         }
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode deleteSkuListFromCouponSku(Long shopId, Long couponActId, List<Long> skuIdList) {
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (shopPo == null) return RESOURCE_ID_NOTEXIST;
 
         var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
-        if (couponActPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (couponActPo == null) return RESOURCE_ID_NOTEXIST;
 
         var couponSkuIdList = new ArrayList<Long>();
         for (var item : skuIdList) {
             var couponSkuPo = couponSkuPoMapper.selectByPrimaryKey(item);
-            if (couponSkuPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+            if (couponSkuPo == null) return RESOURCE_ID_NOTEXIST;
             var skuPo = goodsSkuPoMapper.selectByPrimaryKey(item);
-            if (skuPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+            if (skuPo == null) return RESOURCE_ID_NOTEXIST;
             var spuPo = goodsSpuPoMapper.selectByPrimaryKey(skuPo.getGoodsSpuId());
             if (spuPo == null || !spuPo.getShopId().equals(shopId))
-                return ResponseCode.RESOURCE_ID_OUTSCOPE;
+                return RESOURCE_ID_OUTSCOPE;
             couponSkuIdList.add(item);
         }
 
         for (var item : couponSkuIdList) couponSkuPoMapper.deleteByPrimaryKey(item);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ListBo<CouponOverview> getMyCouponList(
@@ -334,13 +339,13 @@ public class CouponDao {
 
     public ReturnObject<VoListObject<String>> customerGetCoupon(Long userId, Long couponActId) {
         var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
-        if (couponActPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (couponActPo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         var now = LocalDateTime.now();
-        if (now.isBefore(couponActPo.getCouponTime())) return new ReturnObject<>(ResponseCode.COUPON_NOTBEGIN);
-        if (now.isAfter(couponActPo.getEndTime())) return new ReturnObject<>(ResponseCode.COUPON_END);
+        if (now.isBefore(couponActPo.getCouponTime())) return new ReturnObject<>(COUPON_NOTBEGIN);
+        if (now.isAfter(couponActPo.getEndTime())) return new ReturnObject<>(COUPON_END);
         if (couponActPo.getQuantitiyType() == 1 && couponActPo.getQuantity() <= 0)
-            return new ReturnObject<>(ResponseCode.COUPON_FINISH);
+            return new ReturnObject<>(COUPON_FINISH);
 
         var snList = new VoListObject<String>();
         var snNum = 0;

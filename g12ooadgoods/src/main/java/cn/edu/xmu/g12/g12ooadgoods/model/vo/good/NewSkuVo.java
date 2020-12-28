@@ -30,7 +30,7 @@ public class NewSkuVo {
     private String name;
 
     @NotNull
-    @Min(0)
+    @Min(1)
     private Long originalPrice;
 
     @NotNull(message = "configuration不得为空")
@@ -38,7 +38,7 @@ public class NewSkuVo {
     private String configuration;
 
     @NotNull
-    @Min(0)
+    @Min(1)
     private Long weight;
 
     @NotNull(message = "imageUrl不得为空")
@@ -52,4 +52,16 @@ public class NewSkuVo {
     @NotNull(message = "detail不得为空")
     @Size(min = 1)
     private String detail;
+
+    public boolean isInvalid() {
+        sn = sn.trim();
+        name = name.trim();
+        configuration = configuration.trim();
+        imageUrl = imageUrl.trim();
+        if (sn.isEmpty()) return true;
+        if (name.isEmpty()) return true;
+        if (configuration.isEmpty()) return true;
+        if (imageUrl.isEmpty()) return true;
+        return false;
+    }
 }

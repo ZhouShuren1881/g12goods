@@ -44,15 +44,14 @@ public class CommentController {
     @ResponseBody
     @PostMapping("/orderitems/{orderItemId}/comments")
     public Object newSkuComment(@PathVariable Long orderItemId,
-                                @Validated @RequestBody NewCommentVo vo, BindingResult bindingResult,
-                                HttpServletRequest request, HttpServletResponse response) {
+                                @Validated @RequestBody NewCommentVo vo,
+                                HttpServletRequest request) {
         logger.info("newSkuComment controller orderItemId="+orderItemId+" NewCommentVo="+vo.toString());
 
         var userId = Tool.parseJwtAndGetUser(request);
 
         /* 处理参数校验错误 */
-        Object object = Common.processFieldErrors(bindingResult, response);
-        if(object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         var returnObject = commentDao.newSkuComment(orderItemId, userId, vo);
         return Tool.decorateObjectOKStatus(returnObject, HttpStatus.CREATED);

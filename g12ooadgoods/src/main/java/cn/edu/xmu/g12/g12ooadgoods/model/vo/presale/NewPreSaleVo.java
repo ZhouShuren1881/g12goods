@@ -20,31 +20,26 @@ public class NewPreSaleVo {
 //  "payTime": "string",
 //  "endTime": "string"
 
-    @NotNull(message = "name 不得为空")
-    @Size(min = 1)
     private String name;
-
-    @NotNull(message = "advancePayPrice 不得为空")
-    @Min(0)
     private Long advancePayPrice;
-
-    @NotNull(message = "restPayPrice 不得为空")
-    @Min(0)
     private Long restPayPrice;
-
     private Integer quantity;
-    @NotNull(message = "beginTime 不得为空")
-    @Size(min = 1)
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
-
-    @NotNull(message = "payTime 不得为空")
-    @Size(min = 1)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime payTime;
-
-    @NotNull(message = "endTime 不得为空")
-    @Size(min = 1)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
+
+    public boolean isInvalid() {
+        if (name == null) return true;
+        name = name.trim();
+        if (name.length() == 0) return true;
+        if (advancePayPrice == null || advancePayPrice < 0) return true;
+        if (restPayPrice == null || restPayPrice < 0) return true;
+        if (quantity == null || quantity <= 0) return true;
+        if (!(beginTime.isBefore(payTime) && payTime.isBefore(endTime))) return true;
+
+        return false;
+    }
 }

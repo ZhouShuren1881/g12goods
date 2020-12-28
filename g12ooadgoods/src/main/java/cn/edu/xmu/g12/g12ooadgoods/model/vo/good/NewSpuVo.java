@@ -6,6 +6,7 @@ import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Locale;
 
 @Data
 @ApiModel("新Spu传值对象")
@@ -18,6 +19,19 @@ public class NewSpuVo {
     @Size(min = 1)
     private String decription;
 
-    @Nullable
+    @NotNull(message = "specs")
+    @Size(min = 1)
     private String specs;
+
+    public boolean isInvalid() {
+        name = name.trim();
+        if (name.isEmpty()) return true;
+        decription = decription.trim();
+        if (decription.isEmpty()) return true;
+        if (specs != null) {
+            specs = specs.trim();
+            if (specs.isEmpty()) return true;
+        }
+        return false;
+    }
 }

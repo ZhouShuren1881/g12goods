@@ -37,34 +37,34 @@ public class ShopController {
 
     @ResponseBody
     @PostMapping("/shops")
-    public Object newShop(@Validated @RequestBody ShopNameVo vo, BindingResult bindingResult,
-                             HttpServletRequest request, HttpServletResponse response ) {
+    public Object newShop(
+            @Validated @RequestBody ShopNameVo vo,
+            HttpServletRequest request) {
 
         logger.info("createShop controller name = "+vo.getName());
 
         var userAndDepart = jwt.verifyTokenAndGetClaims(request.getHeader("authorization"));
         if (userAndDepart.getDepartId() != 0) return Tool.decorateCode(ResponseCode.USER_HASSHOP);
+        if (userAndDepart.getUserId() == 1) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
-        Object object = Common.processFieldErrors(bindingResult, response);
-        if(object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if(vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        var returnObject = shopDao.newShop(userAndDepart.getUserId(), vo.getName());
+        var returnObject = shopDao.newShop(vo.getName());
         return Tool.decorateObjectOKStatus(returnObject, HttpStatus.CREATED);
     }
 
     @ResponseBody
     @PutMapping("/shops/{shopId}")
     public Object modifyShop(@PathVariable Long shopId,
-                             @Validated @RequestBody ShopNameVo vo, BindingResult bindingResult,
-                             HttpServletRequest request, HttpServletResponse response ) {
+                             @Validated @RequestBody ShopNameVo vo,
+                             HttpServletRequest request) {
         logger.info("modifyShop controller id = "+shopId);
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
-        Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         var responseCode = shopDao.modifyShop(shopId, vo.getName());
         return Tool.decorateCode(responseCode);

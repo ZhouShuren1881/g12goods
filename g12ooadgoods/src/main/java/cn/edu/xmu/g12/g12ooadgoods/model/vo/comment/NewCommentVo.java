@@ -8,11 +8,13 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class NewCommentVo {
-    @NotNull(message = "type 不得为空")
-    @Min(0)
-    @Max(2)
-    private Byte type;
-    @NotNull(message = "content 不得为空")
-    @Min(1)
-    private String content; // 0好评1中评2差评
+    private Byte type; // 0好评1中评2差评
+    private String content;
+
+    public boolean isInvalid() {
+        if (type == null || type < 0 || type > 2) return true;
+        if (content == null) return true;
+        content = content.trim();
+        return content.isEmpty();
+    }
 }

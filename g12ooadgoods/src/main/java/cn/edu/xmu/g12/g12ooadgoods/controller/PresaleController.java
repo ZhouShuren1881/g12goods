@@ -81,8 +81,7 @@ public class PresaleController {
     @ResponseBody
     @PostMapping("/shops/{shopId}/skus/{skuId}/presales")
     public Object newPresale(@PathVariable Long shopId, @PathVariable Long skuId,
-                             @Validated @RequestBody NewPreSaleVo vo, BindingResult bindingResult,
-                             HttpServletRequest request, HttpServletResponse response) {
+                             @Validated @RequestBody NewPreSaleVo vo, HttpServletRequest request) {
         logger.info("newPresale controller shopid="+shopId);
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
@@ -90,8 +89,7 @@ public class PresaleController {
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
-        Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(presaleDao.newPresale(shopId, skuId, vo), HttpStatus.CREATED);
     }
@@ -99,17 +97,13 @@ public class PresaleController {
     @ResponseBody
     @PutMapping("/shops/{shopId}/presales/{presaleId}")
     public Object modifyPresale(@PathVariable Long shopId, @PathVariable Long presaleId,
-                                @Validated @RequestBody ModifyPreSaleVo vo, BindingResult bindingResult,
-                                HttpServletRequest request, HttpServletResponse response) {
+                                @Validated @RequestBody ModifyPreSaleVo vo,
+                                HttpServletRequest request) {
         logger.info("modifyPresale controller shopid="+shopId);
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
-
-        /* 处理参数校验错误 */
-        Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateCode(presaleDao.modifyPresale(presaleId, vo));
     }

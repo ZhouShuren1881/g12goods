@@ -16,4 +16,10 @@ public class NewBrandVo {
     @NotNull(message = "detail不得为空")
     @Size(min = 1)
     private String detail;
+
+    public boolean isInvalid() {
+        name = name.trim();
+        detail = detail.trim();
+        return name.isEmpty() || detail.isEmpty();
+    }
 }

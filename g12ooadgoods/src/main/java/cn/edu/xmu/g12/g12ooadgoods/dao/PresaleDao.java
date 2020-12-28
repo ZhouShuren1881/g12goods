@@ -11,7 +11,6 @@ import cn.edu.xmu.g12.g12ooadgoods.model.vo.presale.ModifyPreSaleVo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.presale.NewPreSaleVo;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -27,6 +26,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
 
 // TODO 预售与团购不同时存在
 
@@ -147,7 +148,7 @@ public class PresaleDao {
         var presaleExample = new PresaleActivityPoExample();
         presaleExample.createCriteria().andGoodsSkuIdEqualTo(skuId);
         var presalePo = presaleActivityPoMapper.selectByExample(presaleExample);
-        if (presalePo != null) return new ReturnObject<>(ResponseCode.PRESALE_STATENOTALLOW);
+        if (presalePo != null) return new ReturnObject<>(PRESALE_STATENOTALLOW);
 
         var newPo = new PresaleActivityPo();
         newPo.setName(vo.getName());
@@ -174,8 +175,10 @@ public class PresaleDao {
     // TODO 是不是 下线状态才能修改？
     public ResponseCode modifyPresale(Long presaleId, ModifyPreSaleVo vo) {
         var presalePo = presaleActivityPoMapper.selectByPrimaryKey(presaleId);
-        if (presalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-        if (presalePo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;
+        if (presalePo == null) return RESOURCE_ID_NOTEXIST;
+        if (presalePo.getState() != 0) return PRESALE_STATENOTALLOW;
+
+        if (vo.isInvalid(presalePo)) return FIELD_NOTVALID;
 
         var updatePo = new PresaleActivityPo();
         updatePo.setId(presaleId);
@@ -189,20 +192,21 @@ public class PresaleDao {
         updatePo.setGmtModified(LocalDateTime.now());
 
         presaleActivityPoMapper.updateByPrimaryKeySelective(updatePo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode changePresaleState(Long presaleId, Byte state) {
         var presalePo = presaleActivityPoMapper.selectByPrimaryKey(presaleId);
 
-        if (state == 2 && presalePo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;
-        if (state == 1 && presalePo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;
-        if (state == 0 && presalePo.getState() != 1) return ResponseCode.PRESALE_STATENOTALLOW;
+        if (state.equals(presalePo.getState())) return STATE_NOCHANGE;
+        if (state == 2 && presalePo.getState() != 0) return PRESALE_STATENOTALLOW;
+        if (state == 1 && presalePo.getState() != 0) return PRESALE_STATENOTALLOW;
+        if (state == 0 && presalePo.getState() != 1) return PRESALE_STATENOTALLOW;
 
         var updatePo = new PresaleActivityPo();
         updatePo.setId(presaleId);
         updatePo.setState(state);
         presaleActivityPoMapper.updateByPrimaryKeySelective(updatePo);
-        return ResponseCode.OK;
+        return OK;
     }
 }

@@ -11,7 +11,11 @@ import javax.validation.constraints.Size;
 @Data
 @ApiModel("店铺名传值对象")
 public class ShopNameVo {
-    @NotNull(message = "name不得为空")
-    @Size(min = 1)
     private String name;
+
+    public boolean isInvalid() {
+        if (name == null) return true;
+        name = name.trim();
+        return name.length() == 0;
+    }
 }

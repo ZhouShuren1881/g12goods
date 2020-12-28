@@ -1,8 +1,11 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -24,25 +27,44 @@ public class NewCouponVo {
     private String name;
 
     @NotNull(message = "quantity 不得为空")
+    @Min(0)
     private Integer quantity;
 
     @NotNull(message = "quantityType 不得为空")
+    @Min(0)
+    @Max(1)
     private Byte quantityType;
 
     @NotNull(message = "validTerm 不得为空")
+    @Min(0)
+    @Max(4)
     private Byte validTerm;
 
     @NotNull(message = "couponTime 不得为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime couponTime;
 
     @NotNull(message = "beginTime 不得为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
 
     @NotNull(message = "endTime 不得为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     @NotNull(message = "strategy 不得为空")
     @Size(min = 1)
     private String strategy;
+
+    public boolean isInvalid() {
+        name = name.trim();
+        if (name.length() == 0) return true;
+        if (!(couponTime.isBefore(beginTime)&&beginTime.isBefore(endTime)))
+            return true;
+        strategy = strategy.trim();
+        if (strategy.isEmpty()) return true;
+
+        return false;
+    }
 
 }

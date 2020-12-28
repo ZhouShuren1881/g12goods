@@ -20,4 +20,11 @@ public class NewGrouponVo {
     @NotNull(message = "endTime 不得为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
+
+    public boolean isInvalid() {
+        strategy = strategy.trim();
+        if (strategy.isEmpty()) return true;
+        if (!beginTime.isBefore(endTime)) return true;
+        return false;
+    }
 }

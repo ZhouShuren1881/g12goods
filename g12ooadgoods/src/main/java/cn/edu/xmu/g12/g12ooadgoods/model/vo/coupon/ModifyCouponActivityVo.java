@@ -1,5 +1,8 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon;
 
+import cn.edu.xmu.g12.g12ooadgoods.model.po.CouponActivityPo;
+import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
@@ -20,12 +23,31 @@ public class ModifyCouponActivityVo {
     private Integer quantity;
 
     @Nullable
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
 
     @Nullable
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime end_time;
 
     @Nullable
     private String strategy;
+
+    public boolean isInvalid(CouponActivityPo po) {
+        if (Tool.allNull(name, quantity, beginTime, end_time, strategy))
+            return true;
+
+        if (name != null) {
+            name = name.trim();
+            if (name.length() == 0) return true;
+        }
+        if (quantity != null && quantity < 0) return true;
+
+        var stime = beginTime==null?po.getBeginTime():beginTime;
+        var etime = end_time==null?po.getEndTime():end_time;
+        if (stime != null && etime != null && !stime.isBefore(etime)) return true;
+
+        return false;
+    }
 
 }

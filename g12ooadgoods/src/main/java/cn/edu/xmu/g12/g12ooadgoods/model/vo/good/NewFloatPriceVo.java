@@ -23,7 +23,11 @@ public class NewFloatPriceVo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
-    @NotNull(message = "activityPrice不得为空")
+    @NotNull(message = "quantity")
     @Size(min = 1)
     private Integer quantity;
+
+    public boolean isInvalid() {
+        return beginTime.isAfter(endTime);
+    }
 }

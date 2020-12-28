@@ -1,6 +1,7 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.good;
 
 import cn.edu.xmu.g12.g12ooadgoods.model.po.GoodsSkuPo;
+import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import org.springframework.lang.Nullable;
@@ -35,14 +36,24 @@ public class ModifySkuVo {
     @Nullable
     private String detail;
 
-    public boolean isAllFieldNull() {
-        if (name            != null) return false;
-        if (originalPrice   != null) return false;
-        if (configuration   != null) return false;
-        if (weight          != null) return false;
-        if (inventory       != null) return false;
-        if (detail          != null) return false;
-        return true;
+    public boolean isInvalid() {
+        if (Tool.allNull(name, originalPrice, configuration, weight, inventory, detail)) return true;
+        if (name != null) {
+            name = name.trim();
+            if (name.isEmpty()) return true;
+        }
+        if (originalPrice != null && originalPrice <= 0) return true;
+        if (configuration != null) {
+            configuration = configuration.trim();
+            if (configuration.isEmpty()) return true;
+        }
+        if (weight != null && weight <= 0) return true;
+        if (inventory != null && inventory < 0) return true;
+        if (detail != null) {
+            detail = detail.trim();
+            if (detail.isEmpty()) return true;
+        }
+        return false;
     }
 
     public GoodsSkuPo convertToGoodsSkuPo() {

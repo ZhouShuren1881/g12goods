@@ -81,4 +81,10 @@ public class Tool {
             }
         }
     }
+
+    public static boolean allNull(Object... args) {
+        if (args == null || args.length == 0) return true;
+        for (var item : args) if (item != null) return false;
+        return true;
+    }
 }

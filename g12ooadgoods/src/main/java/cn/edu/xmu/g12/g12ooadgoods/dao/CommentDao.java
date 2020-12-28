@@ -57,7 +57,8 @@ public class CommentDao {
     }
 
     public ReturnObject<CommentBo> newSkuComment(Long orderItemId, Long userId, NewCommentVo vo) {
-        var returnOrderDTO = orderServiceUnion.getUserSelectSOrderInfo(userId, orderItemId);
+        var returnOrderDTO
+                = orderServiceUnion.getUserSelectSOrderInfo(userId, orderItemId);
         if (returnOrderDTO.getCode() != ResponseCode.OK) return new ReturnObject<>(returnOrderDTO.getCode());
         var orderDTO = returnOrderDTO.getData();
 
@@ -114,11 +115,11 @@ public class CommentDao {
      * @param shopId PathVariable JWT校验过，无需验证, shopId=0管理员
      */
     public ResponseCode confirmComment(Long shopId, Long commentId, ConfirmCommentVo vo) {
-        var commentPo = commentPoMapper.selectByPrimaryKey(commentId);
-
-        var returnOrderDTO
-                = orderServiceUnion.getShopSelectOrderInfo(shopId, commentPo.getOrderitemId());
-        if (returnOrderDTO.getCode() != ResponseCode.OK) return returnOrderDTO.getCode();
+//        var commentPo = commentPoMapper.selectByPrimaryKey(commentId);
+//
+//        var returnOrderDTO
+//                = orderServiceUnion.getShopSelectOrderInfo(shopId, commentPo.getOrderitemId());
+//        if (returnOrderDTO.getCode() != ResponseCode.OK) return returnOrderDTO.getCode();
 
         var updatePo = new CommentPo();
         updatePo.setId(commentId);

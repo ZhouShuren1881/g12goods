@@ -29,7 +29,7 @@ public class ShopDao {
         return new ReturnObject<>(ShopState.getAllStates());
     }
 
-    public ReturnObject<ShopInfoVo> newShop(Long userId, String name) {
+    public ReturnObject<ShopInfoVo> newShop(String name) {
         var shop = new ShopPo();
         shop.setName(name);
         shop.setState((byte)0);
@@ -54,6 +54,10 @@ public class ShopDao {
     }
 
     public ResponseCode changeShopState(Long shopId, Byte state) {
+        var shopExistPo = shopPoMapper.selectByPrimaryKey(shopId);
+        if (shopExistPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (shopExistPo.getState().equals(state)) return ResponseCode.STATE_NOCHANGE;
+
         var shopPo = new ShopPo();
         shopPo.setId(shopId);
         shopPo.setState(state);

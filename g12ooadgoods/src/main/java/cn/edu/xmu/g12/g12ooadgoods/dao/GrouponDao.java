@@ -166,6 +166,9 @@ public class GrouponDao {
 
         var grouponPo = grouponActivityPoMapper.selectByPrimaryKey(grouponId);
         if (grouponPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+
+        if (vo.isInvalid(grouponPo)) return ResponseCode.FIELD_NOTVALID;
+
         if (grouponPo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;
 
         var updatePo = new GrouponActivityPo();

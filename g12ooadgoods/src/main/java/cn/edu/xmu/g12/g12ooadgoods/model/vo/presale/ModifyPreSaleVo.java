@@ -1,6 +1,10 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.presale;
 
+import cn.edu.xmu.g12.g12ooadgoods.model.po.PresaleActivityPo;
+import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -14,11 +18,42 @@ public class ModifyPreSaleVo {
 //  "payTime": "string",
 //  "endTime": "string"
 
+    @Nullable
     private String name;
+    @Nullable
     private Long advancePayPrice;
+    @Nullable
     private Long restPayPrice;
+    @Nullable
     private Integer quantity;
+    @Nullable
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
+    @Nullable
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime payTime;
+    @Nullable
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
+
+    public boolean isInvalid(PresaleActivityPo po) {
+        if (Tool.allNull(name, advancePayPrice, restPayPrice, quantity,
+                beginTime, payTime, endTime)) return true;
+
+        if (name != null) {
+            name = name.trim();
+            if (name.length() == 0) return true;
+        }
+        if (advancePayPrice != null && advancePayPrice < 0) return true;
+        if (restPayPrice != null && restPayPrice < 0) return true;
+        if (quantity != null && quantity <= 0) return true;
+
+        var stime = beginTime==null?po.getBeginTime():beginTime;
+        var ptime = payTime==null?po.getPayTime():payTime;
+        var etime = endTime==null?po.getEndTime():endTime;
+        if (stime != null && ptime != null && etime != null &&
+                !(stime.isBefore(ptime) && ptime.isBefore(etime))) return true;
+
+        return false;
+    }
 }
