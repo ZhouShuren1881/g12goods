@@ -29,8 +29,6 @@ public class TimeSegOverview {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtModified;
 
-    public TimeSegOverview() { }
-
     public TimeSegOverview(TimeSegmentPo po) {
         id = po.getId();
         beginTime = po.getBeginTime();

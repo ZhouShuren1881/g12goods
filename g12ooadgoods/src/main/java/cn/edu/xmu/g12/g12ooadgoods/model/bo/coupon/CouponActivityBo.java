@@ -58,7 +58,6 @@ public class CouponActivityBo {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtModified;
 
-    public CouponActivityBo() { }
     public CouponActivityBo(CouponActivityPo po, IdNameOverview shopOverview, UserOverview createUser, UserOverview modiUser) {
         id = po.getId();
         name = po.getName();

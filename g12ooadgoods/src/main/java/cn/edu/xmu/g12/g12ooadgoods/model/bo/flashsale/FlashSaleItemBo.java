@@ -38,8 +38,6 @@ public class FlashSaleItemBo implements VoObject {
 
     private SkuOverview goodsSku;
 
-    public FlashSaleItemBo() { }
-
     public FlashSaleItemBo(FlashSaleItemPo po, SkuOverview sku) {
         id = po.getId();
         price = po.getPrice();

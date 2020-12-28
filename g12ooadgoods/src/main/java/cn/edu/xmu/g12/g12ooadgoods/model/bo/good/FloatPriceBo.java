@@ -3,9 +3,12 @@ package cn.edu.xmu.g12.g12ooadgoods.model.bo.good;
 import cn.edu.xmu.g12.g12ooadgoods.model.VoObject;
 import cn.edu.xmu.g12.g12ooadgoods.model.bo.UserOverview;
 import cn.edu.xmu.g12.g12ooadgoods.model.po.FloatPricePo;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 public class FloatPriceBo implements VoObject {
 //    "id": 0,
 //    "activityPrice": 0,
@@ -27,15 +30,17 @@ public class FloatPriceBo implements VoObject {
     private Long id;
     private Long activityPrice;
     private Integer quantity;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime beginTime;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
     private Boolean valid;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtCreate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime gmtModified;
     private UserOverview createdBy;
     private UserOverview modifiedBy;
-
-    public FloatPriceBo() { }
 
     public FloatPriceBo(FloatPricePo po, UserOverview createdBy, UserOverview modifiedBy) {
         id = po.getId();

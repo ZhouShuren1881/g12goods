@@ -7,8 +7,6 @@ public class IdNameOverview {
     private Long id;
     private String name;
 
-    public IdNameOverview() { }
-
     public IdNameOverview(Long id, String name) {
         this.id = id;
         this.name = name;
