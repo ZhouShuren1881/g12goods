@@ -123,13 +123,15 @@ public class FlashsaleDao {
     }
 
     public ResponseCode modifyFlashSale(ModifyFlashSaleVo vo, Long flashsaleId) {
+        var flashSaleExistPo = flashSalePoMapper.selectByPrimaryKey(flashsaleId);
+        if (flashSaleExistPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+
         var flashDate = vo.getFlashDate();
         var po = new FlashSalePo();
         po.setId(flashsaleId);
         po.setFlashDate(flashDate);
-        int rows = flashSalePoMapper.updateByPrimaryKeySelective(po);
-        if (rows == 0) return ResponseCode.RESOURCE_ID_NOTEXIST;
-        else return ResponseCode.OK;
+        flashSalePoMapper.updateByPrimaryKeySelective(po);
+        return ResponseCode.OK;
     }
 
     public ReturnObject<FlashSaleItemBo> newFlashSaleItem(Long flashsaleId, NewFlashSaleSkuVo vo) {

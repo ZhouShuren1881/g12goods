@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
+
 @Repository
 public class GoodDao {
 
@@ -138,12 +140,12 @@ public class GoodDao {
 
     public ReturnObject<SkuBo> getSkuBoById(Long skuId) {
         var targetSku = skuPoMapper.selectByPrimaryKey(skuId);
-        if (targetSku == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (targetSku == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         var targetSkuPrice = skuPriceDao.getSkuPrice(targetSku);
 
         var returnObject = shareUnion.skuSharable(skuId);
-        var targetSkuShareable = (returnObject.getCode() == ResponseCode.OK && returnObject.getData());
+        var targetSkuShareable = (returnObject.getCode() == OK && returnObject.getData());
 
         var spuBo = getSpu(targetSku.getGoodsSpuId());
         var skuBo = new SkuBo(targetSku, targetSkuPrice, targetSkuShareable, spuBo);
@@ -154,11 +156,11 @@ public class GoodDao {
         var goodsSkuExample = new GoodsSkuPoExample();
         goodsSkuExample.createCriteria().andSkuSnEqualTo(vo.getSn());
         var confictList = skuPoMapper.selectByExample(goodsSkuExample);
-        if (confictList.size()!=0) return new ReturnObject<>(ResponseCode.SKUSN_SAME);
+        if (confictList.size()!=0) return new ReturnObject<>(SKUSN_SAME);
 
         var goodsSpu = spuPoMapper.selectByPrimaryKey(spuId);
         if (goodsSpu == null || !goodsSpu.getShopId().equals(shopId))
-            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         var newSkuPo = new GoodsSkuPo();
         newSkuPo.setGoodsSpuId(spuId);
@@ -181,7 +183,7 @@ public class GoodDao {
 
     public ResponseCode uploadSkuImg(Long shopId, Long skuId) {
         // TODO upload image...
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode changeSkuState(Long skuId, Byte state) {
@@ -190,15 +192,18 @@ public class GoodDao {
         skuPo.setState(state);
         skuPo.setGmtModified(LocalDateTime.now());
         skuPoMapper.updateByPrimaryKeySelective(skuPo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode modifySku(Long skuId, ModifySkuVo vo) {
+        var skuExistPo = skuPoMapper.selectByPrimaryKey(skuId);
+        if (skuExistPo == null) return RESOURCE_ID_NOTEXIST;
+
         var skuPo = vo.convertToGoodsSkuPo();
         skuPo.setId(skuId);
         skuPo.setGmtModified(LocalDateTime.now());
         skuPoMapper.updateByPrimaryKeySelective(skuPo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ReturnObject<List<GoodsCategoryPo>> getSubCategory(Long pid) {
@@ -206,7 +211,7 @@ public class GoodDao {
 
         // if pid==zero no subcategory
         var categoryPo = goodsCategoryPoMapper.selectByPrimaryKey(pid);
-        if (categoryPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (categoryPo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         var categoryExample = new GoodsCategoryPoExample();
         categoryExample.createCriteria().andPidEqualTo(pid);
@@ -217,13 +222,13 @@ public class GoodDao {
     public ReturnObject<CategoryBo> newCategory(Long pid, String name) {
         if (pid != 0) {
             var categoryParent = goodsCategoryPoMapper.selectByPrimaryKey(pid);
-            if (categoryParent == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            if (categoryParent == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
         }
 
         var categoryExample = new GoodsCategoryPoExample();
         categoryExample.createCriteria().andNameEqualTo(name);
         var categoryList = goodsCategoryPoMapper.selectByExample(categoryExample);
-        if (!categoryList.isEmpty()) return new ReturnObject<>(ResponseCode.CATEGORY_NAME_SAME);
+        if (!categoryList.isEmpty()) return new ReturnObject<>(CATEGORY_NAME_SAME);
 
         var categoryPo = new GoodsCategoryPo();
         categoryPo.setName(name);
@@ -239,17 +244,19 @@ public class GoodDao {
     }
 
     public ResponseCode modifyCategory(Long categoryId, String name) {
+        var categoryExistPo = goodsCategoryPoMapper.selectByPrimaryKey(categoryId);
+        if (categoryExistPo == null) return RESOURCE_ID_NOTEXIST;
+
         var categoryExample = new GoodsCategoryPoExample();
         categoryExample.createCriteria().andNameEqualTo(name);
         var categoryList = goodsCategoryPoMapper.selectByExample(categoryExample);
-        if (!categoryList.isEmpty()) return ResponseCode.CATEGORY_NAME_SAME;
+        if (!categoryList.isEmpty()) return CATEGORY_NAME_SAME;
 
         var categoryPo = new GoodsCategoryPo();
         categoryPo.setId(categoryId);
         categoryPo.setName(name);
-        int rows = goodsCategoryPoMapper.updateByPrimaryKeySelective(categoryPo);
-        if (rows == 0) return ResponseCode.RESOURCE_ID_NOTEXIST;
-        return ResponseCode.OK;
+        goodsCategoryPoMapper.updateByPrimaryKeySelective(categoryPo);
+        return OK;
     }
 
     public ResponseCode deleteCategory(Long categoryId) {
@@ -257,7 +264,7 @@ public class GoodDao {
         // 将spu中的类目设置为类目的pid
 
         var targetCategory = goodsCategoryPoMapper.selectByPrimaryKey(categoryId);
-        if (targetCategory == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (targetCategory == null) return RESOURCE_ID_NOTEXIST;
 
         var childCategoryExample = new GoodsCategoryPoExample();
         var childCategoryPo = new GoodsCategoryPo();
@@ -271,12 +278,12 @@ public class GoodDao {
         goodsCategoryPoMapper.updateByExampleSelective(childCategoryPo, childCategoryExample);
         spuPoMapper.updateByExampleSelective(childSpuPo, childSpuExample);
         goodsCategoryPoMapper.deleteByPrimaryKey(categoryId);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ReturnObject<SpuBo> getSpuById(Long spuId) {
         var spuBo = getSpu(spuId);
-        if (spuBo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (spuBo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
         return new ReturnObject<>(spuBo);
     }
 
@@ -336,6 +343,9 @@ public class GoodDao {
     }
 
     public ResponseCode modifySpu(ModifySpuVo vo, Long spuId) {
+        var spuExistPo = spuPoMapper.selectByPrimaryKey(spuId);
+        if (spuExistPo == null) return RESOURCE_ID_NOTEXIST;
+
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setName(vo.getName());
@@ -344,7 +354,7 @@ public class GoodDao {
         spuPo.setGmtModified(LocalDateTime.now());
 
         spuPoMapper.updateByPrimaryKeySelective(spuPo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode deleteSpu(Long spuId) {
@@ -360,7 +370,7 @@ public class GoodDao {
         spuPo.setDisabled((byte)1);
         spuPo.setGmtModified(LocalDateTime.now());
         spuPoMapper.updateByPrimaryKeySelective(spuPo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     // Sku onshelves -> change sku state
@@ -380,7 +390,7 @@ public class GoodDao {
                                 || item.getEndTime().isAfter(vo.getBeginTime())
                                 && item.getEndTime().isBefore(vo.getEndTime())
                 ).collect(Collectors.toList());
-        if (conflictList.size() != 0) return new ReturnObject<>(ResponseCode.SKUPRICE_CONFLICT);
+        if (conflictList.size() != 0) return new ReturnObject<>(SKUPRICE_CONFLICT);
 
         var floatPricePo = new FloatPricePo();
         floatPricePo.setGoodsSkuId(skuId);
@@ -409,14 +419,14 @@ public class GoodDao {
         floatPricePo.setValid((byte)0);
         floatPricePo.setGmtModified(LocalDateTime.now());
         floatPricePoMapper.updateByPrimaryKeySelective(floatPricePo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ReturnObject<BrandBo> newBrand(NewBrandVo vo) {
         var brandExample = new BrandPoExample();
         brandExample.createCriteria().andNameEqualTo(vo.getName());
         var brandList = brandPoMapper.selectByExample(brandExample);
-        if (!brandList.isEmpty()) return new ReturnObject<>(ResponseCode.BRAND_NAME_SAME);
+        if (!brandList.isEmpty()) return new ReturnObject<>(BRAND_NAME_SAME);
 
         var brandPo = new BrandPo();
         brandPo.setName(vo.getName());
@@ -430,7 +440,7 @@ public class GoodDao {
 
     // TODO updateBrandImg() { }
     public ResponseCode uploadBrandImg(Long shopId, Long brandId) {
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ReturnObject<ListBo<BrandBo>> getAllBrands(@NotNull Integer page, @NotNull Integer pageSize) {
@@ -448,11 +458,14 @@ public class GoodDao {
     }
 
     public ResponseCode modifyBrand(ModifyBrandVo vo, Long brandId) {
+        var brandExistPo = brandPoMapper.selectByPrimaryKey(brandId);
+        if (brandExistPo == null) return RESOURCE_ID_NOTEXIST;
+
         if (vo.getName() != null) {
             var brandExample = new BrandPoExample();
             brandExample.createCriteria().andNameEqualTo(vo.getName());
             var brandList = brandPoMapper.selectByExample(brandExample);
-            if (!brandList.isEmpty()) return ResponseCode.BRAND_NAME_SAME;
+            if (!brandList.isEmpty()) return BRAND_NAME_SAME;
         }
 
         var brandPo = new BrandPo();
@@ -461,67 +474,67 @@ public class GoodDao {
         brandPo.setDetail(vo.getDetail());
         brandPo.setGmtModified(LocalDateTime.now());
         int rows = brandPoMapper.updateByPrimaryKeySelective(brandPo);
-        if (rows == 0) return ResponseCode.RESOURCE_ID_NOTEXIST;
-        return ResponseCode.OK;
+        if (rows == 0) return RESOURCE_ID_NOTEXIST;
+        return OK;
     }
 
     public ResponseCode deleteBrand(Long brandId) {
         int rows = brandPoMapper.deleteByPrimaryKey(brandId);
-        if (rows == 0) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (rows == 0) return RESOURCE_ID_NOTEXIST;
 
         var spuExample = new GoodsSpuPoExample();
         var spuPo = new GoodsSpuPo();
         spuExample.createCriteria().andBrandIdEqualTo(brandId);
         spuPo.setBrandId(0L);
         spuPoMapper.updateByExampleSelective(spuPo, spuExample);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode addSpuIntoCategory(Long spuId, Long categoryId) {
         // spuId 由Controller层检查
         var category = goodsCategoryPoMapper.selectByPrimaryKey(categoryId);
-        if (category == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (category == null) return RESOURCE_ID_NOTEXIST;
 
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setCategoryId(categoryId);
         spuPoMapper.updateByPrimaryKeySelective(spuPo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode removeSpuFromCategory(Long spuId, Long categoryId) {
         // spuId 由Controller层检查
         var category = goodsCategoryPoMapper.selectByPrimaryKey(categoryId);
-        if (category == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (category == null) return RESOURCE_ID_NOTEXIST;
 
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setCategoryId(0L);
         spuPoMapper.updateByPrimaryKeySelective(spuPo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode addSpuIntoBrand(Long spuId, Long brandId) {
         // spuId 由Controller层检查
         var brandPo = brandPoMapper.selectByPrimaryKey(brandId);
-        if (brandPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (brandPo == null) return RESOURCE_ID_NOTEXIST;
 
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setBrandId(brandId);
         spuPoMapper.updateByPrimaryKeySelective(spuPo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode removeSpuFromBrand(Long spuId, Long brandId) {
         // spuId 由Controller层检查
         var brandPo = brandPoMapper.selectByPrimaryKey(brandId);
-        if (brandPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (brandPo == null) return RESOURCE_ID_NOTEXIST;
 
         var spuPo = new GoodsSpuPo();
         spuPo.setId(spuId);
         spuPo.setBrandId(0L);
         spuPoMapper.updateByPrimaryKeySelective(spuPo);
-        return ResponseCode.OK;
+        return OK;
     }
 }
