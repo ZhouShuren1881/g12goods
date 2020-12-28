@@ -83,6 +83,9 @@ public class PresaleController {
     public Object newPresale(@PathVariable Long shopId, @PathVariable Long skuId,
                              @Validated @RequestBody NewPreSaleVo vo, HttpServletRequest request) {
         logger.info("newPresale controller shopid="+shopId);
+        if (request.getRequestURI().contains("shops/2/skus/3311/presales")) {
+            logger.info("- XNOTEX -");
+        }
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);

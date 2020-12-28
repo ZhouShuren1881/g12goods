@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.FieldPosition;
@@ -169,6 +171,13 @@ public class Common {
         }
     }
 
+    private static Object decorateStatus(Object responseUtilObject, HttpStatus httpStatus) {
+        var servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        var response = servletRequestAttributes.getResponse();
+        response.setStatus(httpStatus.value());
+        return responseUtilObject;
+    }
+
     /**
      * Modify by Luxun
      * 根据 errCode 修饰 API 返回对象的 HTTP Status
@@ -180,22 +189,22 @@ public class Common {
         switch (codeInt) {
 //            case INTERNAL_SERVER_ERR:
 //                // 500：数据库或其他严重错误
-//                return new ResponseEntity(
+//                return decorateStatus(
 //                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
 //                        HttpStatus.INTERNAL_SERVER_ERROR);
             case 503/*FIELD_NOTVALID*/:
                 // 503：字段不合法
-                return new ResponseEntity(
+                return decorateStatus(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.BAD_REQUEST);
             case 504/*RESOURCE_ID_NOTEXIST*/:
                 // 504：资源不存在
-                return new ResponseEntity(
+                return decorateStatus(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.NOT_FOUND);
             case 505/*RESOURCE_ID_OUTSCOPE*/:
                 // 505：操作的资源id不是自己的对象
-                return new ResponseEntity(
+                return decorateStatus(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.FORBIDDEN);
             case 0/*OK*/:
@@ -205,20 +214,20 @@ public class Common {
                     if (httpStatus == null)
                         return ResponseUtil.ok(data);
                     else
-                        return new ResponseEntity(ResponseUtil.ok(data), httpStatus);
+                        return decorateStatus(ResponseUtil.ok(data), httpStatus);
                 } else {
                     if (httpStatus == null)
                         return ResponseUtil.ok();
                     else
-                        return new ResponseEntity(ResponseUtil.ok(), httpStatus);
+                        return decorateStatus(ResponseUtil.ok(), httpStatus);
                 }
             default:
                 if (codeInt > 505 && codeInt < 600 || codeInt >= 900 && codeInt < 1000)
-                    return new ResponseEntity(
+                    return decorateStatus(
                             ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                             HttpStatus.BAD_REQUEST);
                 else
-                    return new ResponseEntity(
+                    return decorateStatus(
                             ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                             HttpStatus.INTERNAL_SERVER_ERROR);
         }
