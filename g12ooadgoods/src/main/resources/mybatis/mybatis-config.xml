@@ -39,7 +39,7 @@
         <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/FlashSalePoMapper.xml"/>
         <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/FlashSaleItemPoMapper.xml"/>
         <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/FloatPricePoMapper.xml"/>
-        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/FootPrintPoMapper.xml"/>
+<!--        <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/FootPrintPoMapper.xml"/>-->
         <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/FreightModelPoMapper.xml"/>
         <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/GoodsCategoryPoMapper.xml"/>
         <mapper resource="cn/edu/xmu/g12/g12ooadgoods/mapper/GoodsSkuPoMapper.xml"/>
