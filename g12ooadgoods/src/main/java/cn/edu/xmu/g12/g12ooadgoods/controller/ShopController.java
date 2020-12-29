@@ -107,11 +107,8 @@ public class ShopController {
     public Object shopOnshelves(@PathVariable Long shopId, HttpServletRequest request) {
         logger.info("shopOnshelves controller id= "+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
-
-        var userAndDepart = jwt.verifyTokenAndGetClaims(request.getHeader("authorization"));
-        var departId = userAndDepart.getDepartId();
-        if (!departId.equals(shopId) && departId != 1) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        // 只有平台管理员可以审核
+        if (Tool.noAccessToShop(request, 0L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         var responseCode = shopDao.changeShopState(shopId, (byte)2);
         return Tool.decorateCode(responseCode);
@@ -122,7 +119,8 @@ public class ShopController {
     public Object shopOffshelves(@PathVariable Long shopId, HttpServletRequest request) {
         logger.info("shopOffshelves controller id= "+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        // 只有平台管理员可以审核
+        if (Tool.noAccessToShop(request, 0L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         var responseCode = shopDao.changeShopState(shopId, (byte)1);
         return Tool.decorateCode(responseCode);
