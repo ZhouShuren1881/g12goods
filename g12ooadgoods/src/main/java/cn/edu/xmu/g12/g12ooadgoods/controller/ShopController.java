@@ -82,22 +82,23 @@ public class ShopController {
     }
 
     @ResponseBody
-    @PutMapping("/shops/{shopId}/newshops/{id}/audit")
-    public Object auditShop(@PathVariable Long shopId, @PathVariable Long id,
+    @PutMapping("/shops/{shopId}/newshops/{aimShopId}/audit")
+    public Object auditShop(@PathVariable Long shopId, @PathVariable Long aimShopId,
                             @Validated @RequestBody NewShopAuditVo vo, BindingResult bindingResult,
                             HttpServletRequest request, HttpServletResponse response) {
-        logger.info("auditShop controller shopid="+shopId+",id= "+id);
+        logger.info("auditShop controller shopid="+shopId+",aimShopId= "+ aimShopId);
 
         // 只有平台管理员可以审核
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 0L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if(object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        if (!shopId.equals(id)) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+//        //shopId是操作者的权限，aimShopId是操作目标
+//        if (!shopId.equals(aimShopId)) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        var responseCode = shopDao.changeShopState(id, vo.getConclusion() ? (byte)1 : (byte)4);
+        var responseCode = shopDao.changeShopState(aimShopId, vo.getConclusion() ? (byte)1 : (byte)4);
         return Tool.decorateCode(responseCode);
     }
 
