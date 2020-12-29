@@ -2,11 +2,8 @@ package cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon;
 
 import cn.edu.xmu.g12.g12ooadgoods.model.po.CouponActivityPo;
 import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
@@ -34,13 +31,13 @@ public class ModifyCouponActivityVo {
     @Nullable
 //    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime end_time;
+    private LocalDateTime endTime;
 
     @Nullable
     private String strategy;
 
     public boolean isInvalid(CouponActivityPo po) {
-        if (Tool.allNull(name, quantity, beginTime, end_time, strategy))
+        if (Tool.allNull(name, quantity, beginTime, endTime, strategy))
             return true;
 
         if (name != null) {
@@ -50,7 +47,7 @@ public class ModifyCouponActivityVo {
         if (quantity != null && quantity < 0) return true;
 
         var stime = beginTime==null?po.getBeginTime():beginTime;
-        var etime = end_time==null?po.getEndTime():end_time;
+        var etime = endTime ==null?po.getEndTime(): endTime;
         if (stime != null && etime != null && !stime.isBefore(etime)) return true;
 
         return false;

@@ -16,7 +16,6 @@ import cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon.ModifyCouponActivityVo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon.NewCouponVo;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import cn.edu.xmu.g12.g12ooadgoods.util.ReturnObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -235,7 +234,8 @@ public class CouponDao {
     public ResponseCode modifyCouponActivity(Long couponActId, ModifyCouponActivityVo vo) {
         var couponAct = couponActivityPoMapper.selectByPrimaryKey(couponActId);
         if (couponAct == null) return RESOURCE_ID_NOTEXIST;
-        
+        if (couponAct.getState() == 2) return RESOURCE_ID_NOTEXIST;
+
         if (vo.isInvalid(couponAct)) return FIELD_NOTVALID;
         
         if (couponAct.getState() != 0) return COUPON_STATENOTALLOW;
@@ -244,7 +244,7 @@ public class CouponDao {
         couponAct.setName(vo.getName());
         couponAct.setQuantity(vo.getQuantity());
         couponAct.setBeginTime(vo.getBeginTime());
-        couponAct.setEndTime(vo.getEnd_time());
+        couponAct.setEndTime(vo.getEndTime());
         couponAct.setStrategy(vo.getStrategy());
 
         return OK;
@@ -266,6 +266,9 @@ public class CouponDao {
     }
 
     public ResponseCode addSkuListIntoCoupon(Long shopId, Long couponActId, List<Long> skuIdList) {
+        var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
+        if (couponActPo.getState() == 2) return RESOURCE_ID_NOTEXIST;
+
         var skuPoList = new ArrayList<GoodsSkuPo>();
         for (var item : skuIdList) {
             var skuPo = goodsSkuPoMapper.selectByPrimaryKey(item);
