@@ -137,8 +137,8 @@ public class GrouponDao {
 
         var grouponExample = new GrouponActivityPoExample();
         grouponExample.createCriteria().andGoodsSpuIdEqualTo(spuId);
-        var grouponPo = grouponActivityPoMapper.selectByExample(grouponExample);
-        if (grouponPo != null) return new ReturnObject<>(ResponseCode.PRESALE_STATENOTALLOW);
+        var grouponPoList = grouponActivityPoMapper.selectByExample(grouponExample);
+        if (grouponPoList.size() > 0) return new ReturnObject<>(ResponseCode.FIELD_NOTVALID);/* Spu预售已经存在 */
 
         var newPo = new GrouponActivityPo();
         newPo.setName(UUID.randomUUID().toString());
@@ -169,7 +169,7 @@ public class GrouponDao {
 
         if (vo.isInvalid(grouponPo)) return ResponseCode.FIELD_NOTVALID;
 
-        if (grouponPo.getState() != 0) return ResponseCode.PRESALE_STATENOTALLOW;
+//        if (grouponPo.getState() != 0) return ResponseCode.GROUPON_STATENOTALLOW;
 
         var updatePo = new GrouponActivityPo();
         updatePo.setId(grouponId);

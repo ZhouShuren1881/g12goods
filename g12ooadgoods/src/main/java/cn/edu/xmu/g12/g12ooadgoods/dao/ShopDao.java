@@ -14,6 +14,8 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
+
 @Repository
 public class ShopDao {
     private static final Logger logger = LoggerFactory.getLogger(ShopDao.class);
@@ -39,26 +41,32 @@ public class ShopDao {
 
     public ResponseCode modifyShop(Long shopId, String name) {
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (shopPo == null) return RESOURCE_ID_NOTEXIST;
 
         var shopSet = new ShopPo();
         shopSet.setId(shopId);
         shopSet.setName(name);
         shopSet.setGmtModified(LocalDateTime.now());
         shopPoMapper.updateByPrimaryKeySelective(shopSet);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode changeShopState(Long shopId, Byte state) {
         var shopExistPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopExistPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-        if (shopExistPo.getState().equals(state)) return ResponseCode.STATE_NOCHANGE;
+        if (shopExistPo == null) return RESOURCE_ID_NOTEXIST;
+        var existState = shopExistPo.getState();
+        if (existState.equals(state)) return STATE_NOCHANGE;
+
+        if (existState == 3 || existState == 4) return SHOP_STATENOTALLOW;
+        if (existState == 0 && state != 1 && state != 4) return SHOP_STATENOTALLOW;
+        if (existState == 1 && state != 2 && state != 3) return SHOP_STATENOTALLOW;
+        if (existState == 2 && state != 1 && state != 3) return SHOP_STATENOTALLOW;
 
         var shopPo = new ShopPo();
         shopPo.setId(shopId);
         shopPo.setState(state);
         shopPo.setGmtModified(LocalDateTime.now());
         shopPoMapper.updateByPrimaryKeySelective(shopPo);
-        return ResponseCode.OK;
+        return OK;
     }
 }

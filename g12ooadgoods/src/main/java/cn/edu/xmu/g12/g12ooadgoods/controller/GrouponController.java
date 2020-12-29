@@ -88,8 +88,8 @@ public class GrouponController {
             pageSize = pageTool.getPageSize();
         }
 
-        return ResponseUtil.ok(
-                grouponDao.getAllGrouponByAdmin(shopId, spuId, beginTime, endTime, state, page, pageSize));
+        return Tool.decorateObject(new ReturnObject<>(
+                grouponDao.getAllGrouponByAdmin(shopId, spuId, beginTime, endTime, state, page, pageSize)));
     }
 
     @ResponseBody
