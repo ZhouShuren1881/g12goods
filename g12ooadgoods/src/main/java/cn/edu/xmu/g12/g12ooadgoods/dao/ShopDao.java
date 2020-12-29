@@ -57,6 +57,7 @@ public class ShopDao {
         var existState = shopExistPo.getState();
         if (existState.equals(state)) return STATE_NOCHANGE;
 
+        logger.info("<changeShopState> exist state="+existState+" aim state="+state);
         if (existState == 3 || existState == 4) return SHOP_STATENOTALLOW;
         if (existState == 0 && state != 1 && state != 4) return SHOP_STATENOTALLOW;
         if (existState == 1 && state != 2 && state != 3) return SHOP_STATENOTALLOW;

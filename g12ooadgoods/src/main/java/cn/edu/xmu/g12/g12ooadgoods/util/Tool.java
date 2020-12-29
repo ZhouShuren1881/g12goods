@@ -64,7 +64,7 @@ public class Tool {
     }
 
     /**
-     * 要求shopId对应于一家具体的店铺，可以是 1L，相当于管理员
+     * 要求shopId对应于一家店铺，可以是 0L，相当于管理员
      */
     public static boolean noAccessToShop(HttpServletRequest request, Long shopId) {
         var ud = parseJwtAndGetUD(request, shopId);
@@ -77,7 +77,7 @@ public class Tool {
             return LocalDateTime.parse(text);
         } catch (Exception e) {
             try {
-                var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
                 return LocalDateTime.parse(text, formatter);
             } catch (Exception e2) {
                 return null;

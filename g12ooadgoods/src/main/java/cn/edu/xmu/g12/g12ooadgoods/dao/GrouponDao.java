@@ -107,7 +107,6 @@ public class GrouponDao {
     }
 
     // GET /shops/{shopId}/groupons
-    // TODO 检查 beginTime & endTime 必须同时为null或同时不为null
     public ListBo<GrouponOverview> getAllGrouponByAdmin(
             Long shopId,
             @Nullable Long spuId,
@@ -121,7 +120,9 @@ public class GrouponDao {
         criteria.andShopIdEqualTo(shopId);
 
         /* beginTime & endTime 必须同时为null或同时不为null */
-        if (beginTime != null) criteria.andBeginTimeBetween(beginTime, endTime).andEndTimeBetween(beginTime, endTime);
+        var now = LocalDateTime.now();
+        if (beginTime != null) criteria.andEndTimeGreaterThan(now);
+        if (endTime   != null) criteria.andBeginTimeLessThan(now);
         if (spuId     != null) criteria.andGoodsSpuIdEqualTo(spuId);
         if (state     != null) criteria.andStateEqualTo(state);
 
