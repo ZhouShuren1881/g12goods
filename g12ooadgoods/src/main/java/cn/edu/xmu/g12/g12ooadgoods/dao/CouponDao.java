@@ -232,10 +232,7 @@ public class CouponDao {
         ));
     }
 
-    public ResponseCode modifyCouponActivity(Long shopId, Long couponActId, ModifyCouponActivityVo vo) {
-        var shop = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shop == null) return RESOURCE_ID_NOTEXIST;
-
+    public ResponseCode modifyCouponActivity(Long couponActId, ModifyCouponActivityVo vo) {
         var couponAct = couponActivityPoMapper.selectByPrimaryKey(couponActId);
         if (couponAct == null) return RESOURCE_ID_NOTEXIST;
         
@@ -253,10 +250,7 @@ public class CouponDao {
         return OK;
     }
 
-    public ResponseCode changeCouponActivityState(Long shopId, Long couponActId, Byte state) {
-        var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
-        if (shopPo == null) return RESOURCE_ID_NOTEXIST;
-
+    public ResponseCode changeCouponActivityState(Long couponActId, Byte state) {
         var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
         if (couponActPo == null) return RESOURCE_ID_NOTEXIST;
 

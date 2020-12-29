@@ -42,7 +42,8 @@ public class NewPreSaleVo {
         if (advancePayPrice == null || advancePayPrice < 0) return true;
         if (restPayPrice == null || restPayPrice < 0) return true;
         if (quantity == null || quantity <= 0) return true;
-        if (!(beginTime.isBefore(payTime) && payTime.isBefore(endTime))) return true;
+        if (!(LocalDateTime.now().isBefore(beginTime)
+                && beginTime.isBefore(payTime) && payTime.isBefore(endTime))) return true;
 
         return false;
     }

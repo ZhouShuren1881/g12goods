@@ -160,13 +160,14 @@ public class CouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
+        logger.info(code.toString());
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        return Tool.decorateCode(couponDao.modifyCouponActivity(shopId, couponActId, vo));
+        return Tool.decorateCode(couponDao.modifyCouponActivity(couponActId, vo));
     }
 
     @ResponseBody
@@ -181,7 +182,7 @@ public class CouponController {
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
-        return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)2));
+        return Tool.decorateCode(couponDao.changeCouponActivityState(couponActId, (byte)2));
     }
 
     @ResponseBody
@@ -197,8 +198,11 @@ public class CouponController {
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
-        if (skuIdList == null || skuIdList.size() == 0)
+
+        if (skuIdList == null || skuIdList.size() == 0) {
+            logger.warn("skuIdList == null || skuIdList.size() == 0"+skuIdList);
             return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        }
         skuIdList = skuIdList.stream().filter(item -> item == null || item <= 0).collect(Collectors.toList());
         if (skuIdList.size() == 0) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
@@ -274,7 +278,7 @@ public class CouponController {
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
-        return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)1));
+        return Tool.decorateCode(couponDao.changeCouponActivityState(couponActId, (byte)1));
     }
 
     @ResponseBody
@@ -288,7 +292,7 @@ public class CouponController {
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
-        return Tool.decorateCode(couponDao.changeCouponActivityState(shopId, couponActId, (byte)0));
+        return Tool.decorateCode(couponDao.changeCouponActivityState(couponActId, (byte)0));
     }
 
 

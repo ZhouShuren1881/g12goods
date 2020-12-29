@@ -109,8 +109,8 @@ public class ExistBelongDao {
 
     public ResponseCode couponActBelongToShop(Long couponId, Long shopId) {
         if (couponId == null || couponId <= 0 || shopId == null) return notexist;
-        var groupon = couponActivityPoMapper.selectByPrimaryKey(couponId);
-        if (groupon == null) return notexist;
-        return groupon.getShopId().equals(shopId) ? ok : outscope;
+        var coupon = couponActivityPoMapper.selectByPrimaryKey(couponId);
+        if (coupon == null) return notexist;
+        return coupon.getShopId().equals(shopId) ? ok : outscope;
     }
 }

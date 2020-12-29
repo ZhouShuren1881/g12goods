@@ -15,8 +15,8 @@ public class HttpExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(HttpExceptionHandler.class);
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Object jsonParseException(HttpMessageNotReadableException e) {
-        logger.warn("Met a new json parse exception");
+    public Object httpParseException(HttpMessageNotReadableException e) {
+        logger.warn("Met an HttpMessageNotReadableException!");
         logger.warn(e.getMessage());
 
         return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);

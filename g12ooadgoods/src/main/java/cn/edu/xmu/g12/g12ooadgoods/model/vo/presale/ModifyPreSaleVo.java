@@ -56,7 +56,8 @@ public class ModifyPreSaleVo {
         var ptime = payTime==null?po.getPayTime():payTime;
         var etime = endTime==null?po.getEndTime():endTime;
         if (stime != null && ptime != null && etime != null &&
-                !(stime.isBefore(ptime) && ptime.isBefore(etime))) return true;
+                !(LocalDateTime.now().isBefore(stime) && stime.isBefore(ptime) && ptime.isBefore(etime)))
+            return true;
 
         return false;
     }
