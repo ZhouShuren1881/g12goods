@@ -199,11 +199,10 @@ public class CouponController {
 
 
         logger.warn("skuIdList == null || skuIdList.size() == 0"+skuIdList);
-        if (skuIdList == null) logger.warn("skuIdList == null || skuIdList.size() == 0; size="+skuIdList.size());
         if (skuIdList == null || skuIdList.size() == 0) {
             return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
         }
-        skuIdList = skuIdList.stream().filter(item -> item == null || item <= 0).collect(Collectors.toList());
+        skuIdList = skuIdList.stream().filter(item -> item != null && item > 0).collect(Collectors.toList());
         if (skuIdList.size() == 0) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
         return Tool.decorateCode(couponDao.addSkuListIntoCoupon(shopId, couponActId, skuIdList));
