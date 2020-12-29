@@ -254,8 +254,6 @@ public class CouponDao {
         var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
         if (couponActPo == null) return RESOURCE_ID_NOTEXIST;
 
-        logger.info("<changeCouponActivityState>" + couponActPo.getState());
-
         if (state == 2 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
         if (state == 1 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
         if (state == 0 && couponActPo.getState() != 1) return COUPON_STATENOTALLOW;
@@ -267,7 +265,7 @@ public class CouponDao {
         return OK;
     }
 
-    public ResponseCode addSkuListIntoCouponSku(Long shopId, Long couponActId, List<Long> skuIdList) {
+    public ResponseCode addSkuListIntoCoupon(Long shopId, Long couponActId, List<Long> skuIdList) {
         var skuPoList = new ArrayList<GoodsSkuPo>();
         for (var item : skuIdList) {
             var skuPo = goodsSkuPoMapper.selectByPrimaryKey(item);
@@ -288,7 +286,7 @@ public class CouponDao {
         return OK;
     }
 
-    public ResponseCode deleteSkuListFromCouponSku(Long shopId, Long couponActId, List<Long> skuIdList) {
+    public ResponseCode deleteSkuListFromCoupon(Long shopId, Long couponActId, List<Long> skuIdList) {
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
         if (shopPo == null) return RESOURCE_ID_NOTEXIST;
 

@@ -186,7 +186,7 @@ public class CouponController {
 
     @ResponseBody
     @PostMapping("/shops/{shopId}/couponactivities/{couponActId}/skus")
-    public Object addSkuListIntoCouponSku(
+    public Object addSkuListIntoCoupon(
             @PathVariable Long shopId,
             @PathVariable Long couponActId,
             @RequestBody List<Long> skuIdList,
@@ -198,19 +198,20 @@ public class CouponController {
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
 
+        logger.warn("skuIdList == null || skuIdList.size() == 0"+skuIdList);
+        if (skuIdList == null) logger.warn("skuIdList == null || skuIdList.size() == 0; size="+skuIdList.size());
         if (skuIdList == null || skuIdList.size() == 0) {
-            logger.warn("skuIdList == null || skuIdList.size() == 0"+skuIdList);
             return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
         }
         skuIdList = skuIdList.stream().filter(item -> item == null || item <= 0).collect(Collectors.toList());
         if (skuIdList.size() == 0) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        return Tool.decorateCode(couponDao.addSkuListIntoCouponSku(shopId, couponActId, skuIdList));
+        return Tool.decorateCode(couponDao.addSkuListIntoCoupon(shopId, couponActId, skuIdList));
     }
 
     @ResponseBody
     @DeleteMapping("/shops/{shopId}/couponskus/{couponActId}")
-    public Object deleteSkuListFromCouponSku(
+    public Object deleteSkuListFromCoupon(
             @PathVariable Long shopId,
             @PathVariable Long couponActId,
             @RequestBody List<Long> skuIdList,
@@ -226,7 +227,7 @@ public class CouponController {
         skuIdList = skuIdList.stream().filter(item -> item == null || item <= 0).collect(Collectors.toList());
         if (skuIdList.size() == 0) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
 
-        return Tool.decorateCode(couponDao.deleteSkuListFromCouponSku(shopId, couponActId, skuIdList));
+        return Tool.decorateCode(couponDao.deleteSkuListFromCoupon(shopId, couponActId, skuIdList));
     }
 
     @ResponseBody
