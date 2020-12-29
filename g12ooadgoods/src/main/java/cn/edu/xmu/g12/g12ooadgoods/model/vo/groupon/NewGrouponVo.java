@@ -28,7 +28,7 @@ public class NewGrouponVo {
     public boolean isInvalid() {
         strategy = strategy.trim();
         if (strategy.isEmpty()) return true;
-        if (!beginTime.isBefore(endTime)) return true;
+        if (LocalDateTime.now().isAfter(beginTime) || beginTime.isAfter(endTime)) return true;
         return false;
     }
 }

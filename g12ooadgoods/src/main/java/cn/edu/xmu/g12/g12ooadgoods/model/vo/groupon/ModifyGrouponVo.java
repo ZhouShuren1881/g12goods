@@ -29,7 +29,8 @@ public class ModifyGrouponVo {
         }
         var stime = beginTime==null?po.getBeginTime():beginTime;
         var etime = endTime==null?po.getEndTime():endTime;
-        if (stime != null && etime != null && !beginTime.isBefore(endTime)) return true;
+        if (stime != null && etime != null
+                && (LocalDateTime.now().isAfter(beginTime) || beginTime.isAfter(endTime)) ) return true;
 
         return false;
     }
