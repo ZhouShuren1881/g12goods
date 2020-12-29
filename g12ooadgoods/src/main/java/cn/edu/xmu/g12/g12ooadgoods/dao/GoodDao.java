@@ -60,8 +60,8 @@ public class GoodDao {
     @Autowired
     ShareServiceUnion shareUnion;
 
-    public Object getStates() {
-        return ResponseUtil.ok(GoodState.getAllStates());
+    public ReturnObject<List<GoodState>> getStates() {
+        return  new ReturnObject<>(GoodState.getAllStates());
     }
 
     private ReturnObject<ListBo<SkuOverview>> emptyReturnListBo(

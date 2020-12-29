@@ -33,7 +33,7 @@ public class GoodController {
 
     @ResponseBody
     @GetMapping("/skus/states")
-    public Object getStates() { return ResponseUtil.ok(goodDao.getStates()); }
+    public Object getStates() { return Tool.decorateObject(goodDao.getStates()); }
 
     @ResponseBody
     @GetMapping("/skus")
@@ -304,7 +304,8 @@ public class GoodController {
         if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
         if (vo.fieldCode() != OK) return Tool.decorateCode(vo.fieldCode());
 
-        return Tool.decorateObjectOKStatus(goodDao.newFloatPrice(vo, skuId, userId), HttpStatus.CREATED);
+        /** XuQingYun require OK */
+        return Tool.decorateObject(goodDao.newFloatPrice(vo, skuId, userId));
     }
 
     @ResponseBody
