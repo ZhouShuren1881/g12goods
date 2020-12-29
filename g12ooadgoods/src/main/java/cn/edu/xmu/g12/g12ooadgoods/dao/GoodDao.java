@@ -165,6 +165,7 @@ public class GoodDao {
         var newSkuPo = new GoodsSkuPo();
         newSkuPo.setGoodsSpuId(spuId);
         newSkuPo.setName(vo.getName());
+        newSkuPo.setSkuSn(vo.getSn());
         newSkuPo.setOriginalPrice(vo.getOriginalPrice());
         newSkuPo.setConfiguration(vo.getConfiguration());
         newSkuPo.setWeight(vo.getWeight());
@@ -187,6 +188,11 @@ public class GoodDao {
     }
 
     public ResponseCode changeSkuState(Long skuId, Byte state) {
+        var skuExistPo = skuPoMapper.selectByPrimaryKey(skuId);
+        if (skuExistPo == null) return RESOURCE_ID_NOTEXIST;
+
+        if (skuExistPo.getState().equals(state)) return STATE_NOCHANGE;
+
         var skuPo = new GoodsSkuPo();
         skuPo.setId(skuId);
         skuPo.setState(state);
@@ -378,6 +384,10 @@ public class GoodDao {
     // Sku offshelve -> change sku state
 
     public ReturnObject<FloatPriceBo> newFloatPrice(NewFloatPriceVo vo, Long skuId, Long userId) {
+        var skuPo = skuPoMapper.selectByPrimaryKey(skuId);
+        if (skuPo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
+        if (skuPo.getInventory() < vo.getQuantity()) return new ReturnObject<>(SKU_NOTENOUGH);
+
         var floatPriceExample = new FloatPricePoExample();
         floatPriceExample.createCriteria()
                 .andGoodsSkuIdEqualTo(skuId)

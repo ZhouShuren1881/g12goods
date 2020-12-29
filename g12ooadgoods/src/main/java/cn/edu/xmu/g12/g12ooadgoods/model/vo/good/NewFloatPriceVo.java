@@ -34,6 +34,9 @@ public class NewFloatPriceVo {
     private Integer quantity;
 
     public ResponseCode fieldCode() {
+        if (LocalDateTime.now().isAfter(beginTime)
+            || LocalDateTime.now().isAfter(endTime))
+            return FIELD_NOTVALID;
         if (beginTime.isAfter(endTime))
             return Log_Bigger;
         return OK;
