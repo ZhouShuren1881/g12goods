@@ -253,6 +253,7 @@ public class CouponDao {
     public ResponseCode changeCouponActivityState(Long couponActId, Byte state) {
         var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
         if (couponActPo == null) return RESOURCE_ID_NOTEXIST;
+        if (couponActPo.getState() == (byte)2) return RESOURCE_ID_NOTEXIST;
 
         if (state == 2 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
         if (state == 1 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
