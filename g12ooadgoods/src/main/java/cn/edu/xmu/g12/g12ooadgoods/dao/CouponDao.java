@@ -254,6 +254,8 @@ public class CouponDao {
         var couponActPo = couponActivityPoMapper.selectByPrimaryKey(couponActId);
         if (couponActPo == null) return RESOURCE_ID_NOTEXIST;
 
+        logger.info("<changeCouponActivityState>" + couponActPo.getState());
+
         if (state == 2 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
         if (state == 1 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
         if (state == 0 && couponActPo.getState() != 1) return COUPON_STATENOTALLOW;

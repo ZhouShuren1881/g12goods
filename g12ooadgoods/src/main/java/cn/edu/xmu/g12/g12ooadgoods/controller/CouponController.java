@@ -160,7 +160,6 @@ public class CouponController {
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
-        logger.info(code.toString());
         if (code != ResponseCode.OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
