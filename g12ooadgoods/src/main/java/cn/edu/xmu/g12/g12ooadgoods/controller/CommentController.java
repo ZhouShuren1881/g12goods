@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
+
 @RestController
 public class CommentController {
 
@@ -51,7 +53,7 @@ public class CommentController {
         var userId = Tool.parseJwtAndGetUser(request);
 
         /* 处理参数校验错误 */
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         var returnObject = commentDao.newSkuComment(orderItemId, userId, vo);
         return Tool.decorateObjectOKStatus(returnObject, HttpStatus.CREATED);
@@ -66,7 +68,7 @@ public class CommentController {
 
         var pageTool = PageTool.newPageTool(page, pageSize);
         if (pageTool == null) {
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
         } else {
             page = pageTool.getPage();
             pageSize = pageTool.getPageSize();
@@ -84,13 +86,16 @@ public class CommentController {
                                  HttpServletRequest request, HttpServletResponse response) {
         logger.info("confirmComment controller shopId="+shopId+" commentId="+commentId+" ConfirmCommentVo="+vo.toString());
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        var userId = Tool.parseJwtAndGetUser(request, shopId);
+        if (userId == null) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
+
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.commentBelongToShop(commentId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK && !(code == RESOURCE_ID_OUTSCOPE && userId == 1)) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if(object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if(object != null) return Tool.decorateCode(FIELD_NOTVALID);
 
         var responseCode = commentDao.confirmComment(shopId, commentId, vo);
         return Tool.decorateCode(responseCode);
@@ -107,7 +112,7 @@ public class CommentController {
 
         var pageTool = PageTool.newPageTool(page, pageSize);
         if (pageTool == null) {
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
         } else {
             page = pageTool.getPage();
             pageSize = pageTool.getPageSize();
@@ -127,12 +132,12 @@ public class CommentController {
                                         HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
-        if (state != null && (state < 0 || state > 2)) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (state != null && (state < 0 || state > 2)) return Tool.decorateCode(FIELD_NOTVALID);
         var pageTool = PageTool.newPageTool(page, pageSize);
         if (pageTool == null) {
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
         } else {
             page = pageTool.getPage();
             pageSize = pageTool.getPageSize();

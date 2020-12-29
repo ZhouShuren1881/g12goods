@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
+
 @RestController
 public class GoodController {
     private static final Logger logger = LoggerFactory.getLogger(GoodController.class);
@@ -48,11 +50,11 @@ public class GoodController {
             || skuSn != null && skuSn.length() == 0
             || spuId != null && spuId <= 0
             || spuSn != null && spuSn.length() == 0)
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
 
         var pageTool = PageTool.newPageTool(page, pageSize);
         if (pageTool == null) {
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
         } else {
             page = pageTool.getPage();
             pageSize = pageTool.getPageSize();
@@ -67,7 +69,7 @@ public class GoodController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         if (skuId == null || skuId < 0)
-            return Tool.decorateCode(ResponseCode.RESOURCE_ID_NOTEXIST);
+            return Tool.decorateCode(RESOURCE_ID_NOTEXIST);
 
         return Tool.decorateObject(goodDao.getSkuBoById(skuId));
     }
@@ -80,14 +82,14 @@ public class GoodController {
                          HttpServletRequest request, HttpServletResponse response) {
         logger.info("newSku controller shopid="+shopId+",spuid= "+spuId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newSku(shopId, spuId, vo), HttpStatus.CREATED);
     }
@@ -97,9 +99,9 @@ public class GoodController {
     public Object uploadSkuImg(@PathVariable Long shopId, @PathVariable Long skuId, HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         // TODO upload image...
         return Tool.decorateCodeOKStatus(goodDao.uploadSkuImg(shopId, skuId), HttpStatus.CREATED);
@@ -111,9 +113,9 @@ public class GoodController {
                             HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.changeSkuState(skuId, (byte)6));
     }
@@ -125,15 +127,15 @@ public class GoodController {
                             HttpServletRequest request, HttpServletResponse response) {
         logger.info("newSku controller shopid="+shopId+",skuId= "+skuId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
 
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateCode(goodDao.modifySku(skuId, vo));
     }
@@ -143,7 +145,7 @@ public class GoodController {
     public Object getSubCategory(@PathVariable Long pid) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (pid == null || pid <= 0) return Tool.decorateCode(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (pid == null || pid <= 0) return Tool.decorateCode(RESOURCE_ID_NOTEXIST);
 
         return Tool.decorateObject(goodDao.getSubCategory(pid));
     }
@@ -155,11 +157,11 @@ public class GoodController {
                               HttpServletRequest request, HttpServletResponse response) {
         logger.info("newCategory controller shopid="+shopId+",pid= "+pid);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newCategory(pid, vo.getName()), HttpStatus.CREATED);
     }
@@ -171,11 +173,11 @@ public class GoodController {
                                  HttpServletRequest request, HttpServletResponse response) {
         logger.info("modifyCategory controller shopid="+shopId+",pid= "+pid);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateCode(goodDao.modifyCategory(pid, vo.getName()));
     }
@@ -186,7 +188,7 @@ public class GoodController {
                                  HttpServletRequest request) {
         logger.info("deleteCategory controller shopid="+shopId+",pid= "+pid);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateCode(goodDao.deleteCategory(pid));
     }
@@ -205,7 +207,7 @@ public class GoodController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         var userId = Tool.parseJwtAndGetUser(request);
-        if (userId == null) return Tool.decorateCode(ResponseCode.AUTH_INVALID_JWT);
+        if (userId == null) return Tool.decorateCode(AUTH_INVALID_JWT);
 
         return Tool.decorateObject(goodDao.getSkuBoById(skuId));
     }
@@ -217,12 +219,12 @@ public class GoodController {
                          HttpServletRequest request, HttpServletResponse response) {
         logger.info("newSpu controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newSpu(vo, shopId), HttpStatus.CREATED);
     }
@@ -234,14 +236,14 @@ public class GoodController {
                           HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateCode(goodDao.modifySpu(vo, spuId));
     }
@@ -252,9 +254,9 @@ public class GoodController {
                           HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.deleteSpu(spuId));
     }
@@ -265,9 +267,9 @@ public class GoodController {
                              HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.changeSkuState(skuId, (byte)4));
     }
@@ -278,9 +280,9 @@ public class GoodController {
                               HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.changeSkuState(skuId, (byte)0));
     }
@@ -293,14 +295,14 @@ public class GoodController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         var userId = Tool.parseJwtAndGetUser(request, shopId);
-        if (userId == null) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (userId == null) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.fieldCode() != OK) return Tool.decorateCode(vo.fieldCode());
 
         return Tool.decorateObjectOKStatus(goodDao.newFloatPrice(vo, skuId, userId), HttpStatus.CREATED);
     }
@@ -312,9 +314,9 @@ public class GoodController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         var userId = Tool.parseJwtAndGetUser(request, shopId);
-        if (userId == null) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (userId == null) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.floatPriceBelongToShop(floatId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.endisableFloatPrice(floatId, userId));
     }
@@ -326,12 +328,12 @@ public class GoodController {
                          HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newBrand(vo), HttpStatus.CREATED);
     }
@@ -342,7 +344,7 @@ public class GoodController {
                                HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         // TODO upload image...
         return Tool.decorateCodeOKStatus(goodDao.uploadBrandImg(shopId, brandId), HttpStatus.CREATED);
     }
@@ -355,7 +357,7 @@ public class GoodController {
 
         var pageTool = PageTool.newPageTool(page, pageSize);
         if (pageTool == null) {
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
         } else {
             page = pageTool.getPage();
             pageSize = pageTool.getPageSize();
@@ -371,12 +373,12 @@ public class GoodController {
                             HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateCode(goodDao.modifyBrand(vo, brandId));
     }
@@ -387,7 +389,7 @@ public class GoodController {
                             HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateCode(goodDao.deleteBrand(brandId));
     }
@@ -398,9 +400,9 @@ public class GoodController {
                                    HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.addSpuIntoCategory(spuId, categoryId));
     }
@@ -411,9 +413,9 @@ public class GoodController {
                                       HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.removeSpuFromCategory(spuId, categoryId));
     }
@@ -424,9 +426,9 @@ public class GoodController {
                                 HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.addSpuIntoBrand(spuId, brandId));
     }
@@ -437,9 +439,9 @@ public class GoodController {
                                    HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.spuBelongToShop(spuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(goodDao.removeSpuFromBrand(spuId, brandId));
     }

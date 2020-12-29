@@ -38,8 +38,11 @@ public class Tool {
         if (userAndDepart == null) return null;
         var departId = userAndDepart.getDepartId();
         var userId = userAndDepart.getUserId();
-        if (!(departId.equals(shopId) && shopId != 0) && userId != 1 || shopId < 0) return null; // shopId可以为0
-        return userAndDepart;
+
+        if ( (departId.equals(shopId) && shopId != 0) && (userId == 1 && shopId >= 0))
+            return userAndDepart; // shopId可以为0
+
+        return null;
     }
 
     public static Long parseJwtAndGetUser(HttpServletRequest request, Long shopId) {

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 public class OrderServiceUnion {
     @DubboReference
     IOrderService orderService;
+
+    /** Order Item DTO */
     public ReturnObject<OrderDTO> getUserSelectSOrderInfo(Long userId, Long orderItemId) {
         return new Trans<OrderDTO>().ooad(orderService.getUserSelectSOrderInfo(userId, orderItemId));
     }

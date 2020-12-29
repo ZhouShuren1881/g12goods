@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
+
 /**
  * 将秒杀活动限定为平台管理员才能修改
  */
@@ -51,11 +53,12 @@ public class FlashsaleController {
                                HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.fieldCode() != OK) return vo.fieldCode();
 
         return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSale(vo, timesegId), HttpStatus.CREATED);
     }
@@ -75,7 +78,7 @@ public class FlashsaleController {
                                   HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)2));
     }
@@ -87,11 +90,12 @@ public class FlashsaleController {
                                   HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.fieldCode() != OK) return Tool.decorateCode(vo.fieldCode());
 
         return Tool.decorateCode(flashsaleDao.modifyFlashSale(vo, flashsaleId));
     }
@@ -102,7 +106,7 @@ public class FlashsaleController {
                                      HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)1));
     }
@@ -113,7 +117,7 @@ public class FlashsaleController {
                                       HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateCode(flashsaleDao.chagneFlashSaleState(flashsaleId, (byte)0));
     }
@@ -125,11 +129,11 @@ public class FlashsaleController {
                                    HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        if (object != null) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSaleItem(flashsaleId, vo), HttpStatus.CREATED);
     }
@@ -141,7 +145,7 @@ public class FlashsaleController {
                                       HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, 1L)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         return Tool.decorateCode(flashsaleDao.deleteFlashSaleItem(flashsaleId, flashsaleItemId));
     }

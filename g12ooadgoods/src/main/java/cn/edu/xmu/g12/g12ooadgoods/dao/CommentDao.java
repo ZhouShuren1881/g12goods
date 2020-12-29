@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
+
 @Repository
 public class CommentDao {
     private static final Logger logger = LoggerFactory.getLogger(CouponDao.class);
@@ -59,8 +61,18 @@ public class CommentDao {
     public ReturnObject<CommentBo> newSkuComment(Long orderItemId, Long userId, NewCommentVo vo) {
         var returnOrderDTO
                 = orderServiceUnion.getUserSelectSOrderInfo(userId, orderItemId);
-        if (returnOrderDTO.getCode() != ResponseCode.OK) return new ReturnObject<>(returnOrderDTO.getCode());
+        if (returnOrderDTO.getCode() != OK) {
+            if (returnOrderDTO.getCode() == RESOURCE_ID_OUTSCOPE)
+                return new ReturnObject<>(USER_NOTBUY);
+            else
+                return new ReturnObject<>(returnOrderDTO.getCode());
+        }
         var orderDTO = returnOrderDTO.getData();
+
+        var commentExample = new CommentPoExample();
+        commentExample.createCriteria().andOrderitemIdEqualTo(orderItemId);
+        var commentList = commentPoMapper.selectByExample(commentExample);
+        if (commentList.size() > 0) return new ReturnObject<>(COMMENT_EXISTED);
 
         var commentPo = new CommentPo();
         commentPo.setCustomerId(userId);
@@ -100,7 +112,7 @@ public class CommentDao {
             Long skuId, @NotNull  Integer page, @NotNull  Integer pageSize) {
 
         var skuPo = goodsSkuPoMapper.selectByPrimaryKey(skuId);
-        if (skuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (skuPo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         var commentExample = new CommentPoExample();
         commentExample.createCriteria().andGoodsSkuIdEqualTo(skuId);
@@ -119,14 +131,14 @@ public class CommentDao {
 //
 //        var returnOrderDTO
 //                = orderServiceUnion.getShopSelectOrderInfo(shopId, commentPo.getOrderitemId());
-//        if (returnOrderDTO.getCode() != ResponseCode.OK) return returnOrderDTO.getCode();
+//        if (returnOrderDTO.getCode() != OK) return returnOrderDTO.getCode();
 
         var updatePo = new CommentPo();
         updatePo.setId(commentId);
         updatePo.setState(vo.getConclusion() ? (byte)1 : (byte)2);
         updatePo.setGmtModified(LocalDateTime.now());
         commentPoMapper.updateByPrimaryKeySelective(updatePo);
-        return ResponseCode.OK;
+        return OK;
     }
 
     /**

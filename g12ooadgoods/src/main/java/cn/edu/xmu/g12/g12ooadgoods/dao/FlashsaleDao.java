@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
+
 @Repository
 public class FlashsaleDao {
     private static final Logger logger = LoggerFactory.getLogger(FlashsaleDao.class);
@@ -44,7 +46,7 @@ public class FlashsaleDao {
     /** TODO 响应式API */
     public List<FlashSaleItemBo> getFlashSaleItemInTimeSeg(Long timesegId) {
         var retTimeDTO = timeServiceUnion.getTimeSegmentId(timesegId);
-        if (retTimeDTO.getCode() != ResponseCode.OK) return new ArrayList<>();
+        if (retTimeDTO.getCode() != OK) return new ArrayList<>();
 
         var flashsaleExample = new FlashSalePoExample();
         flashsaleExample.createCriteria()
@@ -77,7 +79,7 @@ public class FlashsaleDao {
 
     public ReturnObject<FlashSaleBo> newFlashSale(NewFlashSaleVo vo, Long timesegId) {
         var retTimeDTO = timeServiceUnion.getTimeSegmentId(timesegId);
-        if (retTimeDTO.getCode() != ResponseCode.OK) return new ReturnObject<>(retTimeDTO.getCode());
+        if (retTimeDTO.getCode() != OK) return new ReturnObject<>(retTimeDTO.getCode());
 
         // 同时间段，未被删除的秒杀
         var flashsaleExample = new FlashSalePoExample();
@@ -87,7 +89,7 @@ public class FlashsaleDao {
         var sameTimeSegFlashSaleList = flashSalePoMapper.selectByExample(flashsaleExample);
         var conflictFlashSaleList = sameTimeSegFlashSaleList.stream()
                 .filter(item -> sameday(item.getFlashDate(), vo.getFlashDate())).collect(Collectors.toList());
-        if (conflictFlashSaleList.size() != 0) return new ReturnObject<>(ResponseCode.TIMESEG_CONFLICT);
+        if (conflictFlashSaleList.size() != 0) return new ReturnObject<>(TIMESEG_CONFLICT);
 
         var flashsalePo = new FlashSalePo();
         flashsalePo.setFlashDate(vo.getFlashDate());
@@ -104,7 +106,7 @@ public class FlashsaleDao {
     /** TODO 响应式API */
     public List<FlashSaleItemBo> getFlashSaleItemTimeSegNow() {
         var retTimeDTO = timeServiceUnion.getCurrentSegmentId();
-        if (retTimeDTO.getCode() != ResponseCode.OK)
+        if (retTimeDTO.getCode() != OK)
             return new ArrayList<>();
 
         return getFlashSaleItemInTimeSeg(retTimeDTO.getData());
@@ -112,34 +114,37 @@ public class FlashsaleDao {
 
     public ResponseCode chagneFlashSaleState(Long flashsaleId, Byte state) {
         var flashsalePo = flashSalePoMapper.selectByPrimaryKey(flashsaleId);
-        if (flashsalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
-        if (flashsalePo.getState().equals(state) || flashsalePo.getState() == (byte)2) return ResponseCode.OK;
+        if (flashsalePo == null) return RESOURCE_ID_NOTEXIST;
+        
+        if (flashsalePo.getState() == (byte)2) return RESOURCE_ID_NOTEXIST;
+        if (flashsalePo.getState() == (byte)1 && state == (byte)2) return ACTIVITYALTER_INVALID;
+        if (flashsalePo.getState().equals(state)) return STATE_NOCHANGE;
 
         var po = new FlashSalePo();
         po.setId(flashsaleId);
         po.setState(state);
         flashSalePoMapper.updateByPrimaryKeySelective(po);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ResponseCode modifyFlashSale(ModifyFlashSaleVo vo, Long flashsaleId) {
         var flashSaleExistPo = flashSalePoMapper.selectByPrimaryKey(flashsaleId);
-        if (flashSaleExistPo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (flashSaleExistPo == null) return RESOURCE_ID_NOTEXIST;
 
         var flashDate = vo.getFlashDate();
         var po = new FlashSalePo();
         po.setId(flashsaleId);
         po.setFlashDate(flashDate);
         flashSalePoMapper.updateByPrimaryKeySelective(po);
-        return ResponseCode.OK;
+        return OK;
     }
 
     public ReturnObject<FlashSaleItemBo> newFlashSaleItem(Long flashsaleId, NewFlashSaleSkuVo vo) {
         var flashsalePo = flashSalePoMapper.selectByPrimaryKey(flashsaleId);
-        if (flashsalePo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (flashsalePo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         var skuPo = goodsSkuPoMapper.selectByPrimaryKey(vo.getSkuId());
-        if (skuPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if (skuPo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
         var skuOverview = new SkuOverview(skuPo, skuPriceDao.getSkuPrice(skuPo));
 
         var flashSaleItemPo = new FlashSaleItemPo();
@@ -156,9 +161,9 @@ public class FlashsaleDao {
 
     public ResponseCode deleteFlashSaleItem(Long flashsaleId, Long flashsaleItemId) {
         var flashsaleItemPo = flashSaleItemPoMapper.selectByPrimaryKey(flashsaleItemId);
-        if (!flashsaleItemPo.getSaleId().equals(flashsaleId)) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if (!flashsaleItemPo.getSaleId().equals(flashsaleId)) return RESOURCE_ID_NOTEXIST;
 
         flashSaleItemPoMapper.deleteByPrimaryKey(flashsaleItemId);
-        return ResponseCode.OK;
+        return OK;
     }
 }

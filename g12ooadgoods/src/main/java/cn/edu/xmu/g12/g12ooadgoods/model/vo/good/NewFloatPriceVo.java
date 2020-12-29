@@ -1,17 +1,16 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.good;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
 
 @Data
 @ApiModel("新价格浮动传值对象")
@@ -34,7 +33,9 @@ public class NewFloatPriceVo {
     @Min(1)
     private Integer quantity;
 
-    public boolean isInvalid() {
-        return beginTime.isAfter(endTime);
+    public ResponseCode fieldCode() {
+        if (beginTime.isAfter(endTime))
+            return Log_Bigger;
+        return OK;
     }
 }
