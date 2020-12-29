@@ -58,7 +58,7 @@ public class FlashsaleController {
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
-        if (vo.fieldCode() != OK) return vo.fieldCode();
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSale(vo, timesegId), HttpStatus.CREATED);
     }
