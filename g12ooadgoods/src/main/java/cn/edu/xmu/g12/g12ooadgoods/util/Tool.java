@@ -39,7 +39,7 @@ public class Tool {
         var departId = userAndDepart.getDepartId();
         var userId = userAndDepart.getUserId();
 
-        if ( (departId.equals(shopId) && shopId != 0) && (userId == 1 && shopId >= 0))
+        if ( (departId.equals(shopId) && shopId != 0) || (userId == 1 && shopId >= 0))
             return userAndDepart; // shopId可以为0
 
         return null;
