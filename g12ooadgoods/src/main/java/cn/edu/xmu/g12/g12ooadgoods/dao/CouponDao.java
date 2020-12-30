@@ -238,7 +238,7 @@ public class CouponDao {
 
         if (vo.isInvalid(couponAct)) return FIELD_NOTVALID;
         
-        if (couponAct.getState() != 0) return COUPON_STATENOTALLOW;
+        if (couponAct.getState() != 0) return COUPONACT_STATENOTALLOW;
 
         couponAct = new CouponActivityPo();
         couponAct.setName(vo.getName());

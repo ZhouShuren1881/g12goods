@@ -1,5 +1,6 @@
 package cn.edu.xmu.g12.g12ooadgoods.model.vo.coupon;
 
+import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -13,6 +14,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
 
 @Data
 @ApiModel("新 Coupon 传值对象")
@@ -63,15 +66,16 @@ public class NewCouponVo {
     @Size(min = 1)
     private String strategy;
 
-    public boolean isInvalid() {
+    public ResponseCode fieldCode() {
+        var now = LocalDateTime.now();
         name = name.trim();
-        if (name.length() == 0) return true;
-        if (!(couponTime.isBefore(beginTime)&&beginTime.isBefore(endTime)))
-            return true;
+        if (name.length() == 0) return FIELD_NOTVALID;
+        if (!(now.isBefore(couponTime)&&couponTime.isBefore(beginTime)&&beginTime.isBefore(endTime)))
+            return Log_Bigger;
         strategy = strategy.trim();
-        if (strategy.isEmpty()) return true;
+        if (strategy.isEmpty()) return FIELD_NOTVALID;
 
-        return false;
+        return OK;
     }
 
 }

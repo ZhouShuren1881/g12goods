@@ -128,15 +128,15 @@ public class CommentDao {
      * @param shopId PathVariable JWT校验过，无需验证, shopId=0管理员
      */
     public ResponseCode confirmComment(Long shopId, Long commentId, ConfirmCommentVo vo) {
-//        var commentPo = commentPoMapper.selectByPrimaryKey(commentId);
-//
-//        var returnOrderDTO
-//                = orderServiceUnion.getShopSelectOrderInfo(shopId, commentPo.getOrderitemId());
-//        if (returnOrderDTO.getCode() != OK) return returnOrderDTO.getCode();
+        Byte state = vo.getConclusion() ? (byte)1 : (byte)2;
+
+        var commentPo = commentPoMapper.selectByPrimaryKey(commentId);
+        if (state.equals(commentPo.getState())) return STATE_NOCHANGE;
+//        if (commentPo.getState() != 0) return /*状态码中没有禁止码*/
 
         var updatePo = new CommentPo();
         updatePo.setId(commentId);
-        updatePo.setState(vo.getConclusion() ? (byte)1 : (byte)2);
+        updatePo.setState(state);
         updatePo.setGmtModified(LocalDateTime.now());
         commentPoMapper.updateByPrimaryKeySelective(updatePo);
         return OK;

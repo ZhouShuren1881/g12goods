@@ -91,7 +91,7 @@ public class CommentController {
 
 //        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.commentBelongToShop(commentId, shopId);
-        if (code != OK && !(code == RESOURCE_ID_OUTSCOPE && userId == 1)) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
