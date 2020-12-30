@@ -42,6 +42,7 @@ public class ShopDao {
     public ResponseCode modifyShop(Long shopId, String name) {
         var shopPo = shopPoMapper.selectByPrimaryKey(shopId);
         if (shopPo == null) return RESOURCE_ID_NOTEXIST;
+        if (shopPo.getState() == 4) return SHOP_STATENOTALLOW;
 
         var shopSet = new ShopPo();
         shopSet.setId(shopId);
