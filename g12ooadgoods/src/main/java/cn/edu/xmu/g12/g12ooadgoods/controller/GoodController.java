@@ -333,8 +333,11 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
+        logger.info("Default Vo check ↓");
         if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        logger.info("vo.isInvalid() check ↓");
         if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
+        logger.info("Controller validate done.");
 
         return Tool.decorateObjectOKStatus(goodDao.newBrand(vo), HttpStatus.CREATED);
     }
