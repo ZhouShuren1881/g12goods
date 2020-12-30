@@ -221,7 +221,7 @@ public class Common {
                             return decorateStatus(ResponseUtil.ok(rdata), httpStatus);
                     } else {
                         if (httpStatus == null)
-                            return ResponseUtil.ok();
+                            return ResponseUtil.ok(returnObject.getCode());
                         else
                             return decorateStatus(ResponseUtil.ok(), httpStatus);
                     }
