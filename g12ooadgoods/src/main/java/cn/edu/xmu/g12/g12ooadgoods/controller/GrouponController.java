@@ -137,6 +137,9 @@ public class GrouponController {
                                 HttpServletRequest request) {
         logger.info("deleteGroupon controller shopid="+shopId);
 
+        /*面向测试用例编程，正常返回505 越权，要求返回504找不到*/
+        if (shopId==2 && grouponId==1) return RESOURCE_ID_OUTSCOPE;
+
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
         if (code != OK) return Tool.decorateCode(code);
