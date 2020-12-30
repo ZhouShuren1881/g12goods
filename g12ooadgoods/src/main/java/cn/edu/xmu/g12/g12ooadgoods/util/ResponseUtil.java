@@ -39,27 +39,27 @@ import java.util.Map;
 public class ResponseUtil {
     public static Object ok() {
         Map<String, Object> obj = new HashMap<String, Object>();
-        obj.put("errno", cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.OK.getCode());
-        obj.put("errmsg", cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.OK.getMessage());
+        obj.put("errno", ResponseCode.OK.getCode());
+        obj.put("errmsg", ResponseCode.OK.getMessage());
         return obj;
     }
 
     public static Object ok(Object data) {
         Map<String, Object> obj = new HashMap<String, Object>();
-        obj.put("errno", cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.OK.getCode());
-        obj.put("errmsg", cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.OK.getMessage());
+        obj.put("errno", ResponseCode.OK.getCode());
+        obj.put("errmsg", ResponseCode.OK.getMessage());
         obj.put("data", data);
         return obj;
     }
 
-    public static Object fail(cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode code) {
+    public static Object fail(ResponseCode code) {
         Map<String, Object> obj = new HashMap<String, Object>();
         obj.put("errno", code.getCode());
         obj.put("errmsg", code.getMessage());
         return obj;
     }
 
-    public static Object fail(cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode code, String errmsg) {
+    public static Object fail(ResponseCode code, String errmsg) {
         Map<String, Object> obj = new HashMap<String, Object>();
         obj.put("errno", code.getCode());
         obj.put("errmsg", errmsg);

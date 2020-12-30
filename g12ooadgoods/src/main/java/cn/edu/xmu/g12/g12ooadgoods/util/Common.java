@@ -193,6 +193,7 @@ public class Common {
 //                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
 //                        HttpStatus.INTERNAL_SERVER_ERROR);
             case 503/*FIELD_NOTVALID*/:
+            case 610/*Log_Bigger*/:
                 // 503：字段不合法
                 return decorateStatus(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
@@ -212,19 +213,22 @@ public class Common {
                     return decorateStatus(
                             ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                             HttpStatus.BAD_REQUEST);
-                if ( codeInt == 0 || codeInt >= 900 && codeInt < 1000) {
-                    Object rdata = returnObject.getData();
-                    if (rdata != null) {
+                if ( codeInt == 0) {
+                    Object data = returnObject.getData();
+                    if (data != null) {
                         if (httpStatus == null)
-                            return ResponseUtil.ok(rdata);
+                            return ResponseUtil.ok(data);
                         else
-                            return decorateStatus(ResponseUtil.ok(rdata), httpStatus);
+                            return decorateStatus(ResponseUtil.ok(data), httpStatus);
                     } else {
                         if (httpStatus == null)
-                            return ResponseUtil.ok(returnObject.getCode());
+                            return ResponseUtil.ok();
                         else
                             return decorateStatus(ResponseUtil.ok(), httpStatus);
                     }
+                }
+                if (codeInt >= 900 && codeInt < 1000) {
+                    return ResponseUtil.fail(returnObject.getCode());
                 }
                 return decorateStatus(
                             ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
