@@ -263,7 +263,7 @@ public class CouponController {
         var userId = Tool.parseJwtAndGetUser(request);
         if (userId == null) return Tool.decorateCode(ResponseCode.AUTH_JWT_EXPIRED);
 
-        return Tool.decorateObject(couponDao.customerGetCoupon(userId, couponActId));
+        return Tool.decorateObjectOKStatus(couponDao.customerGetCoupon(userId, couponActId), HttpStatus.CREATED);
     }
 
     @ResponseBody

@@ -198,6 +198,8 @@ public class PresaleDao {
     public ResponseCode changePresaleState(Long presaleId, Byte state) {
         var presalePo = presaleActivityPoMapper.selectByPrimaryKey(presaleId);
 
+        logger.info("<changePresaleState> exist state="+presalePo.getState()+" aim state="+state);
+
         if (state.equals(presalePo.getState())) return STATE_NOCHANGE;
         if (state == 2 && presalePo.getState() != 0) return PRESALE_STATENOTALLOW;
         if (state == 1 && presalePo.getState() != 0) return PRESALE_STATENOTALLOW;
