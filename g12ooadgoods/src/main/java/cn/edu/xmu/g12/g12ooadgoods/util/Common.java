@@ -196,22 +196,22 @@ public class Common {
             case 610/*Log_Bigger*/:
                 // 503：字段不合法
                 return decorateStatus(
-                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                        ResponseUtil.fail(returnObject.getCode()),
                         HttpStatus.BAD_REQUEST);
             case 504/*RESOURCE_ID_NOTEXIST*/:
                 // 504：资源不存在
                 return decorateStatus(
-                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                        ResponseUtil.fail(returnObject.getCode()),
                         HttpStatus.NOT_FOUND);
             case 505/*RESOURCE_ID_OUTSCOPE*/:
                 // 505：操作的资源id不是自己的对象
                 return decorateStatus(
-                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                        ResponseUtil.fail(returnObject.getCode()),
                         HttpStatus.FORBIDDEN);
             default:
                 if (codeInt > 505 && codeInt < 600)
                     return decorateStatus(
-                            ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                            ResponseUtil.fail(returnObject.getCode()),
                             HttpStatus.BAD_REQUEST);
                 if ( codeInt == 0) {
                     Object data = returnObject.getData();
@@ -231,7 +231,7 @@ public class Common {
                     return ResponseUtil.fail(returnObject.getCode());
                 }
                 return decorateStatus(
-                            ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                            ResponseUtil.fail(returnObject.getCode()),
                             HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

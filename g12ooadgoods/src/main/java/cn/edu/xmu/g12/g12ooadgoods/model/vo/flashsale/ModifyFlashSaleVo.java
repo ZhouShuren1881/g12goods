@@ -23,7 +23,7 @@ public class ModifyFlashSaleVo {
 
     public ResponseCode fieldCode() {
         if (LocalDateTime.now().isAfter(flashDate))
-            return ACTIVITYALTER_INVALID;
+            return FIELD_NOTVALID;
         return OK;
     }
 }

@@ -77,6 +77,7 @@ public class CommentDao {
         var commentPo = new CommentPo();
         commentPo.setCustomerId(userId);
         commentPo.setGoodsSkuId(orderDTO.getSkuId());
+        commentPo.setOrderitemId(orderItemId);
         commentPo.setType(vo.getType());
         commentPo.setContent(vo.getContent());
         commentPo.setState((byte)0);

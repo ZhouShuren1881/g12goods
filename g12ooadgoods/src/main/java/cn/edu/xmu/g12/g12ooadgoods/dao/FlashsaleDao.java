@@ -130,6 +130,9 @@ public class FlashsaleDao {
     public ResponseCode modifyFlashSale(ModifyFlashSaleVo vo, Long flashsaleId) {
         var flashSaleExistPo = flashSalePoMapper.selectByPrimaryKey(flashsaleId);
         if (flashSaleExistPo == null) return RESOURCE_ID_NOTEXIST;
+        if (flashSaleExistPo.getFlashDate() != null
+            && LocalDateTime.now().isAfter(flashSaleExistPo.getFlashDate()))
+            return ACTIVITYALTER_INVALID;
 
         var flashDate = vo.getFlashDate();
         var po = new FlashSalePo();

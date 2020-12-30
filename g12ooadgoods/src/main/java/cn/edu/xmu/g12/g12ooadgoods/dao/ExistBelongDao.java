@@ -1,7 +1,10 @@
 package cn.edu.xmu.g12.g12ooadgoods.dao;
 
+import cn.edu.xmu.g12.g12ooadgoods.controller.GrouponController;
 import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +12,8 @@ import javax.annotation.Resource;
 
 @Repository
 public class ExistBelongDao {
+    private static final Logger logger = LoggerFactory.getLogger(ExistBelongDao.class);
+
     @Resource
     GoodsSpuPoMapper spuPoMapper;
     @Resource
@@ -90,6 +95,7 @@ public class ExistBelongDao {
         var comment = commentPoMapper.selectByPrimaryKey(commentId);
         if (comment == null) return notexist;
 
+        logger.info("Comment id="+comment.getId()+" sku id="+comment.getGoodsSkuId());
         return skuBelongToShop(comment.getGoodsSkuId(), shopId);
     }
 

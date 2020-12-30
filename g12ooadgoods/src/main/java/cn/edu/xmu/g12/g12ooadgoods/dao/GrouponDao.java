@@ -186,6 +186,8 @@ public class GrouponDao {
     public ResponseCode changeGrouponState(Long grouponId, Byte state) {
         var grouponPo = grouponActivityPoMapper.selectByPrimaryKey(grouponId);
 
+        logger.info("<changeGrouponState> exist state="+grouponPo.getState()+" aim state="+state);
+
         if (state == 2 && grouponPo.getState() != 0) return ResponseCode.GROUPON_STATENOTALLOW;
         if (state == 1 && grouponPo.getState() != 0) return ResponseCode.GROUPON_STATENOTALLOW;
         if (state == 0 && grouponPo.getState() != 1) return ResponseCode.GROUPON_STATENOTALLOW;
