@@ -69,11 +69,6 @@ public class PresaleController {
                                            HttpServletRequest request) {
         logger.info("getSkuAllPresaleActivity controller shopid="+shopId);
 
-        /* 面向测试用例编程，因为state==4是非法的 YangMingTest.adminQueryPresales2 */
-        if (shopId==1 && (state != null && state == 4) ) {
-            return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
-        }
-
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
 
         if (state!= null && (state < 0 || state > 2)
@@ -134,9 +129,6 @@ public class PresaleController {
     public Object onshelvesPresale(@PathVariable Long shopId, @PathVariable Long presaleId,
                                    HttpServletRequest request) {
         logger.info("onshelvesPresale controller shopid="+shopId);
-
-        /* 面向测试用例编程，正常返回920 状态未改变，但是要求返回906 预售活动状态禁止*/
-        if (shopId==1 && presaleId==3107) return Tool.decorateCode(ResponseCode.PRESALE_STATENOTALLOW);
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);

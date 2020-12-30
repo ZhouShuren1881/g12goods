@@ -218,9 +218,6 @@ public class CouponController {
             HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        /*面向测试用例编程，body为空不合法，应该先返回Http Status400，而不是404*/
-        /*在aop.HttpExceptionHaldler中实现*/
-
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return Tool.decorateCode(code);

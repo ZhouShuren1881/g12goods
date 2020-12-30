@@ -63,35 +63,13 @@ public class FlashsaleController {
         return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSale(vo, timesegId), HttpStatus.CREATED);
     }
 
-    /* 面向测试用例编程 SongRunhanTest.getFlashSaleActivity1 */
-    boolean firstEchoCurrentFlashSales = true;
-
-    /**
-     * 响应式API
-     */
+    /** TODO 响应式API */
     @ResponseBody
     @GetMapping("/flashsales/current")
     public Object getFlashSaleItemTimeSegNow() {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        var list = flashsaleDao.getFlashSaleItemTimeSegNow();
-
-        /* 面向测试用例编程 SongRunhanTest.getFlashSaleActivity1 */
-        if (firstEchoCurrentFlashSales) {
-            firstEchoCurrentFlashSales = false;
-            if (list.size() >= 2) {
-                list.get(0).setId(8L);
-                var goodsSku0 = list.get(0).getGoodsSku();
-                goodsSku0.setId(275L);
-                list.get(0).setGoodsSku(goodsSku0);
-                list.get(1).setId(7L);
-                var goodsSku1 = list.get(1).getGoodsSku();
-                goodsSku1.setId(290L);
-                list.get(1).setGoodsSku(goodsSku1);
-            }
-        }
-
-        return list;
+        return flashsaleDao.getFlashSaleItemTimeSegNow();
     }
 
     @ResponseBody

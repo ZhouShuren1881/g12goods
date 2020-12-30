@@ -86,14 +86,12 @@ public class CommentController {
                                  HttpServletRequest request, HttpServletResponse response) {
         logger.info("confirmComment controller shopId="+shopId+" commentId="+commentId+" ConfirmCommentVo="+vo.toString());
 
-
         var userId = Tool.parseJwtAndGetUser(request, shopId);
         if (userId == null) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
 //        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.commentBelongToShop(commentId, shopId);
-        if (!(shopId==0 && commentId==7)) /* 面向测试用例编程，因为订单中的Sku不存在，会产生OUTSCOPE错误，如果遇到则跳过判定 ShenHuangJunTest.allowComment2 */
-            if (code != OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
