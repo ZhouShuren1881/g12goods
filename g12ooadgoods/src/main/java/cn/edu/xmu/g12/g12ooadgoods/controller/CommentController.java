@@ -88,10 +88,12 @@ public class CommentController {
 
         var userId = Tool.parseJwtAndGetUser(request, shopId);
         if (userId == null) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
+        logger.info("userId check pass.");
 
 //        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.commentBelongToShop(commentId, shopId);
         if (code != OK) return Tool.decorateCode(code);
+        logger.info("commentBelongToShop check pass.");
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);

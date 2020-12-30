@@ -145,7 +145,7 @@ public class GoodController {
     public Object getSubCategory(@PathVariable Long pid) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        if (pid == null || pid <= 0) return Tool.decorateCode(RESOURCE_ID_NOTEXIST);
+        if (pid == null || pid < 0) return Tool.decorateCode(RESOURCE_ID_NOTEXIST);
 
         return Tool.decorateObject(goodDao.getSubCategory(pid));
     }
@@ -158,10 +158,12 @@ public class GoodController {
         logger.info("newCategory controller shopid="+shopId+",pid= "+pid);
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
+        if (pid < 0) return Tool.decorateCode(RESOURCE_ID_NOTEXIST);
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
         if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(goodDao.newCategory(pid, vo.getName()), HttpStatus.CREATED);
     }
@@ -333,11 +335,11 @@ public class GoodController {
 
         /* 处理参数校验错误 */
         Object object = Common.processFieldErrors(bindingResult, response);
-        logger.info("Default Vo check ↓");
+//        logger.info("Default Vo check ↓");
         if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
-        logger.info("vo.isInvalid() check ↓");
+//        logger.info("vo.isInvalid() check ↓");
         if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
-        logger.info("Controller validate done.");
+//        logger.info("Controller validate done.");
 
         return Tool.decorateObjectOKStatus(goodDao.newBrand(vo), HttpStatus.CREATED);
     }

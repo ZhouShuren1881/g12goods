@@ -12,4 +12,9 @@ public class CategoryNameVo {
     @NotNull(message = "name不得为空")
     @Size(min = 1)
     private String name;
+
+    public boolean isInvalid() {
+        name = name.trim();
+        return name.length() == 0;
+    }
 }

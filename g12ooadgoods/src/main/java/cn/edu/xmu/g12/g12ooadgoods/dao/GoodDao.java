@@ -215,9 +215,10 @@ public class GoodDao {
     public ReturnObject<List<GoodsCategoryPo>> getSubCategory(Long pid) {
         logger.info("getSubCategory(Long pid): pid="+pid);
 
-        // if pid==zero no subcategory
-        var categoryPo = goodsCategoryPoMapper.selectByPrimaryKey(pid);
-        if (categoryPo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
+        if (pid != 0) {
+            var categoryPo = goodsCategoryPoMapper.selectByPrimaryKey(pid);
+            if (categoryPo == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
+        }
 
         var categoryExample = new GoodsCategoryPoExample();
         categoryExample.createCriteria().andPidEqualTo(pid);
@@ -275,11 +276,11 @@ public class GoodDao {
         var childCategoryExample = new GoodsCategoryPoExample();
         var childCategoryPo = new GoodsCategoryPo();
         childCategoryExample.createCriteria().andPidEqualTo(targetCategory.getId());
-        childCategoryPo.setPid(targetCategory.getPid());
+        childCategoryPo.setPid(0L);
         var childSpuExample = new GoodsSpuPoExample();
         var childSpuPo = new GoodsSpuPo();
         childSpuExample.createCriteria().andCategoryIdEqualTo(targetCategory.getId());
-        childSpuPo.setCategoryId(targetCategory.getPid());
+        childSpuPo.setCategoryId(0L);
 
         goodsCategoryPoMapper.updateByExampleSelective(childCategoryPo, childCategoryExample);
         spuPoMapper.updateByExampleSelective(childSpuPo, childSpuExample);

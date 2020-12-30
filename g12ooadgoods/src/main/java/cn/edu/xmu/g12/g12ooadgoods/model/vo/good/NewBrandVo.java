@@ -2,6 +2,7 @@ package cn.edu.xmu.g12.g12ooadgoods.model.vo.good;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,13 +14,12 @@ public class NewBrandVo {
     @Size(min = 1)
     private String name;
 
-    @NotNull(message = "detail不得为空")
-    @Size(min = 1)
+    @Nullable
     private String detail;
 
     public boolean isInvalid() {
         name = name.trim();
-        detail = detail.trim();
-        return name.isEmpty() || detail.isEmpty();
+        if (detail != null) detail = detail.trim();
+        return name.isEmpty();
     }
 }

@@ -53,19 +53,18 @@ public class ExistBelongDao {
     }
 
     /**
-     * @param shopId 所制定的shop必须存在
+     * @param shopId 所制定的shop可以为0
      */
     public ResponseCode skuBelongToShop(Long skuId, Long shopId) {
-        if (skuId == null || skuId <= 0 || shopId == null) return notexist;
+        if (skuId == null || skuId <= 0 || shopId == null || shopId < 0) return notexist;
 
         var sku = skuPoMapper.selectByPrimaryKey(skuId);
         if (sku == null) return notexist;
 
         var spu = spuPoMapper.selectByPrimaryKey(sku.getGoodsSpuId());
-//        var shop = shopPoMapper.selectByPrimaryKey(shopId);
-        if (spu == null/* || shop == null*/) return notexist;
+        if (spu == null) return notexist;
 
-        return spu.getShopId().equals(shopId) ? ok : outscope;
+        return (spu.getShopId().equals(shopId) || shopId == 0) ? ok : outscope;
     }
 
     /**
