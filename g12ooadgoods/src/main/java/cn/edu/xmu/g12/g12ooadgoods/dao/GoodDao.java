@@ -190,6 +190,7 @@ public class GoodDao {
     public ResponseCode changeSkuState(Long skuId, Byte state) {
         var skuExistPo = skuPoMapper.selectByPrimaryKey(skuId);
         if (skuExistPo == null) return RESOURCE_ID_NOTEXIST;
+        if (skuExistPo.getState() == 6) return RESOURCE_ID_NOTEXIST;
 
         if (skuExistPo.getState().equals(state)) return STATE_NOCHANGE;
 
@@ -273,18 +274,31 @@ public class GoodDao {
         var targetCategory = goodsCategoryPoMapper.selectByPrimaryKey(categoryId);
         if (targetCategory == null) return RESOURCE_ID_NOTEXIST;
 
-        var childCategoryExample = new GoodsCategoryPoExample();
-        var childCategoryPo = new GoodsCategoryPo();
-        childCategoryExample.createCriteria().andPidEqualTo(targetCategory.getId());
-        childCategoryPo.setPid(0L);
+        var categoryPoList = new ArrayList<GoodsCategoryPo>();
+        categoryPoList.add(targetCategory);
+        var p = 0;
+        while (p < categoryPoList.size()) {
+            var parent = categoryPoList.get(p);
+            p++;
+            var example = new GoodsCategoryPoExample();
+            example.createCriteria().andPidEqualTo(parent.getId());
+            var childList = goodsCategoryPoMapper.selectByExample(example);
+            if (childList.size() != 0) categoryPoList.addAll(childList);
+        }
+        var categoryIdList = categoryPoList.stream()
+                .map(GoodsCategoryPo::getId).collect(Collectors.toList());
+
+        var tobeDeleteExample = new GoodsCategoryPoExample();
+        tobeDeleteExample.createCriteria().andIdIn(categoryIdList);
+
         var childSpuExample = new GoodsSpuPoExample();
+        childSpuExample.createCriteria().andCategoryIdIn(categoryIdList);
+
         var childSpuPo = new GoodsSpuPo();
-        childSpuExample.createCriteria().andCategoryIdEqualTo(targetCategory.getId());
         childSpuPo.setCategoryId(0L);
 
-        goodsCategoryPoMapper.updateByExampleSelective(childCategoryPo, childCategoryExample);
         spuPoMapper.updateByExampleSelective(childSpuPo, childSpuExample);
-        goodsCategoryPoMapper.deleteByPrimaryKey(categoryId);
+        goodsCategoryPoMapper.deleteByExample(tobeDeleteExample);
         return OK;
     }
 
@@ -396,10 +410,12 @@ public class GoodDao {
         var floatPriceList = floatPricePoMapper.selectByExample(floatPriceExample);
 
         var conflictList = floatPriceList.stream().filter(item ->
-                        item.getBeginTime().isAfter(vo.getBeginTime())
+                        !item.getBeginTime().isBefore(vo.getBeginTime())
                                 && item.getBeginTime().isBefore(vo.getEndTime())
                                 || item.getEndTime().isAfter(vo.getBeginTime())
-                                && item.getEndTime().isBefore(vo.getEndTime())
+                                && !item.getEndTime().isAfter(vo.getEndTime())
+                                || item.getBeginTime().isBefore(vo.getBeginTime())
+                                && item.getEndTime().isAfter(vo.getEndTime())
                 ).collect(Collectors.toList());
         if (conflictList.size() != 0) return new ReturnObject<>(SKUPRICE_CONFLICT);
 
@@ -424,6 +440,9 @@ public class GoodDao {
     }
 
     public ResponseCode endisableFloatPrice(Long floatPriceId, Long userId) {
+        var floatPriceExistPo = floatPricePoMapper.selectByPrimaryKey(floatPriceId);
+        if (floatPriceExistPo == null || floatPriceExistPo.getValid() == 0) return RESOURCE_ID_NOTEXIST;
+
         var floatPricePo = new FloatPricePo();
         floatPricePo.setId(floatPriceId);
         floatPricePo.setInvalidBy(userId);

@@ -100,6 +100,7 @@ public class FlashsaleDao {
         flashSalePoMapper.insertSelective(flashsalePo);
 
         var flashsaleBo = new FlashSaleBo(flashsalePo, timeServiceUnion.getTimeSegOverviewById(timesegId));
+        logger.info(flashsaleBo.toString());
         return new ReturnObject<>(flashsaleBo);
     }
 

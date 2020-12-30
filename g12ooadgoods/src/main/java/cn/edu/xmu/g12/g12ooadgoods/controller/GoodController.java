@@ -306,7 +306,6 @@ public class GoodController {
         if (object != null) return Tool.decorateCode(FIELD_NOTVALID);
         if (vo.fieldCode() != OK) return Tool.decorateCode(vo.fieldCode());
 
-        /** XuQingYun require OK */
         return Tool.decorateObject(goodDao.newFloatPrice(vo, skuId, userId));
     }
 

@@ -193,11 +193,13 @@ public class Common {
 //                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
 //                        HttpStatus.INTERNAL_SERVER_ERROR);
             case 503/*FIELD_NOTVALID*/:
-            case 610/*Log_Bigger*/:
+            case 920/*状态未改变*/:/** For XuQingYun deleteSku3 Http Status = 400! */
                 // 503：字段不合法
                 return decorateStatus(
                         ResponseUtil.fail(returnObject.getCode()),
                         HttpStatus.BAD_REQUEST);
+            case 610/*Log_Bigger*/:
+                return ResponseUtil.fail(returnObject.getCode()); /** For XuQingYun add_floating_price5 NO Http Status! */
             case 504/*RESOURCE_ID_NOTEXIST*/:
                 // 504：资源不存在
                 return decorateStatus(
