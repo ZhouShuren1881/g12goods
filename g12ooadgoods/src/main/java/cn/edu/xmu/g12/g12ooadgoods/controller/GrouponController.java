@@ -20,7 +20,7 @@ import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
 
 @RestController
 public class GrouponController {
-    private static final Logger logger = LoggerFactory.getLogger(GoodController.class);
+    private static final Logger logger = LoggerFactory.getLogger(GrouponController.class);
 
     @Autowired
     GrouponDao grouponDao;

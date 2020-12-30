@@ -255,9 +255,9 @@ public class CouponDao {
         if (couponActPo == null) return RESOURCE_ID_NOTEXIST;
         if (couponActPo.getState() == (byte)2) return RESOURCE_ID_NOTEXIST;
 
-        if (state == 2 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
-        if (state == 1 && couponActPo.getState() != 0) return COUPON_STATENOTALLOW;
-        if (state == 0 && couponActPo.getState() != 1) return COUPON_STATENOTALLOW;
+        if (state == 2 && couponActPo.getState() != 0) return COUPONACT_STATENOTALLOW;
+        if (state == 1 && couponActPo.getState() != 0) return COUPONACT_STATENOTALLOW;
+        if (state == 0 && couponActPo.getState() != 1) return COUPONACT_STATENOTALLOW;
 
         var updatePo = new CouponActivityPo();
         updatePo.setId(couponActId);
