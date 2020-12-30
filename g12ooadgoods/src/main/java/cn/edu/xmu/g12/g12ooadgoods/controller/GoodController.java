@@ -199,7 +199,10 @@ public class GoodController {
     @GetMapping("/spus/{spuId}")
     public Object getSpuById(@PathVariable Long spuId) {
         logger.info("getSpuById controller spuId="+spuId);
-        return Tool.decorateObject(goodDao.getSpuById(spuId));
+        var returnObject = goodDao.getSpuById(spuId);
+        logger.info("FINALX - rescode"+ResponseUtil.fail(returnObject.getCode()).toString());
+        logger.info("FINALX - rescode"+ResponseUtil.ok(returnObject.getData()).toString());
+        return Tool.decorateObject(returnObject);
     }
 
     @ResponseBody
@@ -340,7 +343,10 @@ public class GoodController {
         if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 //        logger.info("Controller validate done.");
 
-        return Tool.decorateObjectOKStatus(goodDao.newBrand(vo), HttpStatus.CREATED);
+        var returnObject = goodDao.newBrand(vo);
+        logger.info("FINALX - rescode"+ResponseUtil.fail(returnObject.getCode()).toString());
+        logger.info("FINALX - rescode"+ResponseUtil.ok(returnObject.getData()).toString());
+        return Tool.decorateObjectOKStatus(returnObject, HttpStatus.CREATED);
     }
 
     @ResponseBody

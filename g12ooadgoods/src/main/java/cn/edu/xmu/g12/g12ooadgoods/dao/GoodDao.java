@@ -141,6 +141,7 @@ public class GoodDao {
     public ReturnObject<SkuBo> getSkuBoById(Long skuId) {
         var targetSku = skuPoMapper.selectByPrimaryKey(skuId);
         if (targetSku == null) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
+        if (targetSku.getState() == 6) return new ReturnObject<>(RESOURCE_ID_NOTEXIST);
 
         var targetSkuPrice = skuPriceDao.getSkuPrice(targetSku);
 

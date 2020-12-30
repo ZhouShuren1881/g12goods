@@ -141,7 +141,9 @@ public class GrouponController {
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
         if (code != OK) return Tool.decorateCode(code);
 
-        return Tool.decorateCode(grouponDao.changeGrouponState(grouponId, (byte)2));
+        var returnCode = grouponDao.changeGrouponState(grouponId, (byte)2);
+        logger.info("FINALX - rescode"+returnCode.toString());
+        return Tool.decorateCode(returnCode);
     }
 
     @ResponseBody
