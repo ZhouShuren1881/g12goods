@@ -462,7 +462,7 @@ public class GoodDao {
         var brandPo = new BrandPo();
         brandPo.setName(vo.getName());
         brandPo.setDetail(vo.getDetail());
-        brandPo.setImageUrl("");
+        brandPo.setImageUrl(null);
         brandPo.setGmtCreate(LocalDateTime.now());
         brandPo.setGmtCreate(LocalDateTime.now());
         brandPoMapper.insertSelective(brandPo);
