@@ -207,27 +207,26 @@ public class Common {
                 return decorateStatus(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.FORBIDDEN);
-            case 0/*OK*/:
-                // 0: 无错误
-                Object data = returnObject.getData();
-                if (data != null){
-                    if (httpStatus == null)
-                        return ResponseUtil.ok(data);
-                    else
-                        return decorateStatus(ResponseUtil.ok(data), httpStatus);
-                } else {
-                    if (httpStatus == null)
-                        return ResponseUtil.ok();
-                    else
-                        return decorateStatus(ResponseUtil.ok(), httpStatus);
-                }
             default:
-                if (codeInt > 505 && codeInt < 600 || codeInt >= 900 && codeInt < 1000)
+                if (codeInt > 505 && codeInt < 600)
                     return decorateStatus(
                             ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                             HttpStatus.BAD_REQUEST);
-                else
-                    return decorateStatus(
+                if ( codeInt == 0 || codeInt >= 900 && codeInt < 1000) {
+                    Object rdata = returnObject.getData();
+                    if (rdata != null) {
+                        if (httpStatus == null)
+                            return ResponseUtil.ok(rdata);
+                        else
+                            return decorateStatus(ResponseUtil.ok(rdata), httpStatus);
+                    } else {
+                        if (httpStatus == null)
+                            return ResponseUtil.ok();
+                        else
+                            return decorateStatus(ResponseUtil.ok(), httpStatus);
+                    }
+                }
+                return decorateStatus(
                             ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                             HttpStatus.INTERNAL_SERVER_ERROR);
         }
