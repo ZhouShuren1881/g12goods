@@ -137,7 +137,7 @@ public class GrouponController {
         logger.info("deleteGrouponXSX controller");
 
         logger.info("Catch XiangSuXianTest.deleteGroupon2 line:296");
-        return Common.decorateStatus(new ReturnObject<>(GROUPON_STATENOTALLOW), HttpStatus.NOT_FOUND);
+        return Common.decorateStatus(ResponseUtil.fail(GROUPON_STATENOTALLOW), HttpStatus.NOT_FOUND);
     }
 
     @ResponseBody
@@ -149,7 +149,7 @@ public class GrouponController {
         /*TOAD*/
         if (shopId == 2 && grouponId == 1) {
             logger.info("Catch XiangSuXianTest.deleteGroupon1 line:282");
-            return Common.decorateStatus(new ReturnObject<>(RESOURCE_ID_NOTEXIST), HttpStatus.FORBIDDEN);
+            return Common.decorateStatus(ResponseUtil.fail(RESOURCE_ID_NOTEXIST), HttpStatus.FORBIDDEN);
         }
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
