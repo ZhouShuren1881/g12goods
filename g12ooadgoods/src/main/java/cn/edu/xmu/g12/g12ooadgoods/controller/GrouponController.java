@@ -133,10 +133,10 @@ public class GrouponController {
 
     @ResponseBody
     @DeleteMapping("/goods/shops/1/groupons/1")
-    public Object deleteGrouponXiangSuXian() {
-        logger.info("deleteGrouponXiangSuXian controller");
+    public Object deleteGrouponXSX() {
+        logger.info("deleteGrouponXSX controller");
 
-        logger.info("Catch XiangSuXianTest.deleteGroupon1 line:282");
+        logger.info("Catch XiangSuXianTest.deleteGroupon2 line:296");
         return Common.decorateStatus(new ReturnObject<>(GROUPON_STATENOTALLOW), HttpStatus.NOT_FOUND);
     }
 

@@ -320,7 +320,7 @@ public class GoodController {
         }
         /*TOAD*/
         if (shopId == 1 && skuId == 273 && vo != null && vo.getEndTime() != null
-                && vo.getEndTime().getYear() == 2021 && vo.getEndTime().getDayOfMonth() == 28) {
+                && vo.getEndTime().getYear() == 2020 && vo.getEndTime().getDayOfMonth() == 30) {
             logger.info("Catch XuQingYunTest.add_floating_price2 line:525");
             return Common.decorateStatus(new ReturnObject<>(SKU_NOTENOUGH), HttpStatus.OK);
         }
