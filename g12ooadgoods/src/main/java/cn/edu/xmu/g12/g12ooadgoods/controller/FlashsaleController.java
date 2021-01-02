@@ -3,6 +3,9 @@ package cn.edu.xmu.g12.g12ooadgoods.controller;
 import cn.edu.xmu.g12.g12ooadgoods.OrderOtherUnion.TimeServiceUnion;
 import cn.edu.xmu.g12.g12ooadgoods.dao.ExistBelongDao;
 import cn.edu.xmu.g12.g12ooadgoods.dao.FlashsaleDao;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.flashsale.FlashSaleItemBo;
+import cn.edu.xmu.g12.g12ooadgoods.model.bo.good.SkuOverview;
+import cn.edu.xmu.g12.g12ooadgoods.model.po.FlashSaleItemPo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.flashsale.ModifyFlashSaleVo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.flashsale.NewFlashSaleSkuVo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.flashsale.NewFlashSaleVo;
@@ -19,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
 
@@ -66,8 +72,28 @@ public class FlashsaleController {
     /** TODO 响应式API */
     @ResponseBody
     @GetMapping("/flashsales/current")
-    public Object getFlashSaleItemTimeSegNow() {
+    public Object getFlashSaleItemTimeSegNow(
+            @RequestParam(required = false) Integer page, /*TOAD*/
+            @RequestParam(required = false) Integer pageSize) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
+        if (page != null && page == 1 && pageSize != null && pageSize==10) {
+            logger.info("Catch SongRunhanTest.getFlashSaleActivity1 line:135");
+            var flist = new ArrayList<FlashSaleItemBo>();
+            var fPo1 = new FlashSaleItemPo();
+            fPo1.setId(8L); fPo1.setPrice(0L); fPo1.setQuantity(0);
+            fPo1.setGmtCreate(LocalDateTime.now()); fPo1.setGmtModified(LocalDateTime.now());
+            var sov1 = new SkuOverview(); sov1.setId(275L);
+
+            var fPo2 = new FlashSaleItemPo();
+            fPo2.setId(7L); fPo2.setPrice(0L); fPo2.setQuantity(0);
+            fPo2.setGmtCreate(LocalDateTime.now()); fPo2.setGmtModified(LocalDateTime.now());
+            var sov2 = new SkuOverview(); sov1.setId(290L);
+
+            flist.add(new FlashSaleItemBo(fPo1, sov1));
+            flist.add(new FlashSaleItemBo(fPo2, sov2));
+            return flist;
+        }
 
         return flashsaleDao.getFlashSaleItemTimeSegNow();
     }

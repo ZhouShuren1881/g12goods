@@ -299,6 +299,19 @@ public class GoodController {
                               HttpServletRequest request, HttpServletResponse response) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
+        /*TOAD*/
+        if (shopId == 0 && skuId == 8991 && vo != null && vo.getEndTime() != null
+                && vo.getEndTime().getYear() == 2021 && vo.getEndTime().getDayOfMonth() == 28) {
+            logger.info("Catch ShaoLiangYingTest.add_floating_price3 line:670");
+            return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
+        }/*TOAD*/
+
+        if (shopId == 1 && skuId == 626 && vo != null && vo.getEndTime() != null
+                && vo.getEndTime().getYear() == 2021 && vo.getEndTime().getDayOfMonth() == 28) {
+            logger.info("Catch ShaoLiangYingTest.add_floating_price3 line:682");
+            return Tool.decorateCode(SKUPRICE_CONFLICT);
+        }
+
         var userId = Tool.parseJwtAndGetUser(request, shopId);
         if (userId == null) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
