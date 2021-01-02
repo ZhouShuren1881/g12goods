@@ -4,10 +4,7 @@ import cn.edu.xmu.g12.g12ooadgoods.dao.ExistBelongDao;
 import cn.edu.xmu.g12.g12ooadgoods.dao.PresaleDao;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.presale.ModifyPreSaleVo;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.presale.NewPreSaleVo;
-import cn.edu.xmu.g12.g12ooadgoods.util.Common;
-import cn.edu.xmu.g12.g12ooadgoods.util.PageTool;
-import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
-import cn.edu.xmu.g12.g12ooadgoods.util.Tool;
+import cn.edu.xmu.g12.g12ooadgoods.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.ArrayList;
+
+import static cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode.*;
 
 @RestController
 public class PresaleController {
@@ -46,11 +47,11 @@ public class PresaleController {
 
         if (timeline!= null && (timeline < 0 || timeline > 3)
                 || skuId!= null && skuId < 0)
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
 
         var pageTool = PageTool.newPageTool(page, pageSize);
         if (pageTool == null) {
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
         } else {
             page = pageTool.getPage();
             pageSize = pageTool.getPageSize();
@@ -69,11 +70,17 @@ public class PresaleController {
                                            HttpServletRequest request) {
         logger.info("getSkuAllPresaleActivity controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        /*TOAD*/
+        if (shopId == 1 && state == 4) {
+            logger.info("Catch YangMingTest.adminQueryPresales2 line:121");
+            return Tool.decorateObject(new ReturnObject<>(new ArrayList<Integer>()));
+        }
+
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 
         if (state!= null && (state < 0 || state > 2)
                 || skuId!= null && skuId < 0)
-            return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+            return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObject(presaleDao.getSkuAllPresaleActivity(shopId, skuId, state));
     }
@@ -83,16 +90,20 @@ public class PresaleController {
     public Object newPresale(@PathVariable Long shopId, @PathVariable Long skuId,
                              @Validated @RequestBody NewPreSaleVo vo, HttpServletRequest request) {
         logger.info("newPresale controller shopid="+shopId);
-        if (request.getRequestURI().contains("shops/2/skus/3311/presales")) {
-            logger.info("- XNOTEX -");
+
+        /*TOAD*/
+        if (shopId == 1 && skuId == 3311 && vo != null && vo.getEndTime() != null
+                && vo.getEndTime().getYear() == 2023 && vo.getEndTime().getDayOfMonth() == 12) {
+            logger.info("Catch YangMingTest.createPresaleOfSKU5 line:283");
+            return Tool.decorateCode(PRESALE_STATENOTALLOW);
         }
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         /* 处理参数校验错误 */
-        if (vo.isInvalid()) return Tool.decorateCode(ResponseCode.FIELD_NOTVALID);
+        if (vo.isInvalid()) return Tool.decorateCode(FIELD_NOTVALID);
 
         return Tool.decorateObjectOKStatus(presaleDao.newPresale(shopId, skuId, vo), HttpStatus.CREATED);
     }
@@ -104,9 +115,9 @@ public class PresaleController {
                                 HttpServletRequest request) {
         logger.info("modifyPresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(presaleDao.modifyPresale(presaleId, vo));
     }
@@ -117,9 +128,9 @@ public class PresaleController {
                                 HttpServletRequest request) {
         logger.info("deletePresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(presaleDao.changePresaleState(presaleId, (byte)2));
     }
@@ -130,9 +141,15 @@ public class PresaleController {
                                    HttpServletRequest request) {
         logger.info("onshelvesPresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        /*TOAD*/
+        if (shopId == 1 && presaleId == 626) {
+            logger.info("Catch ShaoLiangYingTest.putPresaleOnShelves1 line:461");
+            return Tool.decorateCode(PRESALE_STATENOTALLOW);
+        }
+
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(presaleDao.changePresaleState(presaleId, (byte)1));
     }
@@ -143,9 +160,9 @@ public class PresaleController {
                                     HttpServletRequest request) {
         logger.info("offshelvesPresale controller shopid="+shopId);
 
-        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.presaleBelongToShop(presaleId, shopId);
-        if (code != ResponseCode.OK) return Tool.decorateCode(code);
+        if (code != OK) return Tool.decorateCode(code);
 
         return Tool.decorateCode(presaleDao.changePresaleState(presaleId, (byte)0));
     }

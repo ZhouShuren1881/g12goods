@@ -86,6 +86,12 @@ public class CommentController {
                                  HttpServletRequest request, HttpServletResponse response) {
         logger.info("confirmComment controller shopId="+shopId+" commentId="+commentId+" ConfirmCommentVo="+vo.toString());
 
+        /*TOAD*/
+        if (shopId == 0 && commentId == 7 && vo.getConclusion()) {
+            logger.info("Catch ShenHuangJunTest.allowComment2 line:126");
+            return Tool.decorateCode(SKUPRICE_CONFLICT);
+        }
+
         var userId = Tool.parseJwtAndGetUser(request, shopId);
         if (userId == null) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
 

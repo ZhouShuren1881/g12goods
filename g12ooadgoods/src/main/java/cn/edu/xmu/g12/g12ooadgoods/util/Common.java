@@ -171,7 +171,7 @@ public class Common {
         }
     }
 
-    private static Object decorateStatus(Object responseUtilObject, HttpStatus httpStatus) {
+    public static Object decorateStatus(Object responseUtilObject, HttpStatus httpStatus) {
         var servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         var response = servletRequestAttributes.getResponse();
         response.setStatus(httpStatus.value());

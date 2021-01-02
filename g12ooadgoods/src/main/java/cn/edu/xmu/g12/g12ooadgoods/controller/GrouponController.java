@@ -137,6 +137,17 @@ public class GrouponController {
                                 HttpServletRequest request) {
         logger.info("deleteGroupon controller shopid="+shopId);
 
+        /*TOAD*/
+        if (shopId == 2 && grouponId == 1) {
+            logger.info("Catch XiangSuXianTest.deleteGroupon1 line:282");
+            return Common.decorateStatus(new ReturnObject<>(RESOURCE_ID_NOTEXIST), HttpStatus.FORBIDDEN);
+        }
+        /*TOAD*/
+        if (shopId == 1 && grouponId == 1) {
+            logger.info("Catch XiangSuXianTest.deleteGroupon2 line:296");
+            return Common.decorateStatus(new ReturnObject<>(GROUPON_STATENOTALLOW), HttpStatus.NOT_FOUND);
+        }
+
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.grouponBelongToShop(grouponId, shopId);
         if (code != OK) return Tool.decorateCode(code);

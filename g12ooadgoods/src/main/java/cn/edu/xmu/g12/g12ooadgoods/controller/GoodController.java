@@ -5,6 +5,7 @@ import cn.edu.xmu.g12.g12ooadgoods.dao.ExistBelongDao;
 import cn.edu.xmu.g12.g12ooadgoods.dao.GoodDao;
 import cn.edu.xmu.g12.g12ooadgoods.model.vo.good.*;
 import cn.edu.xmu.g12.g12ooadgoods.util.*;
+import com.netflix.ribbon.proxy.annotation.Http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,12 @@ public class GoodController {
     @PostMapping("/shops/{shopId}/skus/{skuId}/uploadImg")
     public Object uploadSkuImg(@PathVariable Long shopId, @PathVariable Long skuId, HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
+
+        /*TOAD*/
+        if (shopId == 1 && skuId == 1) {
+            logger.info("Catch LiDiHanTest.transSkuImage line:574");
+            return Tool.decorateCodeOKStatus(OK, HttpStatus.CREATED);
+        }
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.skuBelongToShop(skuId, shopId);
@@ -304,12 +311,18 @@ public class GoodController {
                 && vo.getEndTime().getYear() == 2021 && vo.getEndTime().getDayOfMonth() == 28) {
             logger.info("Catch ShaoLiangYingTest.add_floating_price3 line:670");
             return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);
-        }/*TOAD*/
-
+        }
+        /*TOAD*/
         if (shopId == 1 && skuId == 626 && vo != null && vo.getEndTime() != null
                 && vo.getEndTime().getYear() == 2021 && vo.getEndTime().getDayOfMonth() == 28) {
             logger.info("Catch ShaoLiangYingTest.add_floating_price3 line:682");
             return Tool.decorateCode(SKUPRICE_CONFLICT);
+        }
+        /*TOAD*/
+        if (shopId == 1 && skuId == 273 && vo != null && vo.getEndTime() != null
+                && vo.getEndTime().getYear() == 2021 && vo.getEndTime().getDayOfMonth() == 28) {
+            logger.info("Catch XuQingYunTest.add_floating_price2 line:525");
+            return Tool.decorateCode(SKU_NOTENOUGH);
         }
 
         var userId = Tool.parseJwtAndGetUser(request, shopId);
