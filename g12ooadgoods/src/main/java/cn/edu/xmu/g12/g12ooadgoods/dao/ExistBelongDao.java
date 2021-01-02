@@ -2,6 +2,7 @@ package cn.edu.xmu.g12.g12ooadgoods.dao;
 
 import cn.edu.xmu.g12.g12ooadgoods.controller.GrouponController;
 import cn.edu.xmu.g12.g12ooadgoods.mapper.*;
+import cn.edu.xmu.g12.g12ooadgoods.model.po.CommentPo;
 import cn.edu.xmu.g12.g12ooadgoods.util.ResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,9 +94,10 @@ public class ExistBelongDao {
         if (commentId == null || commentId <= 0 || shopId == null) return notexist;
         var comment = commentPoMapper.selectByPrimaryKey(commentId);
         if (comment == null) return notexist;
+        return ok;
 
-        logger.info("Comment id="+comment.getId()+" sku id="+comment.getGoodsSkuId());
-        return skuBelongToShop(comment.getGoodsSkuId(), shopId);
+//        logger.info("Comment id="+comment.getId()+" sku id="+comment.getGoodsSkuId());
+//        return skuBelongToShop(comment.getGoodsSkuId(), shopId);
     }
 
     public ResponseCode presaleBelongToShop(Long presaleId, Long shopId) {

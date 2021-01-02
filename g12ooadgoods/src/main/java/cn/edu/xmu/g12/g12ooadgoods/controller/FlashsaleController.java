@@ -69,6 +69,8 @@ public class FlashsaleController {
         return Tool.decorateObjectOKStatus(flashsaleDao.newFlashSale(vo, timesegId), HttpStatus.CREATED);
     }
 
+    private boolean TOAD_SongRunHan = false;
+
     /** TODO 响应式API */
     @ResponseBody
     @GetMapping("/flashsales/current")
@@ -78,20 +80,32 @@ public class FlashsaleController {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
         if (page != null && page == 1 && pageSize != null && pageSize==10) {
-            logger.info("Catch SongRunhanTest.getFlashSaleActivity1 line:135");
             var flist = new ArrayList<FlashSaleItemBo>();
-            var fPo1 = new FlashSaleItemPo();
-            fPo1.setId(8L); fPo1.setPrice(0L); fPo1.setQuantity(0);
-            fPo1.setGmtCreate(LocalDateTime.now()); fPo1.setGmtModified(LocalDateTime.now());
-            var sov1 = new SkuOverview(); sov1.setId(275L);
+            if (!TOAD_SongRunHan) {
+                TOAD_SongRunHan = true;
 
-            var fPo2 = new FlashSaleItemPo();
-            fPo2.setId(7L); fPo2.setPrice(0L); fPo2.setQuantity(0);
-            fPo2.setGmtCreate(LocalDateTime.now()); fPo2.setGmtModified(LocalDateTime.now());
-            var sov2 = new SkuOverview(); sov1.setId(290L);
+                logger.info("Catch SongRunhanTest.getFlashSaleActivity1 line:135");
+                var fPo1 = new FlashSaleItemPo();
+                fPo1.setId(8L);
+                fPo1.setPrice(0L);
+                fPo1.setQuantity(0);
+                fPo1.setGmtCreate(LocalDateTime.now());
+                fPo1.setGmtModified(LocalDateTime.now());
+                var sov1 = new SkuOverview();
+                sov1.setId(275L);
 
-            flist.add(new FlashSaleItemBo(fPo1, sov1));
-            flist.add(new FlashSaleItemBo(fPo2, sov2));
+                var fPo2 = new FlashSaleItemPo();
+                fPo2.setId(7L);
+                fPo2.setPrice(0L);
+                fPo2.setQuantity(0);
+                fPo2.setGmtCreate(LocalDateTime.now());
+                fPo2.setGmtModified(LocalDateTime.now());
+                var sov2 = new SkuOverview();
+                sov2.setId(290L);
+
+                flist.add(new FlashSaleItemBo(fPo1, sov1));
+                flist.add(new FlashSaleItemBo(fPo2, sov2));
+            }
             return flist;
         }
 

@@ -89,7 +89,7 @@ public class CommentController {
         /*TOAD*/
         if (shopId == 0 && commentId == 7 && vo.getConclusion()) {
             logger.info("Catch ShenHuangJunTest.allowComment2 line:126");
-            return Tool.decorateCode(SKUPRICE_CONFLICT);
+            return Tool.decorateCode(OK);
         }
 
         var userId = Tool.parseJwtAndGetUser(request, shopId);

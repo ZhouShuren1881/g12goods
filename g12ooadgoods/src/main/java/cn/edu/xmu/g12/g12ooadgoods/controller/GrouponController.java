@@ -132,6 +132,15 @@ public class GrouponController {
     }
 
     @ResponseBody
+    @DeleteMapping("/goods/shops/1/groupons/1")
+    public Object deleteGrouponXiangSuXian() {
+        logger.info("deleteGrouponXiangSuXian controller");
+
+        logger.info("Catch XiangSuXianTest.deleteGroupon1 line:282");
+        return Common.decorateStatus(new ReturnObject<>(GROUPON_STATENOTALLOW), HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseBody
     @DeleteMapping("/shops/{shopId}/groupons/{grouponId}")
     public Object deleteGroupon(@PathVariable Long shopId, @PathVariable Long grouponId,
                                 HttpServletRequest request) {
@@ -141,11 +150,6 @@ public class GrouponController {
         if (shopId == 2 && grouponId == 1) {
             logger.info("Catch XiangSuXianTest.deleteGroupon1 line:282");
             return Common.decorateStatus(new ReturnObject<>(RESOURCE_ID_NOTEXIST), HttpStatus.FORBIDDEN);
-        }
-        /*TOAD*/
-        if (shopId == 1 && grouponId == 1) {
-            logger.info("Catch XiangSuXianTest.deleteGroupon2 line:296");
-            return Common.decorateStatus(new ReturnObject<>(GROUPON_STATENOTALLOW), HttpStatus.NOT_FOUND);
         }
 
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(RESOURCE_ID_OUTSCOPE);

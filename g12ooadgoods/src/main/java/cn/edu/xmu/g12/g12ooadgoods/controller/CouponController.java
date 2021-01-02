@@ -221,12 +221,6 @@ public class CouponController {
             HttpServletRequest request) {
         logger.info(Thread.currentThread() .getStackTrace()[1].getMethodName() + " controller");
 
-        /*TOAD*/
-        if (shopId == 1 && couponActId == 1) {
-            logger.info("Catch LiuFeiYanTest.deleteCouponSku1 line:424");
-            return Tool.decorateCode(RESOURCE_ID_NOTEXIST);
-        }
-
         if (Tool.noAccessToShop(request, shopId)) return Tool.decorateCode(ResponseCode.RESOURCE_ID_OUTSCOPE);
         var code = existBelongDao.couponActBelongToShop(couponActId, shopId);
         if (code != ResponseCode.OK) return Tool.decorateCode(code);

@@ -193,7 +193,6 @@ public class Common {
 //                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
 //                        HttpStatus.INTERNAL_SERVER_ERROR);
             case 503/*FIELD_NOTVALID*/:
-//            case 920/*状态未改变*/:/** For XuQingYun deleteSku3 Http Status = 200! */
                 // 503：字段不合法
                 return decorateStatus(
                         ResponseUtil.fail(returnObject.getCode()),
